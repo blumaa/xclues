@@ -1,6 +1,6 @@
 # Xclues
 
-A multi-domain connections game inspired by NYTimes Connections. Group 16 items into 4 categories of 4!
+A multi-domain connections game. Group 16 items into 4 categories of 4!
 
 ## Supported Domains
 
@@ -15,7 +15,6 @@ A multi-domain connections game inspired by NYTimes Connections. Group 16 items 
 - 🎨 Clean UI with Mond Design System
 - 🌐 Multi-domain support with build-time SEO
 - 🧩 Multiple grouping strategies per genre
-- 🎯 NYTimes Connections-style gameplay
 - ⚡ Fast, modern tech stack
 
 ## Tech Stack
