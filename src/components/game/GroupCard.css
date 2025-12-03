@@ -1,0 +1,20 @@
+.group-card {
+  transition: all 0.3s ease;
+  aspect-ratio: 4 / 1;
+}
+
+.group-card.yellow {
+  background-color: rgb(249, 223, 109);
+}
+
+.group-card.green {
+  background-color: rgb(160, 195, 90);
+}
+
+.group-card.blue {
+  background-color: rgb(176, 196, 239);
+}
+
+.group-card.purple {
+  background-color: rgb(186, 129, 197);
+}

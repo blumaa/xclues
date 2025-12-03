@@ -1,0 +1,7 @@
+# Robots.txt for Filmclues
+# https://www.filmclues.space
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.filmclues.space/sitemap.xml
