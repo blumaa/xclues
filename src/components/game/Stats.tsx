@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, Heading, Text } from "@mond-design-system/theme";
+import { Box, Text } from "@mond-design-system/theme";
 import type { UserStats } from "../../types";
 import "./Stats.css";
 
