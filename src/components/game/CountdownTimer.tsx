@@ -36,10 +36,9 @@ export function CountdownTimer() {
   };
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" gap="sm">
-      <Text size="2xs">Next puzzle in</Text>
-      <Text size="xl" weight="semibold">
-        {formatCountdown()}
+    <Box display="flex" alignItems="flex-end" justifyContent="center">
+      <Text size="md" responsive>
+        Next puzzle in {formatCountdown()}
       </Text>
     </Box>
   );

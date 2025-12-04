@@ -1,10 +1,12 @@
 import * as amplitude from "@amplitude/analytics-browser";
+import type { Genre } from "../../config/seoConfig";
 
 const AMPLITUDE_API_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY as
   | string
   | undefined;
 
 let isInitialized = false;
+let currentGenre: Genre | null = null;
 
 type ValidPropertyType =
   | number
@@ -14,7 +16,7 @@ type ValidPropertyType =
   | { [key: string]: ValidPropertyType }
   | Array<{ [key: string]: ValidPropertyType }>;
 
-export function initAnalytics() {
+export function initAnalytics(genre: Genre) {
   if (!AMPLITUDE_API_KEY) {
     console.warn("Amplitude API key not configured");
     return;
@@ -24,6 +26,8 @@ export function initAnalytics() {
     return;
   }
 
+  currentGenre = genre;
+
   amplitude.init(AMPLITUDE_API_KEY, {
     serverZone: "EU",
     autocapture: {
@@ -32,6 +36,11 @@ export function initAnalytics() {
       sessions: true,
     },
   });
+
+  // Set genre as a user property so it's associated with all events
+  const identifyEvent = new amplitude.Identify();
+  identifyEvent.set("genre", genre);
+  amplitude.identify(identifyEvent);
 
   isInitialized = true;
 }
@@ -43,7 +52,11 @@ export function trackEvent(
   if (!isInitialized) {
     return;
   }
-  amplitude.track(eventName, properties);
+  // Include genre in every event for easy filtering/segmentation
+  amplitude.track(eventName, {
+    ...properties,
+    genre: currentGenre,
+  });
 }
 
 export function identifyUser(
