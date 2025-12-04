@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Box, ThemeProvider } from "@mond-design-system/theme";
+import { ThemeProvider } from "@mond-design-system/theme";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeContextProvider } from "./providers/ThemeContext";
 import { useThemeContext } from "./providers/useThemeContext";
