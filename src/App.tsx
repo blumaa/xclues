@@ -34,11 +34,19 @@ function ThemedApp() {
               display: "flex",
               flexDirection: "column",
               minHeight: "100vh",
+              position: "relative",
             }}
           >
-            <Box display="flex" justifyContent="flex-end" padding="1">
+            <div
+              style={{
+                position: "absolute",
+                top: "0.5rem",
+                right: "0.5rem",
+                zIndex: 10,
+              }}
+            >
               <ThemeToggle />
-            </Box>
+            </div>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/privacy" element={<PrivacyPage />} />

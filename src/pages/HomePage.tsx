@@ -27,7 +27,11 @@ export function HomePage() {
   const storage = useStorage();
   const stats = useStats();
   const today = getTodayDate();
-  const { data: puzzle, isLoading, error } = useDailyPuzzle(today, genre, storage);
+  const {
+    data: puzzle,
+    isLoading,
+    error,
+  } = useDailyPuzzle(today, genre, storage);
 
   // Check if user has already played today
   useEffect(() => {
@@ -164,7 +168,14 @@ export function HomePage() {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        justifyContent: "center",
+      }}
+    >
       <GameBoard onViewStats={() => setResultsDismissed(false)} />
       <ResultsModal
         isOpen={showResults}
