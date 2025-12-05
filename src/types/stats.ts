@@ -4,6 +4,9 @@
  * Type definitions for user stats and game results.
  */
 
+/** Difficulty colors for guess history display */
+export type GuessColor = 'yellow' | 'green' | 'blue' | 'purple';
+
 /**
  * Result of a completed game
  */
@@ -16,6 +19,8 @@ export interface GameResult {
   mistakes: number;
   /** Timestamp when game was completed */
   completedAt: number;
+  /** History of guesses as colors (for share/display) */
+  guessHistory?: GuessColor[][];
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Box, Spinner, Text } from "@mond-design-system/theme";
 import { useGameStore } from "../store/gameStore";
 import { GameBoard } from "../components/game/GameBoard";
@@ -8,13 +8,15 @@ import { useStats } from "../providers/useStats";
 import { useSite } from "../providers/useSite";
 import { useDailyPuzzle } from "../lib/supabase/storage";
 import { getTodayDate } from "../utils/index";
+import { guessesToColorHistory } from "../utils/guessHistory";
 import { trackEvent, EVENTS } from "../services/analytics";
 import type { GameResult } from "../types";
 
 export function HomePage() {
-  const { gameStatus, groups, mistakes, initializeGame, restoreCompletedGame } =
+  const { gameStatus, groups, mistakes, previousGuesses, initializeGame, restoreCompletedGame } =
     useGameStore();
   const [resultsDismissed, setResultsDismissed] = useState(false);
+  const [showResultsDelayed, setShowResultsDelayed] = useState(false);
   const [recordedDate, setRecordedDate] = useState<string | null>(null);
   const [alreadyPlayedToday, setAlreadyPlayedToday] =
     useState<GameResult | null>(null);
@@ -22,6 +24,19 @@ export function HomePage() {
 
   // Get site config for genre
   const { genre } = useSite();
+
+  // Derive guess history from current game or restored game
+  const currentGuessHistory = useMemo(() => {
+    // If we have guesses from current session, compute colors
+    if (previousGuesses.length > 0 && groups.length > 0) {
+      return guessesToColorHistory(previousGuesses, groups);
+    }
+    // If restored from saved game, use persisted history
+    if (alreadyPlayedToday?.guessHistory) {
+      return alreadyPlayedToday.guessHistory;
+    }
+    return null;
+  }, [previousGuesses, groups, alreadyPlayedToday]);
 
   // Get storage and load today's puzzle
   const storage = useStorage();
@@ -90,11 +105,15 @@ export function HomePage() {
     const notYetRecorded = recordedDate !== today;
 
     if (isGameOver && notYetRecorded) {
+      // Convert guesses to color history for persistence
+      const guessHistory = guessesToColorHistory(previousGuesses, groups);
+
       const result: GameResult = {
         date: today,
         won: gameStatus === "won",
         mistakes,
         completedAt: Date.now(),
+        guessHistory,
       };
 
       stats
@@ -106,11 +125,22 @@ export function HomePage() {
           console.error("Failed to record game completion:", error);
         });
     }
-  }, [gameStatus, recordedDate, today, mistakes, stats]);
+  }, [gameStatus, recordedDate, today, mistakes, stats, previousGuesses, groups]);
 
-  // Derive modal visibility from game status and dismissal state
-  const showResults =
-    (gameStatus === "won" || gameStatus === "lost") && !resultsDismissed;
+  // Add delay before showing results modal (only for freshly completed games)
+  useEffect(() => {
+    // If returning to a completed game, show immediately (0ms)
+    // Otherwise, delay for 2 seconds
+    const isGameOver = gameStatus === "won" || gameStatus === "lost";
+    const delay = isGameOver ? (alreadyPlayedToday ? 0 : 2000) : 0;
+    const timer = setTimeout(() => {
+      setShowResultsDelayed(isGameOver);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [gameStatus, alreadyPlayedToday]);
+
+  // Derive modal visibility from game status, delay, and dismissal state
+  const showResults = showResultsDelayed && !resultsDismissed;
 
   const handleCloseResults = () => {
     setResultsDismissed(true);
@@ -182,6 +212,7 @@ export function HomePage() {
         onClose={handleCloseResults}
         gameStatus={gameStatus === "playing" ? "won" : gameStatus}
         mistakes={mistakes}
+        guessHistory={currentGuessHistory}
       />
     </div>
   );
