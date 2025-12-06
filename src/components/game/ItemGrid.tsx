@@ -6,6 +6,7 @@ interface ItemGridProps {
   items: Item[];
   selectedItemIds: number[];
   isShaking: boolean;
+  jumpingItemIds: number[];
   onSelectItem: (itemId: number) => void;
 }
 
@@ -13,6 +14,7 @@ export function ItemGrid({
   items,
   selectedItemIds,
   isShaking,
+  jumpingItemIds,
   onSelectItem,
 }: ItemGridProps) {
   return (
@@ -23,6 +25,7 @@ export function ItemGrid({
           item={item}
           isSelected={selectedItemIds.includes(item.id)}
           isShaking={isShaking}
+          isJumping={jumpingItemIds.includes(item.id)}
           onClick={() => onSelectItem(item.id)}
         />
       ))}

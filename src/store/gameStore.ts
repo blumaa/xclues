@@ -12,6 +12,7 @@ interface GameActions {
   restoreCompletedGame: (groups: Group[], won: boolean, mistakes: number) => void;
   resetGame: () => void;
   clearNotification: () => void;
+  completeGroupAnimation: () => void;
 }
 
 type GameStore = GameState & GameActions;
@@ -32,6 +33,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   notification: null,
   isShaking: false,
   puzzleDate: null,
+  animatingGroup: null,
+  jumpingItemIds: [],
 
   // Actions
   selectItem: (itemId: number) => {
@@ -114,23 +117,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
 
     if (matchedGroup) {
-      // Correct guess!
-      const newFoundGroups = [...foundGroups, matchedGroup];
-      const remainingItems = items.filter(
-        (item) => !matchedGroup.items.some((f) => f.id === item.id)
-      );
-
-      const isGameWon = newFoundGroups.length === 4;
+      // Correct guess! First trigger staggered jump animation
+      const matchedItemIds = matchedGroup.items.map((item) => item.id);
 
       set({
-        foundGroups: newFoundGroups,
-        items: remainingItems,
         selectedItemIds: [],
         previousGuesses: [...previousGuesses, sortedGuess],
-        gameStatus: isGameWon ? 'won' : 'playing',
       });
 
-      // Track events
+      // Track guess event immediately
       trackEvent(EVENTS.GUESS_SUBMITTED, {
         puzzleDate,
         isCorrect: true,
@@ -138,20 +133,49 @@ export const useGameStore = create<GameStore>((set, get) => ({
         wasOneAway: false,
       });
 
-      trackEvent(EVENTS.GROUP_FOUND, {
-        puzzleDate,
-        groupIndex: newFoundGroups.length,
-        difficulty: matchedGroup.difficulty,
-        mistakesSoFar: mistakes,
+      // Stagger the jump animation - add each item with a delay
+      const staggerDelay = 100; // ms between each tile jump
+      matchedItemIds.forEach((itemId, index) => {
+        setTimeout(() => {
+          set((state) => ({
+            jumpingItemIds: [...state.jumpingItemIds, itemId],
+          }));
+        }, index * staggerDelay);
       });
 
-      if (isGameWon) {
-        trackEvent(EVENTS.GAME_WON, {
-          puzzleDate,
-          mistakes,
-          groupsFound: 4,
+      // After all jumps complete, update foundGroups
+      const totalAnimationTime = (matchedItemIds.length * staggerDelay) + 400;
+      setTimeout(() => {
+        const currentState = get();
+        const newFoundGroups = [...currentState.foundGroups, matchedGroup];
+        const remainingItems = currentState.items.filter(
+          (item) => !matchedGroup.items.some((f) => f.id === item.id)
+        );
+
+        const isGameWon = newFoundGroups.length === 4;
+
+        set({
+          foundGroups: newFoundGroups,
+          items: remainingItems,
+          jumpingItemIds: [],
+          gameStatus: isGameWon ? 'won' : 'playing',
         });
-      }
+
+        trackEvent(EVENTS.GROUP_FOUND, {
+          puzzleDate,
+          groupIndex: newFoundGroups.length,
+          difficulty: matchedGroup.difficulty,
+          mistakesSoFar: currentState.mistakes,
+        });
+
+        if (isGameWon) {
+          trackEvent(EVENTS.GAME_WON, {
+            puzzleDate,
+            mistakes: currentState.mistakes,
+            groupsFound: 4,
+          });
+        }
+      }, totalAnimationTime);
     } else {
       // Wrong guess
       const newMistakes = mistakes + 1;
@@ -213,6 +237,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gameStatus: 'playing',
       isLoading: false,
       puzzleDate,
+      animatingGroup: null,
+      jumpingItemIds: [],
     });
   },
 
@@ -236,7 +262,48 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isLoading: false,
       notification: null,
       isShaking: false,
+      animatingGroup: null,
+      jumpingItemIds: [],
     });
+  },
+
+  /**
+   * Complete the group found animation and update state.
+   * Called after GSAP animation finishes.
+   */
+  completeGroupAnimation: () => {
+    const { animatingGroup, foundGroups, items, mistakes, puzzleDate } = get();
+
+    if (!animatingGroup) return;
+
+    const newFoundGroups = [...foundGroups, animatingGroup];
+    const remainingItems = items.filter(
+      (item) => !animatingGroup.items.some((f) => f.id === item.id)
+    );
+    const isGameWon = newFoundGroups.length === 4;
+
+    set({
+      foundGroups: newFoundGroups,
+      items: remainingItems,
+      animatingGroup: null,
+      gameStatus: isGameWon ? 'won' : 'playing',
+    });
+
+    // Track events
+    trackEvent(EVENTS.GROUP_FOUND, {
+      puzzleDate,
+      groupIndex: newFoundGroups.length,
+      difficulty: animatingGroup.difficulty,
+      mistakesSoFar: mistakes,
+    });
+
+    if (isGameWon) {
+      trackEvent(EVENTS.GAME_WON, {
+        puzzleDate,
+        mistakes,
+        groupsFound: 4,
+      });
+    }
   },
 
   resetGame: () => {
@@ -252,6 +319,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       notification: null,
       isShaking: false,
       puzzleDate: null,
+      animatingGroup: null,
+      jumpingItemIds: [],
     });
   },
 

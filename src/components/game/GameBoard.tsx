@@ -24,6 +24,7 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
     gameStatus,
     isShaking,
     puzzleDate,
+    jumpingItemIds,
     selectItem,
     deselectAll,
     submitGuess,
@@ -65,6 +66,7 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
             items={items}
             selectedItemIds={selectedItemIds}
             isShaking={isShaking}
+            jumpingItemIds={jumpingItemIds}
             onSelectItem={selectItem}
           />
         )}

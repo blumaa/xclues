@@ -43,6 +43,8 @@ export interface GameState {
   notification: string | null; // For "One away!" and other messages
   isShaking: boolean; // Trigger shake animation on wrong guess
   puzzleDate: string | null; // YYYY-MM-DD format of current puzzle
+  animatingGroup: Group | null; // Group currently being animated after correct guess
+  jumpingItemIds: number[]; // Item IDs currently playing jump animation
 }
 
 export type GroupingStrategy =

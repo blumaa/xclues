@@ -6,6 +6,7 @@ interface ItemTileProps {
   item: Item;
   isSelected: boolean;
   isShaking?: boolean;
+  isJumping?: boolean;
   onClick: () => void;
 }
 
@@ -13,6 +14,7 @@ export function ItemTile({
   item,
   isSelected,
   isShaking,
+  isJumping,
   onClick,
 }: ItemTileProps) {
   const textLengthProps = getTextLengthProps(item.title);
@@ -22,6 +24,7 @@ export function ItemTile({
       aspectRatio="square"
       isSelected={isSelected}
       shake={isShaking && isSelected}
+      jump={isJumping}
       onClick={onClick}
       hoverable
       variant="elevated"

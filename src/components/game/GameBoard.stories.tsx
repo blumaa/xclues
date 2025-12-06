@@ -202,3 +202,37 @@ export const Completed: Story = {
     ),
   ],
 };
+
+// Story showing the animation in action
+function AnimatingStoreInitializer() {
+  useEffect(() => {
+    // Set up state with animation in progress
+    useGameStore.setState({
+      items: mockItems, // All items still visible
+      groups: mockGroups,
+      foundGroups: [],
+      selectedItemIds: [],
+      mistakes: 0,
+      gameStatus: "playing",
+      isShaking: false,
+      notification: null,
+      puzzleDate: "2024-01-15",
+      previousGuesses: [],
+      isLoading: false,
+      animatingGroup: mockGroups[0], // First group is animating
+    });
+  }, []);
+
+  return null;
+}
+
+export const AnimatingGroup: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <AnimatingStoreInitializer />
+        <Story />
+      </>
+    ),
+  ],
+};
