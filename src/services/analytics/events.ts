@@ -13,6 +13,10 @@ export const EVENTS = {
   // Engagement
   STATS_VIEWED: "stats_viewed",
   THEME_TOGGLED: "theme_toggled",
+
+  // Puzzle submission
+  CREATE_PUZZLE_CLICKED: "create_puzzle_clicked",
+  PUZZLE_SUBMITTED: "puzzle_submitted",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];

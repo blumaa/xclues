@@ -1,0 +1,44 @@
+.group-input-card {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.group-input-card--yellow {
+  border-left: 4px solid var(--color-yellow, #f9df6d);
+}
+
+.group-input-card--green {
+  border-left: 4px solid var(--color-green, #a0c35a);
+}
+
+.group-input-card--blue {
+  border-left: 4px solid var(--color-blue, #b0c4ef);
+}
+
+.group-input-card--purple {
+  border-left: 4px solid var(--color-purple, #ba81c5);
+}
+
+.group-input-card__color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.group-input-card__color-dot--yellow {
+  background: var(--color-yellow, #f9df6d);
+}
+
+.group-input-card__color-dot--green {
+  background: var(--color-green, #a0c35a);
+}
+
+.group-input-card__color-dot--blue {
+  background: var(--color-blue, #b0c4ef);
+}
+
+.group-input-card__color-dot--purple {
+  background: var(--color-purple, #ba81c5);
+}

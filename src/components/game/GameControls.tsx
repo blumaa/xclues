@@ -41,7 +41,7 @@ export function GameControls({
         disabled={!canSubmit}
         corners="rounded-xl"
       >
-        Submit
+        Create
       </Button>
     </Box>
   );

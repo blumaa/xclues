@@ -1,11 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GameBoard } from "./GameBoard";
 import { useGameStore } from "../../store/gameStore";
 import { ToastProvider } from "../../providers/ToastProvider";
 import { SiteProvider } from "../../providers/SiteProvider";
 import { MockThemeProvider } from "../../../.storybook/MockThemeProvider";
 import type { Item, Group } from "../../types";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const mockItems: Item[] = [
   { id: 1, title: "Pulp Fiction", year: 1994 },
@@ -101,13 +110,15 @@ const meta: Meta<typeof GameBoard> = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <SiteProvider>
-        <MockThemeProvider>
-          <ToastProvider>
-            <Story />
-          </ToastProvider>
-        </MockThemeProvider>
-      </SiteProvider>
+      <QueryClientProvider client={queryClient}>
+        <SiteProvider>
+          <MockThemeProvider>
+            <ToastProvider>
+              <Story />
+            </ToastProvider>
+          </MockThemeProvider>
+        </SiteProvider>
+      </QueryClientProvider>
     ),
   ],
 };
