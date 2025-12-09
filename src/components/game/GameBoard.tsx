@@ -37,7 +37,8 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
 
   const { showInfo, showSuccess, showError } = useToast();
   const [isSubmitDrawerOpen, setIsSubmitDrawerOpen] = useState(false);
-  const { mutateAsync: submitPuzzle, isPending: isSubmitting } = usePuzzleSubmit();
+  const { mutateAsync: submitPuzzle, isPending: isSubmitting } =
+    usePuzzleSubmit();
 
   const MAX_MISTAKES = 4;
   const MAX_SELECTIONS = 4;
@@ -52,10 +53,7 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
   return (
     <Box>
       <Box display="flex" flexDirection="column" gap="sm">
-        <GameHeader
-          gameStatus={gameStatus}
-          puzzleDate={puzzleDate || undefined}
-        />
+        <GameHeader puzzleDate={puzzleDate || undefined} />
 
         {/* Found groups as colored rows */}
         {foundGroups.length > 0 && (
@@ -78,7 +76,11 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
         )}
 
         {gameStatus === "playing" ? (
-          <MistakesIndicator mistakes={mistakes} maxMistakes={MAX_MISTAKES} />
+          <MistakesIndicator
+            mistakes={mistakes}
+            maxMistakes={MAX_MISTAKES}
+            gameStatus={gameStatus}
+          />
         ) : (
           <Box display="flex" justifyContent="center" gap="md">
             {onViewStats && (
@@ -93,10 +95,14 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
                 </Box>
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={() => {
-              trackEvent(EVENTS.CREATE_PUZZLE_CLICKED);
-              setIsSubmitDrawerOpen(true);
-            }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                trackEvent(EVENTS.CREATE_PUZZLE_CLICKED);
+                setIsSubmitDrawerOpen(true);
+              }}
+            >
               <Box display="flex" flexDirection="column" alignItems="center">
                 <Icon size="lg">
                   <PuzzleSubmitIcon />
@@ -128,9 +134,15 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
             await submitPuzzle(submission);
             trackEvent(EVENTS.PUZZLE_SUBMITTED);
             setIsSubmitDrawerOpen(false);
-            showSuccess("Your puzzle has been submitted! Look for it in the next month of puzzles.");
+            showSuccess(
+              "Your puzzle has been submitted! Look for it in the next month of puzzles.",
+            );
           } catch (error) {
-            showError(error instanceof Error ? error.message : "Failed to submit puzzle");
+            showError(
+              error instanceof Error
+                ? error.message
+                : "Failed to submit puzzle",
+            );
           }
         }}
         isSubmitting={isSubmitting}

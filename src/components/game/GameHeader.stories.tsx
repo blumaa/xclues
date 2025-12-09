@@ -9,7 +9,6 @@ const meta: Meta<typeof GameHeader> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    gameStatus: { control: "select", options: ["playing", "won", "lost"] },
     puzzleDate: { control: "text" },
   },
 };
@@ -17,30 +16,13 @@ const meta: Meta<typeof GameHeader> = {
 export default meta;
 type Story = StoryObj<typeof GameHeader>;
 
-export const Playing: Story = {
+export const WithPuzzleDate: Story = {
   args: {
-    gameStatus: "playing",
     puzzleDate: "2024-01-15",
   },
 };
 
 export const NoPuzzleDate: Story = {
-  args: {
-    gameStatus: "playing",
-  },
-};
-
-export const Won: Story = {
-  args: {
-    gameStatus: "won",
-    puzzleDate: "2024-01-15",
-  },
-};
-
-export const Lost: Story = {
-  args: {
-    gameStatus: "lost",
-    puzzleDate: "2024-01-15",
-  },
+  args: {},
 };
 
