@@ -13,6 +13,7 @@ export { VALID_GENRES as GENRES, DEFAULT_GENRE };
  * Domain to genre mapping
  */
 const DOMAIN_TO_GENRE: Record<string, Genre> = {
+  // Production .space domains
   'filmecules.space': 'films',
   'www.filmecules.space': 'films',
   'musicules.space': 'music',
@@ -25,6 +26,11 @@ const DOMAIN_TO_GENRE: Record<string, Genre> = {
   'www.sportsclues.space': 'sports',
   'litclues.space': 'books',
   'www.litclues.space': 'books',
+  // Vercel preview/staging domains
+  'filmclues.vercel.app': 'films',
+  'musiclues.vercel.app': 'music',
+  'sportsclues.vercel.app': 'sports',
+  'litclues.vercel.app': 'books',
 };
 
 /**
