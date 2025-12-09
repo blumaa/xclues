@@ -2,12 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { initAnalytics } from './services/analytics';
-import { detectGenreFromDomain } from './config/domainDetector';
+import { detectGenreFromDomain, setFavicon, setDocumentTitle } from './config/domainDetector';
 import './index.css';
 
-// Initialize analytics with detected genre before rendering
+// Initialize with detected genre before rendering
 const genre = detectGenreFromDomain();
 initAnalytics(genre);
+setFavicon(genre);
+setDocumentTitle(genre);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

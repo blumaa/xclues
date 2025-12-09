@@ -3,6 +3,7 @@ import {
   VALID_GENRES,
   DEFAULT_GENRE,
   isValidGenre as isValidGenreBase,
+  getSeoConfig,
 } from './seoConfig';
 
 // Re-export for backward compatibility
@@ -78,4 +79,37 @@ export function detectGenreFromDomain(): Genre {
 
   // For localhost or unknown domains, use dev genre
   return getDevGenre();
+}
+
+/**
+ * Set the favicon dynamically based on genre
+ */
+export function setFavicon(genre: Genre): void {
+  const faviconPath = `/assets/favicon-${genre}.ico`;
+
+  // Update existing favicon link
+  const existingLink = document.querySelector('link[rel="icon"]');
+  if (existingLink) {
+    existingLink.setAttribute('href', faviconPath);
+  } else {
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/x-icon';
+    link.href = faviconPath;
+    document.head.appendChild(link);
+  }
+
+  // Update apple-touch-icon if present
+  const appleLink = document.querySelector('link[rel="apple-touch-icon"]');
+  if (appleLink) {
+    appleLink.setAttribute('href', faviconPath);
+  }
+}
+
+/**
+ * Update document title based on genre
+ */
+export function setDocumentTitle(genre: Genre): void {
+  const config = getSeoConfig(genre);
+  document.title = config.metaTitle;
 }
