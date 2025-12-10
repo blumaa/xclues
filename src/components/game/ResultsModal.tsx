@@ -12,6 +12,7 @@ import { ShareIcon } from "./ShareIcon";
 import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
 import type { GuessColor } from "../../types/stats";
+import { AboutLinks } from "../about";
 
 interface ResultsModalProps {
   isOpen: boolean;
@@ -133,12 +134,13 @@ export function ResultsModal({
           </Box>
         )}
 
-        <Box display="flex" justifyContent="center" padding="2" border="subtle">
+        <Box display="flex" justifyContent="center" padding="8" border="subtle">
           <Button variant="primary" onClick={onClose} size="lg">
             Back to Game
           </Button>
         </Box>
       </Box>
+      <AboutLinks />
     </Modal>
   );
 }
