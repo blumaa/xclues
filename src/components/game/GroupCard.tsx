@@ -26,6 +26,7 @@ export function GroupCard({ group }: GroupCardProps) {
           level={3}
           responsive
           color="black.900"
+          align="center"
           {...textLengthProps}
         >
           {group.connection}
