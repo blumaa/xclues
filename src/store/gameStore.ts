@@ -35,6 +35,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   puzzleDate: null,
   animatingGroup: null,
   jumpingItemIds: [],
+  rejectedItemId: null,
 
   // Actions
   selectItem: (itemId: number) => {
@@ -47,8 +48,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (selectedItemIds.includes(itemId)) {
       set({ selectedItemIds: selectedItemIds.filter((id) => id !== itemId) });
     } else {
-      // Can't select more than 4
-      if (selectedItemIds.length >= MAX_SELECTIONS) return;
+      // Can't select more than 4 - shake the rejected tile
+      if (selectedItemIds.length >= MAX_SELECTIONS) {
+        set({ rejectedItemId: itemId });
+        setTimeout(() => set({ rejectedItemId: null }), 500);
+        return;
+      }
       set({ selectedItemIds: [...selectedItemIds, itemId] });
     }
   },
