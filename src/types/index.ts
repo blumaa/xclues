@@ -45,6 +45,7 @@ export interface GameState {
   puzzleDate: string | null; // YYYY-MM-DD format of current puzzle
   animatingGroup: Group | null; // Group currently being animated after correct guess
   jumpingItemIds: number[]; // Item IDs currently playing jump animation
+  rejectedItemId: number | null; // Item ID that was rejected (5th selection attempt)
 }
 
 export type GroupingStrategy =

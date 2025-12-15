@@ -1,0 +1,11 @@
+/* Override focus styles for keyboard-only focus ring */
+/* This ensures focus ring only shows for keyboard navigation, not mouse clicks */
+
+.item-tile:focus {
+  outline: none;
+}
+
+.item-tile:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 2px;
+}
