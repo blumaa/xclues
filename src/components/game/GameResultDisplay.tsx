@@ -7,10 +7,17 @@ interface GameResultDisplayProps {
 }
 
 const COLOR_MAP: Record<GuessColor, string> = {
-  yellow: "#f9df6d",
-  green: "#a0c35a",
-  blue: "#b0c4ef",
-  purple: "#ba81c5",
+  yellow: "#fbbf24",
+  green: "#34d399",
+  blue: "#60a5fa",
+  purple: "#c084fc",
+};
+
+const COLOR_LABELS: Record<GuessColor, string> = {
+  yellow: "yellow",
+  green: "green",
+  blue: "blue",
+  purple: "purple",
 };
 
 export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
@@ -19,7 +26,14 @@ export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap="xxs">
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap="xxs"
+      role="img"
+      aria-label={`Guess history: ${guessHistory.length} guesses made`}
+    >
       {guessHistory.map((row, rowIndex) => (
         <div key={rowIndex} className="guess-row">
           {row.map((color, colIndex) => (
@@ -27,6 +41,8 @@ export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
               key={colIndex}
               className="guess-square"
               style={{ backgroundColor: COLOR_MAP[color] }}
+              aria-hidden="true"
+              title={COLOR_LABELS[color]}
             />
           ))}
         </div>

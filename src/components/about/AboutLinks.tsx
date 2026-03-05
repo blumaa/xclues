@@ -49,7 +49,7 @@ export function AboutLinks({ showHeading = true }: AboutLinksProps) {
   const otherGames = GAME_LINKS.filter((link) => link.genre !== genre);
 
   const content = (
-    <Box display="flex" flexDirection="column" alignItems="center" gap="xs" paddingBottom="4">
+    <Box display="flex" flexDirection="column" alignItems="center" gap="xs" paddingBottom="4" className="about-links">
       {showHeading && (
         <Heading size="xs" weight="semibold" responsive>
           {siteName} is part of the Puzzle Clues Suite of games which include:

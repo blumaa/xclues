@@ -1,11 +1,74 @@
-/* Override focus styles for keyboard-only focus ring */
-/* This ensures focus ring only shows for keyboard navigation, not mouse clicks */
+/* Item tile — use .item-tile.mond-card to beat single-class Mond selectors
+   without resorting to !important, while letting .mond-card--shake / --jump win */
 
+.item-tile.mond-card {
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  border-radius: var(--xclues-border-radius);
+  box-shadow: var(--xclues-card-shadow);
+  background: var(--xclues-card-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(108, 92, 231, 0.06);
+  transition:
+    transform var(--xclues-transition),
+    box-shadow var(--xclues-transition),
+    background var(--xclues-transition),
+    border-color var(--xclues-transition);
+}
+
+/* Hover state - lift and glow */
+.item-tile.mond-card:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--xclues-card-shadow-hover);
+  background: var(--xclues-card-bg-hover);
+  border-color: rgba(108, 92, 231, 0.15);
+}
+
+/* Selected state - dramatic color fill with glow */
+.item-tile.mond-card[aria-pressed="true"] {
+  background: var(--xclues-card-selected);
+  color: var(--xclues-card-selected-text);
+  box-shadow: var(--xclues-card-shadow-selected);
+  border-color: transparent;
+  transform: scale(1.04);
+}
+
+.item-tile.mond-card[aria-pressed="true"] * {
+  color: var(--xclues-card-selected-text);
+}
+
+/* Selected + hover */
+.item-tile.mond-card[aria-pressed="true"]:hover {
+  transform: scale(1.06);
+  box-shadow: var(--xclues-card-shadow-selected), var(--xclues-glow);
+}
+
+/* Remove default focus, use focus-visible for keyboard only */
 .item-tile:focus {
   outline: none;
 }
 
 .item-tile:focus-visible {
-  outline: 2px solid var(--color-primary, #3b82f6);
+  outline: 3px solid var(--xclues-primary);
   outline-offset: 2px;
+  z-index: 1;
+}
+
+/* Active/pressed state for touch feedback — skip during animations */
+.item-tile.mond-card:active:not(.mond-card--shake):not(.mond-card--jump) {
+  transform: scale(0.96);
+  transition: transform 0.1s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-tile.mond-card:hover,
+  .item-tile.mond-card:active,
+  .item-tile.mond-card[aria-pressed="true"] {
+    transform: none;
+  }
 }

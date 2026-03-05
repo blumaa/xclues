@@ -1,15 +1,259 @@
 @import "@mond-design-system/theme/theme.css";
 
-* {
+/* ============================================
+   XCLUES DESIGN SYSTEM - Custom Properties
+   ============================================ */
+
+:root {
+  /* Brand Colors */
+  --xclues-primary: #6c5ce7;
+  --xclues-primary-light: #a29bfe;
+  --xclues-primary-dark: #4834d4;
+  --xclues-accent: #fd79a8;
+  --xclues-accent-light: #fab1cc;
+  --xclues-accent-dark: #e84393;
+
+  /* Warm neutrals */
+  --xclues-warm-50: #fdf8f3;
+  --xclues-warm-100: #f9f0e6;
+  --xclues-warm-200: #f0e2cf;
+  --xclues-warm-300: #e3cdb0;
+  --xclues-warm-400: #c9a87c;
+  --xclues-warm-500: #a68555;
+  --xclues-warm-600: #7d6340;
+  --xclues-warm-700: #5a4730;
+  --xclues-warm-800: #3a2e1f;
+  --xclues-warm-900: #1e1810;
+
+  /* Game group colors - vibrant, modern */
+  --xclues-yellow: #fbbf24;
+  --xclues-yellow-bg: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --xclues-green: #34d399;
+  --xclues-green-bg: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --xclues-blue: #60a5fa;
+  --xclues-blue-bg: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --xclues-purple: #c084fc;
+  --xclues-purple-bg: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+
+  /* Surfaces - light mode */
+  --xclues-page-bg: linear-gradient(160deg, #fdf8f3 0%, #f0e6f6 40%, #e8f0fe 100%);
+  --xclues-card-bg: rgba(255, 255, 255, 0.85);
+  --xclues-card-bg-hover: rgba(255, 255, 255, 0.95);
+  --xclues-card-selected: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+  --xclues-card-selected-text: #ffffff;
+  --xclues-card-shadow: 0 2px 8px rgba(108, 92, 231, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --xclues-card-shadow-hover: 0 8px 25px rgba(108, 92, 231, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08);
+  --xclues-card-shadow-selected: 0 4px 20px rgba(108, 92, 231, 0.35), 0 2px 8px rgba(108, 92, 231, 0.2);
+
+  /* Header */
+  --xclues-header-bg: rgba(255, 255, 255, 0.7);
+  --xclues-header-border: rgba(108, 92, 231, 0.1);
+  --xclues-header-blur: 20px;
+
+  /* Footer */
+  --xclues-footer-bg: rgba(255, 255, 255, 0.5);
+  --xclues-footer-border: rgba(108, 92, 231, 0.08);
+
+  /* Buttons */
+  --xclues-btn-primary-bg: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+  --xclues-btn-primary-hover: linear-gradient(135deg, #5b4cdb 0%, #8b83f7 100%);
+  --xclues-btn-primary-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+
+  /* Misc */
+  --xclues-glow: 0 0 20px rgba(108, 92, 231, 0.3);
+  --xclues-border-radius: 16px;
+  --xclues-border-radius-sm: 12px;
+  --xclues-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --xclues-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Mistake dots */
+  --xclues-dot-filled: #6c5ce7;
+  --xclues-dot-empty: rgba(108, 92, 231, 0.15);
+  --xclues-dot-glow: 0 0 8px rgba(108, 92, 231, 0.4);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] {
+  --xclues-page-bg: linear-gradient(160deg, #0f0a1a 0%, #1a1028 40%, #0d1520 100%);
+  --xclues-card-bg: rgba(30, 25, 50, 0.8);
+  --xclues-card-bg-hover: rgba(40, 35, 65, 0.9);
+  --xclues-card-selected: linear-gradient(135deg, #7c6cf7 0%, #a29bfe 100%);
+  --xclues-card-selected-text: #ffffff;
+  --xclues-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(108, 92, 231, 0.1);
+  --xclues-card-shadow-hover: 0 8px 25px rgba(108, 92, 231, 0.2), 0 4px 10px rgba(0, 0, 0, 0.4);
+  --xclues-card-shadow-selected: 0 4px 20px rgba(108, 92, 231, 0.4), 0 0 40px rgba(108, 92, 231, 0.15);
+
+  --xclues-header-bg: rgba(15, 10, 26, 0.8);
+  --xclues-header-border: rgba(108, 92, 231, 0.15);
+
+  --xclues-footer-bg: rgba(15, 10, 26, 0.6);
+  --xclues-footer-border: rgba(108, 92, 231, 0.1);
+
+  --xclues-dot-filled: #a29bfe;
+  --xclues-dot-empty: rgba(162, 155, 254, 0.15);
+  --xclues-dot-glow: 0 0 12px rgba(162, 155, 254, 0.5);
+
+  /* Slightly brighter group colors for dark mode */
+  --xclues-yellow: #fcd34d;
+  --xclues-yellow-bg: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  --xclues-green: #6ee7b7;
+  --xclues-green-bg: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
+  --xclues-blue: #93c5fd;
+  --xclues-blue-bg: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+  --xclues-purple: #d8b4fe;
+  --xclues-purple-bg: linear-gradient(135deg, #d8b4fe 0%, #c084fc 100%);
+}
+
+/* ============================================
+   GLOBAL RESETS
+   ============================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,
-body {
-  background: var(--mond-surface-background);
-  color: var(--mond-text-primary);
-  font-family: var(--mond-font-family-sans);
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  scroll-behavior: smooth;
 }
 
+html,
+body {
+  background: var(--xclues-page-bg);
+  color: var(--mond-text-primary);
+  font-family: var(--mond-font-family-sans);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Improve focus visibility globally */
+:focus-visible {
+  outline: 3px solid var(--xclues-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Ensure minimum touch target size for all interactive elements */
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip to main content link for keyboard users */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Smooth text rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TOAST OVERRIDES
+   ============================================ */
+
+/* Ensure toasts appear above sticky header (z-index: 10) */
+.mond-toast-container {
+  z-index: 100;
+}
+
+.mond-toast {
+  border-radius: var(--xclues-border-radius-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(108, 92, 231, 0.1);
+}
+
+.mond-toast--info {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-primary);
+}
+
+.mond-toast--success {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-green);
+}
+
+.mond-toast--error {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-accent-dark);
+}
+
+.mond-toast--warning {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-yellow);
+}
+
+.mond-toast__title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.mond-toast--info .mond-toast__progress {
+  background: var(--xclues-primary);
+}
+
+.mond-toast--success .mond-toast__progress {
+  background: var(--xclues-green);
+}
+
+/* ============================================
+   ABOUT LINKS OVERRIDES (in results modal)
+   ============================================ */
+
+.about-links .mond-button {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-color: var(--xclues-primary-light);
+  transition: all var(--xclues-transition);
+}
+
+.about-links .mond-button:hover {
+  background: var(--xclues-primary);
+  border-color: var(--xclues-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--xclues-btn-primary-shadow);
+}

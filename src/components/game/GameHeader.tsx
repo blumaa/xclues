@@ -11,9 +11,11 @@ export function GameHeader({ puzzleDate }: GameHeaderProps) {
   const { siteName } = useSite();
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box display="flex" flexDirection="column" className="game-header">
       <Heading level={1} size="md" align="center">
-        {puzzleDate ? formatPuzzleHeader(puzzleDate, siteName) : siteName}
+        <span className="game-header-title">
+          {puzzleDate ? formatPuzzleHeader(puzzleDate, siteName) : siteName}
+        </span>
       </Heading>
     </Box>
   );

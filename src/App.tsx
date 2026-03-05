@@ -12,6 +12,7 @@ import { PrivacyPage } from "./pages/PrivacyPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { Footer } from "./components/Footer";
+import "./App.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,29 +30,20 @@ function ThemedApp() {
     <ThemeProvider colorScheme={theme}>
       <ToastProvider>
         <BrowserRouter>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: "0.5rem",
-                right: "0.5rem",
-                zIndex: 10,
-              }}
-            >
+          <div className="app-layout">
+            <header className="app-header">
+              <a href="/" className="app-header-brand" aria-label="xclues home">
+                <span className="app-header-logo">xclues</span>
+              </a>
               <ThemeToggle />
-            </div>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/about" element={<AboutPage />} />
-            </Routes>
+            </header>
+            <main className="app-main">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/about" element={<AboutPage />} />
+              </Routes>
+            </main>
             <Footer />
           </div>
         </BrowserRouter>

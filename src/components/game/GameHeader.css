@@ -1,7 +1,17 @@
-.game-header-title {
+.game-header {
   text-align: center;
+  padding: var(--mond-spacing-2) 0;
 }
 
-.game-header-subtitle {
-  text-align: center;
+.game-header-title {
+  font-size: 0.95rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--mond-text-secondary);
+}
+
+@media (min-width: 640px) {
+  .game-header-title {
+    font-size: 1.05rem;
+  }
 }

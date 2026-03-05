@@ -1,4 +1,4 @@
-import { Box, Text } from "@mond-design-system/theme";
+import { Text } from "@mond-design-system/theme";
 import "./MistakesIndicator.css";
 import { CountdownTimer } from "./CountdownTimer";
 
@@ -16,24 +16,23 @@ export function MistakesIndicator({
   const remainingMistakes = maxMistakes - mistakes;
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <div className="mistakes-container">
       {gameStatus === "playing" ? (
-        <Text align="center" size="xs">
+        <Text align="center" size="sm">
           Create four groups of four!
         </Text>
       ) : (
         <CountdownTimer />
       )}
-      <Box display="flex" gap="xs">
-        <Text size="2xs" weight="extralight">
+      <div
+        className="mistakes-row"
+        role="status"
+        aria-label={`${remainingMistakes} mistake${remainingMistakes !== 1 ? "s" : ""} remaining`}
+      >
+        <Text size="xs" weight="extralight">
           Mistakes remaining:
         </Text>
-        <div className="mistakes-dots">
+        <div className="mistakes-dots" aria-hidden="true">
           {Array.from({ length: maxMistakes }).map((_, index) => (
             <div
               key={index}
@@ -41,7 +40,7 @@ export function MistakesIndicator({
             />
           ))}
         </div>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

@@ -1,10 +1,48 @@
 .guess-row {
   display: flex;
-  gap: 4px;
+  gap: 8px;
 }
 
 .guess-square {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  animation: squareAppear 0.3s ease-out both;
+}
+
+.guess-row:nth-child(1) .guess-square { animation-delay: 0.05s; }
+.guess-row:nth-child(2) .guess-square { animation-delay: 0.15s; }
+.guess-row:nth-child(3) .guess-square { animation-delay: 0.25s; }
+.guess-row:nth-child(4) .guess-square { animation-delay: 0.35s; }
+.guess-row:nth-child(5) .guess-square { animation-delay: 0.45s; }
+.guess-row:nth-child(6) .guess-square { animation-delay: 0.55s; }
+.guess-row:nth-child(7) .guess-square { animation-delay: 0.65s; }
+.guess-row:nth-child(8) .guess-square { animation-delay: 0.75s; }
+
+@keyframes squareAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Larger squares on bigger screens */
+@media (min-width: 640px) {
+  .guess-square {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guess-square {
+    animation: none;
+  }
 }

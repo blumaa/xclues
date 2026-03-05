@@ -1,4 +1,5 @@
 import { Box, Button } from "@mond-design-system/theme";
+import "./GameControls.css";
 
 interface GameControlsProps {
   onSubmit: () => void;
@@ -16,32 +17,35 @@ export function GameControls({
   canSubmit,
 }: GameControlsProps) {
   return (
-    <Box display="flex" gap="sm" justifyContent="center">
+    <Box display="flex" gap="sm" justifyContent="center" className="game-controls">
       <Button
         variant="outline"
         onClick={onShuffle}
-        size="sm"
+        size="md"
         corners="rounded-xl"
+        aria-label="Shuffle tiles"
       >
         Shuffle
       </Button>
       <Button
         variant="outline"
         onClick={onDeselect}
-        size="sm"
+        size="md"
         disabled={!hasSelection}
         corners="rounded-xl"
+        aria-label="Deselect all tiles"
       >
         Deselect All
       </Button>
       <Button
         variant="primary"
         onClick={onSubmit}
-        size="sm"
+        size="md"
         disabled={!canSubmit}
         corners="rounded-xl"
+        aria-label="Submit guess"
       >
-       Submit 
+        Submit
       </Button>
     </Box>
   );

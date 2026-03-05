@@ -11,6 +11,7 @@ import { getTodayDate } from "../utils/index";
 import { guessesToColorHistory } from "../utils/guessHistory";
 import { trackEvent, EVENTS } from "../services/analytics";
 import type { GameResult } from "../types";
+import "./HomePage.css";
 
 export function HomePage() {
   const { gameStatus, groups, mistakes, previousGuesses, initializeGame, restoreCompletedGame } =
@@ -148,7 +149,7 @@ export function HomePage() {
 
   if (isLoading || !statsLoaded) {
     return (
-      <div>
+      <div className="homepage-state" role="status" aria-label="Loading puzzle">
         <Box
           display="flex"
           flexDirection="column"
@@ -165,7 +166,7 @@ export function HomePage() {
 
   if (error) {
     return (
-      <div>
+      <div className="homepage-state" role="alert">
         <Box
           display="flex"
           flexDirection="column"
@@ -173,7 +174,7 @@ export function HomePage() {
           justifyContent="center"
           gap="lg"
         >
-          <Text>Failed to load puzzle</Text>
+          <Text size="lg" weight="semibold">Failed to load puzzle</Text>
           <Text semantic="secondary">{error.message}</Text>
         </Box>
       </div>
@@ -182,7 +183,7 @@ export function HomePage() {
 
   if (!puzzle || !groups.length) {
     return (
-      <div>
+      <div className="homepage-state" role="status">
         <Box
           display="flex"
           flexDirection="column"
@@ -190,7 +191,7 @@ export function HomePage() {
           justifyContent="center"
           gap="lg"
         >
-          <Text>No puzzle available for today</Text>
+          <Text size="lg" weight="semibold">No puzzle available for today</Text>
           <Text semantic="secondary">Check back soon!</Text>
         </Box>
       </div>
@@ -198,14 +199,7 @@ export function HomePage() {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        justifyContent: "center",
-      }}
-    >
+    <div className="homepage-game">
       <GameBoard onViewStats={() => setResultsDismissed(false)} />
       <ResultsModal
         isOpen={showResults}

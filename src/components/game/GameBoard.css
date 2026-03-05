@@ -1,17 +1,20 @@
-/* Responsive width only (no height) - matches FilmGrid responsive widths */
+/* Found groups container - responsive width matching the grid */
 .found-groups-container {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--mond-spacing-sm);
+  width: 100%;
 }
 
+/* Mobile: match the item grid width */
 @media (max-width: 639px) {
   .found-groups-container {
     width: calc(3 * 8px + 4 * 22.5vw);
   }
 }
 
+/* Tablet */
 @media (min-width: 640px) and (max-width: 1024px) {
   .found-groups-container {
     width: 500px;
@@ -19,6 +22,7 @@
   }
 }
 
+/* Desktop */
 @media (min-width: 1025px) {
   .found-groups-container {
     width: 600px;
@@ -26,14 +30,22 @@
   }
 }
 
-@media (max-width: 640px) {
-  .game-board-container {
-    max-width: 100%;
-    padding: 0;
-  }
+/* Post-game action buttons */
+.game-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--mond-spacing-md);
+  padding: var(--mond-spacing-3) 0;
+}
 
-  /* Reduce gaps on mobile */
-  .game-board-container > div {
-    gap: var(--mond-spacing-md) !important;
-  }
+.game-actions .mond-button {
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: var(--xclues-border-radius-sm);
+  transition: all var(--xclues-transition);
+}
+
+.game-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--xclues-card-shadow-hover);
 }

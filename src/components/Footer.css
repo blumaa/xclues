@@ -1,3 +1,37 @@
 .footer {
   margin-top: auto;
+  padding-bottom: max(var(--mond-spacing-3), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--xclues-footer-border);
+  background: var(--xclues-footer-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--mond-spacing-2);
+  padding: var(--mond-spacing-3) var(--mond-spacing-4);
+}
+
+/* Ensure footer links meet minimum touch target */
+.footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--mond-spacing-1) var(--mond-spacing-2);
+  border-radius: 8px;
+  transition: all var(--xclues-transition);
+}
+
+.footer a:hover {
+  background: rgba(108, 92, 231, 0.06);
+}
+
+.footer-separator {
+  color: var(--mond-text-tertiary);
+  user-select: none;
+  opacity: 0.4;
 }

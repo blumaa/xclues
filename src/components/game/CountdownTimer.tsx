@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Text } from "@mond-design-system/theme";
+import { Text } from "@mond-design-system/theme";
+import "./CountdownTimer.css";
 
 function getTimeUntilMidnightUTC(): {
   hours: number;
@@ -36,10 +37,13 @@ export function CountdownTimer() {
   };
 
   return (
-    <Box display="flex" alignItems="flex-end" justifyContent="center">
-      <Text size="md" responsive>
-        Next puzzle in {formatCountdown()}
+    <div className="countdown-container" role="timer" aria-label="Time until next puzzle">
+      <Text size="xs" semantic="secondary" align="center">
+        Next puzzle in
       </Text>
-    </Box>
+      <span className="countdown-time">
+        {formatCountdown()}
+      </span>
+    </div>
   );
 }

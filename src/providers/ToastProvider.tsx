@@ -75,7 +75,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     clearAllToasts,
   };
 
-  const position: ToastPosition = 'top-right';
+  const position: ToastPosition = 'top-center';
 
   return (
     <ToastContext.Provider value={value}>

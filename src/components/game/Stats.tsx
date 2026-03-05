@@ -1,4 +1,3 @@
-import { Box, Text } from "@mond-design-system/theme";
 import type { UserStats } from "../../types";
 import "./Stats.css";
 
@@ -8,33 +7,19 @@ interface StatsProps {
 
 export function Stats({ stats }: StatsProps) {
   return (
-    <Box paddingRight="4" paddingLeft="4" border="subtle" paddingTop="2" paddingBottom="2">
-      <Box display="flex" justifyContent="space-around" gap="md">
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Text size="2xl" align="center">
-            {stats.gamesPlayed}
-          </Text>
-          <Text semantic="secondary" align="center">
-            Played
-          </Text>
-        </Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Text size="2xl" align="center">
-            {stats.currentStreak}
-          </Text>
-          <Text semantic="secondary" align="center">
-            Current Streak
-          </Text>
-        </Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Text size="2xl" align="center">
-            {stats.maxStreak}
-          </Text>
-          <Text semantic="secondary" align="center">
-            Max Streak
-          </Text>
-        </Box>
-      </Box>
-    </Box>
+    <div className="stats-container" role="group" aria-label="Game statistics">
+      <div className="stat-item">
+        <span className="stat-number">{stats.gamesPlayed}</span>
+        <span className="stat-label">Played</span>
+      </div>
+      <div className="stat-item">
+        <span className="stat-number">{stats.currentStreak}</span>
+        <span className="stat-label">Current Streak</span>
+      </div>
+      <div className="stat-item">
+        <span className="stat-number">{stats.maxStreak}</span>
+        <span className="stat-label">Max Streak</span>
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Box, Text, Link } from "@mond-design-system/theme";
+import { Text, Link } from "@mond-design-system/theme";
 import { useSite } from "../providers/useSite";
 import "./Footer.css";
 
@@ -7,28 +7,24 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer">
-      <Box display="flex" alignItems="center" justifyContent="center" paddingBottom="2" paddingTop="2" gap="xxs">
-        <Text size="2xs" semantic="secondary">
-          © {currentYear} {siteName}
+    <footer className="footer" role="contentinfo">
+      <nav className="footer-content" aria-label="Footer navigation">
+        <Text size="xs" semantic="secondary">
+          &copy; {currentYear} {siteName}
         </Text>
-        <Text size="2xs" semantic="secondary">
-          |
-        </Text>
+        <span className="footer-separator" aria-hidden="true">|</span>
         <Link href="/about" target="_blank" rel="noopener noreferrer">
-          <Text size="2xs" semantic="secondary">
+          <Text size="xs" semantic="secondary">
             About
           </Text>
         </Link>
-        <Text size="2xs" semantic="secondary">
-          |
-        </Text>
+        <span className="footer-separator" aria-hidden="true">|</span>
         <Link href="/privacy" target="_blank" rel="noopener noreferrer">
-          <Text size="2xs" semantic="secondary">
+          <Text size="xs" semantic="secondary">
             Privacy
           </Text>
         </Link>
-      </Box>
+      </nav>
     </footer>
   );
 }

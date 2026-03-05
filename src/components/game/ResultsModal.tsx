@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal } from "@mond-design-system/theme/client";
-import { Box, Heading, Text, Button, Icon } from "@mond-design-system/theme";
+import { Box, Text, Button, Icon } from "@mond-design-system/theme";
 import { useStats } from "../../providers/useStats";
 import { useSite } from "../../providers/useSite";
 import { Stats } from "./Stats";
@@ -13,6 +13,7 @@ import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
 import type { GuessColor } from "../../types/stats";
 import { AboutLinks } from "../about";
+import "./ResultsModal.css";
 
 interface ResultsModalProps {
   isOpen: boolean;
@@ -83,45 +84,43 @@ export function ResultsModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <Box display="flex" flexDirection="column" gap="xxs" paddingTop="2">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Heading level={2} size="xl">
+      <div className="results-modal-content">
+        {/* Result heading */}
+        <div className="results-heading">
+          <span className="results-heading-title">
             {gameStatus === "won" ? "You Won!" : "Game Over"}
-          </Heading>
-        </Box>
+          </span>
+          <div className="results-heading-subtitle">
+            <Text align="center">
+              {gameStatus === "won"
+                ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
+                : "Better luck next time!"}
+            </Text>
+          </div>
+        </div>
 
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Text>
-            {gameStatus === "won"
-              ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
-              : "Better luck next time!"}
-          </Text>
-        </Box>
-
+        {/* Stats section */}
         {userStats && <Stats stats={userStats} />}
 
+        {/* Countdown */}
         <CountdownTimer />
 
+        {/* Guess history visualization */}
         {guessHistory && guessHistory.length > 0 && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="2"
-            paddingBottom="2"
-          >
+          <div className="results-guess-history">
             <GameResultDisplay guessHistory={guessHistory} />
-          </Box>
+          </div>
         )}
 
+        {/* Share button */}
         {guessHistory && guessHistory.length > 0 && (
-          <Box display="flex" justifyContent="center" paddingBottom="2">
-            <Button variant="outline" onClick={handleShare} size="sm">
+          <div className="results-share">
+            <Button
+              variant="outline"
+              onClick={handleShare}
+              size="md"
+              aria-label={copied ? "Results copied to clipboard" : "Share your results"}
+            >
               <Box display="flex" alignItems="center" gap="xxs">
                 {!copied && (
                   <Icon color="currentColor" size="sm">
@@ -131,16 +130,18 @@ export function ResultsModal({
                 {copied ? "Copied!" : "Share Your Results"}
               </Box>
             </Button>
-          </Box>
+          </div>
         )}
 
-        <Box display="flex" justifyContent="center" padding="8" border="subtle">
-          <Button variant="primary" onClick={onClose} size="lg">
+        {/* Back to game */}
+        <div className="results-back">
+          <Button variant="primary" onClick={onClose} size="lg" fullWidth>
             Back to Game
           </Button>
-        </Box>
-      </Box>
-      <AboutLinks />
+        </div>
+
+        <AboutLinks />
+      </div>
     </Modal>
   );
 }

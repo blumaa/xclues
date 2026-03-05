@@ -53,16 +53,19 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
 
   return (
     <Box>
-      <Box display="flex" flexDirection="column" gap="sm">
+      <Box display="flex" flexDirection="column" gap="md">
         <GameHeader puzzleDate={puzzleDate || undefined} />
 
         {/* Found groups as colored rows */}
         {foundGroups.length > 0 && (
-          <div className="found-groups-container">
+          <section
+            className="found-groups-container"
+            aria-label="Found groups"
+          >
             {foundGroups.map((group) => (
               <GroupCard key={group.id} group={group} />
             ))}
-          </div>
+          </section>
         )}
 
         {/* Remaining item tiles in dynamic grid */}
@@ -84,9 +87,14 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
             gameStatus={gameStatus}
           />
         ) : (
-          <Box display="flex" justifyContent="center" gap="md">
+          <div className="game-actions">
             {onViewStats && (
-              <Button variant="ghost" size="sm" onClick={onViewStats}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onViewStats}
+                aria-label="View statistics"
+              >
                 <Box display="flex" flexDirection="column" alignItems="center">
                   <Icon size="lg">
                     <StatsIcon />
@@ -104,6 +112,7 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
                 trackEvent(EVENTS.CREATE_PUZZLE_CLICKED);
                 setIsSubmitDrawerOpen(true);
               }}
+              aria-label="Create a new puzzle"
             >
               <Box display="flex" flexDirection="column" alignItems="center">
                 <Icon size="lg">
@@ -114,7 +123,7 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
                 </Text>
               </Box>
             </Button>
-          </Box>
+          </div>
         )}
 
         {gameStatus === "playing" && (

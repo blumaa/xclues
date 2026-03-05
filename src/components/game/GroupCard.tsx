@@ -10,7 +10,11 @@ interface GroupCardProps {
 export function GroupCard({ group }: GroupCardProps) {
   const textLengthProps = getTextLengthProps(group.connection);
   return (
-    <Card className={`group-card ${group.color}`}>
+    <Card
+      className={`group-card ${group.color}`}
+      role="status"
+      aria-label={`Found group: ${group.connection}`}
+    >
       <Box
         display="flex"
         flexDirection="column"
@@ -29,17 +33,9 @@ export function GroupCard({ group }: GroupCardProps) {
           align="center"
           {...textLengthProps}
         >
-          {group.connection}
+          <span className="group-card-connection">{group.connection}</span>
         </Heading>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "4px",
-            rowGap: "1px",
-          }}
-        >
+        <div className="group-card-items">
           {group.items.map((item, index) => {
             return (
               <Text key={item.id} responsive color="black.900">
