@@ -1,0 +1,12 @@
+/* Prevent grid from overflowing parent on mobile */
+.item-grid {
+  max-width: 100%;
+}
+
+/* Constrain grid width on desktop so square tiles fit in viewport */
+@media (min-width: 1025px) {
+  .item-grid {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}

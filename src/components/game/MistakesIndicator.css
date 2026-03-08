@@ -61,6 +61,13 @@
   }
 }
 
+/* Tighter spacing on desktop */
+@media (min-width: 1025px) {
+  .mistakes-container {
+    padding: var(--mond-spacing-1) 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mistake-dot {
     transition: none;

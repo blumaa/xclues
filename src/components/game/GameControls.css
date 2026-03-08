@@ -59,6 +59,13 @@
   box-shadow: none;
 }
 
+/* Tighter spacing on desktop */
+@media (min-width: 1025px) {
+  .game-controls {
+    padding: var(--mond-spacing-1) 0;
+  }
+}
+
 /* Stack buttons on very narrow screens */
 @media (max-width: 360px) {
   .game-controls {

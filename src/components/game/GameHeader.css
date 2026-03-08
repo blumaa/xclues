@@ -15,3 +15,9 @@
     font-size: 1.05rem;
   }
 }
+
+@media (min-width: 1025px) {
+  .game-header {
+    padding: 0;
+  }
+}

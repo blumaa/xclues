@@ -39,6 +39,15 @@
   }
 }
 
+/* Compact group cards on desktop so game fits in viewport */
+@media (min-width: 1025px) {
+  .group-card.mond-card {
+    aspect-ratio: unset;
+    min-height: unset;
+    padding: var(--mond-spacing-2) var(--mond-spacing-3);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .group-card {
     animation: none;

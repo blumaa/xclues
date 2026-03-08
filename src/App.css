@@ -57,6 +57,13 @@
   flex-direction: column;
 }
 
+/* On desktop, constrain layout to viewport so game fits without scrolling */
+@media (min-width: 1025px) {
+  .app-layout {
+    height: 100dvh;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-layout {
     animation: none;

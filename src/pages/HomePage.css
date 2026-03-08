@@ -37,6 +37,12 @@
   }
 }
 
+@media (min-width: 1025px) {
+  .homepage-game {
+    padding: var(--mond-spacing-2) var(--mond-spacing-4);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .homepage-game {
     animation: none;

@@ -30,6 +30,17 @@
   background: rgba(108, 92, 231, 0.06);
 }
 
+/* Compact footer on desktop */
+@media (min-width: 1025px) {
+  .footer-content {
+    padding: var(--mond-spacing-1) var(--mond-spacing-4);
+  }
+
+  .footer a {
+    min-height: unset;
+  }
+}
+
 .footer-separator {
   color: var(--mond-text-tertiary);
   user-select: none;
