@@ -70,8 +70,9 @@ describe("GenreSwitch", () => {
 
   it("in production, navigates to the correct domain", async () => {
     const user = userEvent.setup();
+    const assignSpy = vi.fn();
     Object.defineProperty(window, "location", {
-      value: { ...window.location, hostname: "filmclues.space", href: "" },
+      value: { ...window.location, hostname: "filmclues.space", assign: assignSpy },
       writable: true,
       configurable: true,
     });
@@ -80,7 +81,7 @@ describe("GenreSwitch", () => {
 
     await user.click(screen.getByRole("button", { name: "Music" }));
 
-    expect(window.location.href).toBe("https://musiclues.space");
+    expect(assignSpy).toHaveBeenCalledWith("https://musiclues.space");
   });
 
   it("does nothing when clicking the already active genre", async () => {

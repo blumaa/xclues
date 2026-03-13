@@ -29,7 +29,7 @@ export function GenreSwitch() {
       setGenre(genre);
     } else {
       // Production web: cross-domain navigation
-      window.location.href = `https://${domain}`;
+      window.location.assign(`https://${domain}`);
     }
   };
 

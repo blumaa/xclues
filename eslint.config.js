@@ -36,6 +36,7 @@ export default [js.configs.recommended, {
       clearInterval: 'readonly',
       HTMLInputElement: 'readonly',
       crypto: 'readonly',
+      Storage: 'readonly',
       React: 'readonly',
       // Node globals
       process: 'readonly',
@@ -78,5 +79,12 @@ export default [js.configs.recommended, {
     },
   },
 }, {
-  ignores: ['dist', 'node_modules', 'storybook-static'],
+  files: ['*.js'],
+  languageOptions: {
+    globals: {
+      process: 'readonly',
+    },
+  },
+}, {
+  ignores: ['dist', 'node_modules', 'storybook-static', 'ios'],
 }, ...storybook.configs["flat/recommended"]];
