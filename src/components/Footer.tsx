@@ -1,4 +1,5 @@
-import { Text, Link } from "@mond-design-system/theme";
+import { Text } from "@mond-design-system/theme";
+import { Link } from "react-router-dom";
 import { useSite } from "../providers/useSite";
 import "./Footer.css";
 
@@ -13,13 +14,13 @@ export function Footer() {
           &copy; {currentYear} {siteName}
         </Text>
         <span className="footer-separator" aria-hidden="true">|</span>
-        <Link href="/about" target="_blank" rel="noopener noreferrer">
+        <Link to="/about" className="footer-link">
           <Text size="xs" semantic="secondary">
             About
           </Text>
         </Link>
         <span className="footer-separator" aria-hidden="true">|</span>
-        <Link href="/privacy" target="_blank" rel="noopener noreferrer">
+        <Link to="/privacy" className="footer-link">
           <Text size="xs" semantic="secondary">
             Privacy
           </Text>

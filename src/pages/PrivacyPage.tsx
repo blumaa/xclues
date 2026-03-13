@@ -18,9 +18,6 @@ export function PrivacyPage() {
       <Text size="xl" weight="bold">
         Privacy Policy
       </Text>
-      <Text size="xs" semantic="secondary">
-        Last updated: December 2024
-      </Text>
 
       <Box display="flex" flexDirection="column" gap="sm" className="privacy-content">
         <Text size="md" weight="semibold">

@@ -1,0 +1,40 @@
+.genre-switch {
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid var(--xclues-header-border);
+  background: var(--xclues-card-bg);
+  padding: 2px;
+  gap: 2px;
+}
+
+.genre-switch__button {
+  all: unset;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  color: var(--mond-color-text-secondary, #888);
+  text-align: center;
+}
+
+.genre-switch__button:hover:not(.genre-switch__button--active) {
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.genre-switch__button--active {
+  background: var(--xclues-primary);
+  color: #fff;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  .genre-switch__button {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+}

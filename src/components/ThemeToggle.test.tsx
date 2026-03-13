@@ -8,6 +8,11 @@ vi.mock('../providers/useThemeContext', () => ({
   useThemeContext: vi.fn(),
 }));
 
+vi.mock('../services/analytics', () => ({
+  trackEvent: vi.fn(),
+  EVENTS: { THEME_TOGGLED: 'theme_toggled' },
+}));
+
 import { useThemeContext } from '../providers/useThemeContext';
 
 describe('ThemeToggle', () => {
@@ -22,34 +27,6 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-
-  it('should show moon emoji when theme is light', () => {
-    vi.mocked(useThemeContext).mockReturnValue({
-      theme: 'light',
-      isDarkMode: false,
-      setTheme: vi.fn(),
-      toggleTheme: vi.fn(),
-    });
-
-    render(<ThemeToggle />);
-
-    const button = screen.getByRole('button');
-    expect(button).toHaveTextContent('🌙');
-  });
-
-  it('should show sun emoji when theme is dark', () => {
-    vi.mocked(useThemeContext).mockReturnValue({
-      theme: 'dark',
-      isDarkMode: true,
-      setTheme: vi.fn(),
-      toggleTheme: vi.fn(),
-    });
-
-    render(<ThemeToggle />);
-
-    const button = screen.getByRole('button');
-    expect(button).toHaveTextContent('☀️');
   });
 
   it('should call toggleTheme when clicked', async () => {
@@ -70,7 +47,7 @@ describe('ThemeToggle', () => {
     expect(toggleTheme).toHaveBeenCalledOnce();
   });
 
-  it('should have accessible label', () => {
+  it('should have accessible label for light mode', () => {
     vi.mocked(useThemeContext).mockReturnValue({
       theme: 'light',
       isDarkMode: false,
@@ -81,5 +58,18 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(screen.getByLabelText('Switch to dark mode')).toBeInTheDocument();
+  });
+
+  it('should have accessible label for dark mode', () => {
+    vi.mocked(useThemeContext).mockReturnValue({
+      theme: 'dark',
+      isDarkMode: true,
+      setTheme: vi.fn(),
+      toggleTheme: vi.fn(),
+    });
+
+    render(<ThemeToggle />);
+
+    expect(screen.getByLabelText('Switch to light mode')).toBeInTheDocument();
   });
 });

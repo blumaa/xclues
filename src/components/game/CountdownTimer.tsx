@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text } from "@mond-design-system/theme";
+import { useSite } from "../../providers/useSite";
 import "./CountdownTimer.css";
 
 function getTimeUntilMidnightUTC(): {
@@ -21,6 +22,7 @@ function getTimeUntilMidnightUTC(): {
 }
 
 export function CountdownTimer() {
+  const { siteName } = useSite();
   const [countdown, setCountdown] = useState(getTimeUntilMidnightUTC());
 
   useEffect(() => {
@@ -37,9 +39,9 @@ export function CountdownTimer() {
   };
 
   return (
-    <div className="countdown-container" role="timer" aria-label="Time until next puzzle">
+    <div className="countdown-container" role="timer" aria-label={`Time until next ${siteName} puzzle`}>
       <Text size="xs" semantic="secondary" align="center">
-        Next puzzle in
+        Next {siteName} puzzle in
       </Text>
       <span className="countdown-time">
         {formatCountdown()}

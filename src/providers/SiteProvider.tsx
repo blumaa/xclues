@@ -3,11 +3,13 @@
  *
  * Provides site configuration throughout the app based on domain.
  * Detects genre from hostname and provides corresponding config.
+ * Genre can be changed reactively via setGenre (for dev/Capacitor).
  */
 
-import { ReactNode, useEffect } from 'react';
-import { detectGenreFromDomain, getSiteConfig, type SiteConfig } from '../config';
-import { SiteContext } from './useSiteContext';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { detectGenreFromDomain, getSiteConfig, type Genre } from '../config';
+import { SiteContext, type SiteContextValue } from './useSiteContext';
+import { useGameStore } from '../store/gameStore';
 
 interface SiteProviderProps {
   children: ReactNode;
@@ -36,7 +38,7 @@ function updateLinkTag(selector: string, href: string): void {
 /**
  * Update all meta tags based on site config
  */
-function updateMetaTags(config: SiteConfig): void {
+function updateMetaTags(config: SiteContextValue): void {
   const siteUrl = `https://www.${config.domain}`;
 
   // Primary meta tags
@@ -82,15 +84,27 @@ function updateMetaTags(config: SiteConfig): void {
 /**
  * Provides site context to children.
  * Detects genre from domain and provides config.
+ * Supports reactive genre switching via setGenre.
  */
 export function SiteProvider({ children }: SiteProviderProps) {
-  const genre = detectGenreFromDomain();
-  const config = getSiteConfig(genre);
+  const [genre, setGenreState] = useState<Genre>(detectGenreFromDomain);
+  const config = useMemo(() => getSiteConfig(genre), [genre]);
+
+  const setGenre = useCallback((newGenre: Genre) => {
+    setGenreState(newGenre);
+    // Reset game state so stale puzzle data doesn't flash
+    useGameStore.getState().resetGame();
+  }, []);
 
   // Update all meta tags when config changes
-  useEffect(() => {
-    updateMetaTags(config);
-  }, [config]);
+  const contextValue: SiteContextValue = useMemo(
+    () => ({ ...config, setGenre }),
+    [config, setGenre]
+  );
 
-  return <SiteContext.Provider value={config}>{children}</SiteContext.Provider>;
+  useEffect(() => {
+    updateMetaTags(contextValue);
+  }, [contextValue]);
+
+  return <SiteContext.Provider value={contextValue}>{children}</SiteContext.Provider>;
 }

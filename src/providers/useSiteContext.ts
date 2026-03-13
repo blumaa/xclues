@@ -6,11 +6,18 @@
  */
 
 import { createContext } from 'react';
-import { detectGenreFromDomain, getSiteConfig, type SiteConfig } from '../config';
+import { detectGenreFromDomain, getSiteConfig, type SiteConfig, type Genre } from '../config';
+
+export interface SiteContextValue extends SiteConfig {
+  setGenre: (genre: Genre) => void;
+}
 
 // Detect genre from domain and get initial config
 const initialGenre = detectGenreFromDomain();
 const initialConfig = getSiteConfig(initialGenre);
 
 // Create context with the initial config
-export const SiteContext = createContext<SiteConfig>(initialConfig);
+export const SiteContext = createContext<SiteContextValue>({
+  ...initialConfig,
+  setGenre: () => {},
+});

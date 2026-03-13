@@ -13,7 +13,7 @@ export function AboutBody() {
             between {itemNamePlural}!
           </Text>
 
-          <Box gap="xxs" display="flex">
+          <Box gap="xxs" display="flex" alignItems="center">
             <Text size="sm">Built with the</Text>
             <Link
               size="small"

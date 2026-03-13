@@ -19,6 +19,7 @@
   border-color: rgba(108, 92, 231, 0.2);
   background: var(--xclues-card-bg);
   backdrop-filter: blur(8px);
+  color: inherit;
 }
 
 .game-controls .mond-button--outline:hover:not(:disabled) {
@@ -26,6 +27,17 @@
   box-shadow: var(--xclues-card-shadow-hover);
   border-color: var(--xclues-primary);
   background: var(--xclues-card-bg-hover);
+  color: inherit;
+}
+
+/* Prevent sticky hover on touch devices */
+@media (hover: none) {
+  .game-controls .mond-button--outline:hover:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(108, 92, 231, 0.2);
+    background: var(--xclues-card-bg);
+  }
 }
 
 /* Primary button (Submit) - hero treatment */

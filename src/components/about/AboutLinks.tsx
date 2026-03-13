@@ -8,6 +8,7 @@ import { useSite } from "../../providers/useSite";
 import { BookIcon } from "./icons/BookIcon";
 import { PopcornIcon } from "./icons/PopcornIcon";
 import { MusicIcon } from "./icons/MusicIcon";
+import { Capacitor } from "@capacitor/core";
 import type { Genre } from "../../config/seoConfig";
 
 interface AboutLinksProps {
@@ -16,43 +17,49 @@ interface AboutLinksProps {
 
 interface GameLink {
   genre: Genre;
-  url: string;
+  domain: string;
   label: string;
   icon: React.ReactNode;
 }
 
 const GAME_LINKS: GameLink[] = [
   {
-    genre: "books",
-    url: "https://litclues.space",
-    label: "litclues.space",
-    icon: <BookIcon />,
-  },
-  {
     genre: "films",
-    url: "https://filmclues.space",
+    domain: "filmclues.space",
     label: "filmclues.space",
     icon: <PopcornIcon />,
   },
   {
+    genre: "books",
+    domain: "litclues.space",
+    label: "litclues.space",
+    icon: <BookIcon />,
+  },
+  {
     genre: "music",
-    url: "https://musiclues.space",
+    domain: "musiclues.space",
     label: "musiclues.space",
     icon: <MusicIcon />,
   },
 ];
 
+
 export function AboutLinks({ showHeading = true }: AboutLinksProps) {
-  const { siteName, genre } = useSite();
+  const { siteName, genre: activeGenre, setGenre } = useSite();
 
-  // Filter out the current site
-  const otherGames = GAME_LINKS.filter((link) => link.genre !== genre);
+  const isNative = Capacitor.isNativePlatform();
 
-  const content = (
+  const handleClick = (genre: Genre) => {
+    if (genre === activeGenre) return;
+    localStorage.setItem("xclues-dev-genre", genre);
+    setGenre(genre);
+  };
+
+  return (
     <Box display="flex" flexDirection="column" alignItems="center" gap="xs" paddingBottom="4" className="about-links">
       {showHeading && (
         <Heading size="xs" weight="semibold" responsive>
-          {siteName} is part of the Puzzle Clues Suite of games which include:
+          {siteName} is part of the Puzzle Clues Suite of games:
         </Heading>
       )}
       <Box
@@ -61,28 +68,41 @@ export function AboutLinks({ showHeading = true }: AboutLinksProps) {
         flexWrap="wrap"
         justifyContent="center"
       >
-        {otherGames.map((link) => (
-          <Button
-            key={link.genre}
-            size="sm"
-            href={link.url}
-            as="a"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon color="currentColor" size="md">
-              {link.icon}
-            </Icon>
-            {link.label}
-          </Button>
-        ))}
+        {GAME_LINKS.map((link) => {
+          if (isNative) {
+            return (
+              <Button
+                key={link.genre}
+                size="sm"
+                variant={link.genre === activeGenre ? "primary" : "outline"}
+                onClick={() => handleClick(link.genre)}
+              >
+                <Icon color="currentColor" size="md">
+                  {link.icon}
+                </Icon>
+                {link.label}
+              </Button>
+            );
+          }
+
+          return (
+            <Button
+              key={link.genre}
+              size="sm"
+              variant={link.genre === activeGenre ? "primary" : "outline"}
+              as="a"
+              href={`https://${link.domain}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon color="currentColor" size="md">
+                {link.icon}
+              </Icon>
+              {link.label}
+            </Button>
+          );
+        })}
       </Box>
     </Box>
   );
-
-  if (showHeading) {
-    return content;
-  }
-
-  return content;
 }

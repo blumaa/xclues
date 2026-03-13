@@ -12,7 +12,7 @@ import { ShareIcon } from "./ShareIcon";
 import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
 import type { GuessColor } from "../../types/stats";
-import { AboutLinks } from "../about";
+
 import "./ResultsModal.css";
 
 interface ResultsModalProps {
@@ -140,7 +140,6 @@ export function ResultsModal({
           </Button>
         </div>
 
-        <AboutLinks />
       </div>
     </Modal>
   );

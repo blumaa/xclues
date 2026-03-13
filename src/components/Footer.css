@@ -24,6 +24,8 @@
   padding: var(--mond-spacing-1) var(--mond-spacing-2);
   border-radius: 8px;
   transition: all var(--xclues-transition);
+  text-decoration: none;
+  color: inherit;
 }
 
 .footer a:hover {

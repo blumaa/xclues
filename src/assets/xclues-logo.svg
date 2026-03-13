@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c5ce7"/>
+      <stop offset="100%" stop-color="#fd79a8"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0a1a"/>
+      <stop offset="100%" stop-color="#1a1035"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <!-- Decorative grid dots (subtle clue/puzzle motif) -->
+  <g opacity="0.12" fill="#a29bfe">
+    <circle cx="128" cy="128" r="8"/>
+    <circle cx="256" cy="128" r="8"/>
+    <circle cx="384" cy="128" r="8"/>
+    <circle cx="128" cy="256" r="8"/>
+    <circle cx="384" cy="256" r="8"/>
+    <circle cx="128" cy="384" r="8"/>
+    <circle cx="256" cy="384" r="8"/>
+    <circle cx="384" cy="384" r="8"/>
+  </g>
+  <!-- "x" character -->
+  <text x="130" y="340" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="260" font-weight="900" letter-spacing="-8" fill="url(#brandGrad)">x</text>
+  <!-- "C" character -->
+  <text x="280" y="340" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="260" font-weight="900" letter-spacing="-8" fill="#ffffff">C</text>
+</svg>
