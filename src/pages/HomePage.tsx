@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Box, Spinner, Text } from "@mond-design-system/theme";
 import { useGameStore } from "../store/gameStore";
 import { GameBoard } from "../components/game/GameBoard";
@@ -25,6 +25,19 @@ export function HomePage() {
 
   // Get site config for genre
   const { genre } = useSite();
+
+  // Reset local state when genre changes (reactive switch, no remount)
+  const prevGenreRef = useRef(genre);
+  useEffect(() => {
+    if (prevGenreRef.current === genre) return;
+    prevGenreRef.current = genre;
+
+    setResultsDismissed(false);
+    setShowResultsDelayed(false);
+    setRecordedDate(null);
+    setAlreadyPlayedToday(null);
+    setStatsLoaded(false);
+  }, [genre]);
 
   // Derive guess history from current game or restored game
   const currentGuessHistory = useMemo(() => {
