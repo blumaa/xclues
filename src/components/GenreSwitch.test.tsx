@@ -93,4 +93,80 @@ describe("GenreSwitch", () => {
 
     expect(mockSetGenre).not.toHaveBeenCalled();
   });
+
+  describe("hover prefetch (production)", () => {
+    beforeEach(() => {
+      Object.defineProperty(window, "location", {
+        value: {
+          ...window.location,
+          hostname: "filmclues.space",
+          assign: vi.fn(),
+        },
+        writable: true,
+        configurable: true,
+      });
+      // Clean up any prefetch links/scripts from previous tests
+      document.head
+        .querySelectorAll('link[rel="prefetch"], script[type="speculationrules"]')
+        .forEach((el) => el.remove());
+    });
+
+    it("injects a prefetch link on hover over a sibling genre", async () => {
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+
+      await user.hover(screen.getByRole("button", { name: "Music" }));
+
+      const prefetchLink = document.head.querySelector(
+        'link[rel="prefetch"][href="https://musiclues.space/"]'
+      );
+      expect(prefetchLink).toBeTruthy();
+      expect(prefetchLink?.getAttribute("as")).toBe("document");
+    });
+
+    it("does not inject duplicate prefetch links on repeated hovers", async () => {
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+
+      const musicBtn = screen.getByRole("button", { name: "Music" });
+      await user.hover(musicBtn);
+      await user.unhover(musicBtn);
+      await user.hover(musicBtn);
+
+      const prefetchLinks = document.head.querySelectorAll(
+        'link[rel="prefetch"][href="https://musiclues.space/"]'
+      );
+      expect(prefetchLinks).toHaveLength(1);
+    });
+
+    it("does not prefetch when hovering the active genre", async () => {
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+
+      await user.hover(screen.getByRole("button", { name: "Films" }));
+
+      const prefetchLinks = document.head.querySelectorAll(
+        'link[rel="prefetch"]'
+      );
+      expect(prefetchLinks).toHaveLength(0);
+    });
+
+    it("does not prefetch in dev mode", async () => {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, hostname: "localhost" },
+        writable: true,
+        configurable: true,
+      });
+
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+
+      await user.hover(screen.getByRole("button", { name: "Music" }));
+
+      const prefetchLinks = document.head.querySelectorAll(
+        'link[rel="prefetch"]'
+      );
+      expect(prefetchLinks).toHaveLength(0);
+    });
+  });
 });

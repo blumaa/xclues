@@ -9,6 +9,7 @@ import { ThemeProvider } from "@mond-design-system/theme";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeContextProvider } from "./providers/ThemeContext";
 import { useThemeContext } from "./providers/useThemeContext";
+import { useSite } from "./providers/useSite";
 import { StorageProvider } from "./providers/StorageProvider";
 import { StatsProvider } from "./providers/StatsProvider";
 import { SiteProvider } from "./providers/SiteProvider";
@@ -31,6 +32,7 @@ const queryClient = new QueryClient({
 
 function ThemedApp() {
   const { theme } = useThemeContext();
+  const { genre } = useSite();
 
   return (
     <ThemeProvider colorScheme={theme}>
@@ -46,7 +48,7 @@ function ThemedApp() {
             </header>
             <main className="app-main">
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<HomePage key={genre} />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/about" element={<AboutPage />} />
               </Routes>

@@ -4,6 +4,13 @@ node_modules/
 # Build output
 dist/
 
+# TypeScript composite build artifacts
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo
+src/config/seoConfig.js
+src/config/seoConfig.d.ts
+
 # Environment files
 .env
 .env.local
@@ -35,3 +42,5 @@ storybook-static/
 
 # Supabase
 .supabase/
+
+.tool-versions

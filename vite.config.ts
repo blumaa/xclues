@@ -13,6 +13,18 @@ function seoPlugin(): Plugin {
   const config = SEO_CONFIGS[genre];
   const siteUrl = `https://www.${config.domain}`;
 
+  // Generate preconnect links for sibling genre domains
+  const siblingDomains = Object.values(SEO_CONFIGS)
+    .map((c) => c.domain)
+    .filter((d) => d !== config.domain);
+
+  const preconnectLinks = siblingDomains
+    .map(
+      (d) =>
+        `<link rel="dns-prefetch" href="https://www.${d}" />\n    <link rel="preconnect" href="https://www.${d}" crossorigin />`
+    )
+    .join('\n    ');
+
   return {
     name: 'seo-transform',
     transformIndexHtml(html) {
@@ -24,6 +36,8 @@ function seoPlugin(): Plugin {
         .replace(/{{META_KEYWORDS}}/g, config.metaKeywords)
         .replace(/{{SITE_URL}}/g, siteUrl)
         .replace(/{{DOMAIN}}/g, config.domain)
+        // Preconnect links
+        .replace(/{{PRECONNECT_LINKS}}/g, preconnectLinks)
         // JSON-LD structured data
         .replace(/{{JSON_LD_NAME}}/g, config.siteName)
         .replace(/{{JSON_LD_DESCRIPTION}}/g, config.metaDescription)
