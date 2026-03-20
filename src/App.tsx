@@ -68,10 +68,22 @@ function App() {
     if (!Capacitor.isNativePlatform()) return;
 
     async function setup() {
-      await ScreenOrientation.lock({ orientation: "portrait" });
-      await StatusBar.setStyle({ style: Style.Dark });
-      await StatusBar.hide();
-      await SplashScreen.hide();
+      try {
+        await ScreenOrientation.lock({ orientation: "portrait" });
+      } catch {
+        // ScreenOrientation may not be supported on all devices (e.g., iPad)
+      }
+      try {
+        await StatusBar.setStyle({ style: Style.Dark });
+        await StatusBar.hide();
+      } catch {
+        // StatusBar APIs may fail on some OS versions
+      }
+      try {
+        await SplashScreen.hide();
+      } catch {
+        // SplashScreen hide may fail if already dismissed
+      }
       setReady(true);
     }
     setup();
