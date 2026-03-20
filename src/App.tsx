@@ -6,6 +6,7 @@ import { ScreenOrientation } from "@capacitor/screen-orientation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mond-design-system/theme";
+import { Analytics } from "@vercel/analytics/react";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeContextProvider } from "./providers/ThemeContext";
 import { useThemeContext } from "./providers/useThemeContext";
@@ -57,6 +58,7 @@ function ThemedApp() {
           </div>
         </BrowserRouter>
       </ToastProvider>
+      <Analytics />
     </ThemeProvider>
   );
 }
