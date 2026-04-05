@@ -86,5 +86,5 @@ export default [js.configs.recommended, {
     },
   },
 }, {
-  ignores: ['dist', 'node_modules', 'storybook-static', 'ios'],
+  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase'],
 }, ...storybook.configs["flat/recommended"]];
