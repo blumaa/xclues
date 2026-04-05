@@ -41,6 +41,14 @@ vi.mock("./providers/StatsProvider", () => ({
   StatsProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+vi.mock("./providers/AuthProvider", () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock("./components/UserMenuButton", () => ({
+  UserMenuButton: () => <div>UserMenuButton</div>,
+}));
+
 vi.mock("./providers/ThemeContext", () => ({
   ThemeContextProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
