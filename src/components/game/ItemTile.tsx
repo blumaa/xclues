@@ -1,6 +1,7 @@
 import { Card, CardBody, Box, Text } from "@mond-design-system/theme";
 import type { Item } from "../../types";
 import { getTextLengthProps } from "../../utils";
+import { getDisplayTitle } from "../../utils/displayTitle";
 import type { KeyboardEvent } from "react";
 import "./ItemTile.css";
 
@@ -21,7 +22,8 @@ export function ItemTile({
   isRejected,
   onClick,
 }: ItemTileProps) {
-  const textLengthProps = getTextLengthProps(item.title);
+  const displayTitle = getDisplayTitle(item);
+  const textLengthProps = getTextLengthProps(displayTitle);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -44,7 +46,7 @@ export function ItemTile({
       tabIndex={0}
       role="button"
       aria-pressed={isSelected}
-      aria-label={`${item.title}${isSelected ? ", selected" : ""}`}
+      aria-label={`${displayTitle}${isSelected ? ", selected" : ""}`}
     >
       <CardBody>
         <Box
@@ -55,7 +57,7 @@ export function ItemTile({
           height="full"
         >
           <Text responsive align="center" {...textLengthProps}>
-            {item.title}
+            {displayTitle}
           </Text>
         </Box>
       </CardBody>

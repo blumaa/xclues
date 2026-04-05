@@ -17,6 +17,14 @@ export const EVENTS = {
   // Puzzle submission
   CREATE_PUZZLE_CLICKED: "create_puzzle_clicked",
   PUZZLE_SUBMITTED: "puzzle_submitted",
+
+  // Auth
+  AUTH_SIGNUP: "auth_signup",
+  AUTH_LOGIN: "auth_login",
+  AUTH_LOGOUT: "auth_logout",
+  AUTH_EMAIL_UPDATED: "auth_email_updated",
+  AUTH_PASSWORD_UPDATED: "auth_password_updated",
+  AUTH_ACCOUNT_DELETED: "auth_account_deleted",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];

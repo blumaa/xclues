@@ -2,6 +2,7 @@ import { Box, Card, Heading, Text } from "@mond-design-system/theme";
 import type { Group } from "../../types";
 import "./GroupCard.css";
 import { getTextLengthProps } from "../../utils";
+import { getDisplayTitle } from "../../utils/displayTitle";
 
 interface GroupCardProps {
   group: Group;
@@ -39,7 +40,7 @@ export function GroupCard({ group }: GroupCardProps) {
           {group.items.map((item, index) => {
             return (
               <Text key={item.id} responsive color="black.900">
-                {item.title}
+                {getDisplayTitle(item)}
                 {index < group.items.length - 1 && ", "}
               </Text>
             );
