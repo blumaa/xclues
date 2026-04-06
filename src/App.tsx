@@ -42,7 +42,6 @@ function ThemedApp() {
       <ToastProvider>
         <BrowserRouter>
           <div className="app-layout">
-            <a href="#main-content" className="sr-only">Skip to content</a>
             <header className="app-header">
               <Link to="/" className="app-header-brand" aria-label="xclues home">
                 <span className="app-header-logo"><Logo genre={genre} /></span>

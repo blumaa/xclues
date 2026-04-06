@@ -13,7 +13,11 @@ export function XModal({ isOpen, onClose, children }: XModalProps) {
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="xmodal__overlay" />
-        <Dialog.Content className="xmodal__content" aria-describedby={undefined}>
+        <Dialog.Content
+          className="xmodal__content"
+          aria-describedby={undefined}
+        >
+          <Dialog.Title />
           {children}
         </Dialog.Content>
       </Dialog.Portal>

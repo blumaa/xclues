@@ -17,7 +17,6 @@
   background: var(--xclues-card-bg);
   border: 1px solid var(--xclues-header-border);
   border-radius: var(--xclues-border-radius);
-  padding: var(--xclues-spacing-6);
   max-width: 480px;
   width: calc(100% - var(--xclues-spacing-8));
   max-height: calc(100vh - var(--xclues-spacing-12));

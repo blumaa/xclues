@@ -8,7 +8,6 @@ import { CountdownTimer } from "./CountdownTimer";
 import { trackEvent, EVENTS } from "../../services/analytics";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "./ShareIcon";
-import { CrossGenreLinks } from "./CrossGenreLinks";
 import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
 import type { GuessColor } from "../../types/stats";
@@ -31,7 +30,7 @@ export function ResultsModal({
   guessHistory,
 }: ResultsModalProps) {
   const stats = useStats();
-  const { siteName, domain, genre } = useSite();
+  const { siteName, domain } = useSite();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -74,6 +73,9 @@ export function ResultsModal({
   return (
     <XModal isOpen={isOpen} onClose={onClose}>
       <div className="results-modal-content">
+        <button className="results-close" onClick={onClose} aria-label="Close">
+          ✕
+        </button>
         {/* Result heading */}
         <div className="results-heading">
           <span className="results-heading-title">
@@ -121,17 +123,6 @@ export function ResultsModal({
             </XButton>
           </div>
         )}
-
-        {/* Cross-genre CTA */}
-        <CrossGenreLinks currentGenre={genre} />
-
-        {/* Back to game */}
-        <div className="results-back">
-          <XButton variant="primary" onClick={onClose} size="lg" fullWidth>
-            Back to Game
-          </XButton>
-        </div>
-
       </div>
     </XModal>
   );

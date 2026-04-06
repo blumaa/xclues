@@ -5,6 +5,8 @@
   flex-direction: column;
   gap: var(--xclues-spacing-sm);
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* Mobile: match the item grid width */
