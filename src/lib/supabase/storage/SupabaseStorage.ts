@@ -18,7 +18,7 @@ import type {
   PuzzleListResult,
   PuzzleUpdate,
 } from './IPuzzleStorage';
-import type { DifficultyColor, DifficultyLevel } from './IGroupStorage';
+import type { DifficultyColor, DifficultyLevel } from '../../../types';
 
 type DbPuzzleRow = Database['public']['Tables']['puzzles']['Row'] & {
   groups?: unknown; // JSONB column for group snapshot

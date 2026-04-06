@@ -1,6 +1,6 @@
-import { Card, CardBody, Box, Text } from "@mond-design-system/theme";
+import { XCard, XCardBody, XText } from "../ui";
 import type { Item } from "../../types";
-import { getTextLengthProps } from "../../utils";
+import { getTextLengthProps, addSoftHyphens } from "../../utils";
 import { getDisplayTitle } from "../../utils/displayTitle";
 import type { KeyboardEvent } from "react";
 import "./ItemTile.css";
@@ -22,7 +22,7 @@ export function ItemTile({
   isRejected,
   onClick,
 }: ItemTileProps) {
-  const displayTitle = getDisplayTitle(item);
+  const displayTitle = addSoftHyphens(getDisplayTitle(item));
   const textLengthProps = getTextLengthProps(displayTitle);
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,7 +33,7 @@ export function ItemTile({
   };
 
   return (
-    <Card
+    <XCard
       className="item-tile"
       aspectRatio="square"
       isSelected={isSelected}
@@ -48,19 +48,21 @@ export function ItemTile({
       aria-pressed={isSelected}
       aria-label={`${displayTitle}${isSelected ? ", selected" : ""}`}
     >
-      <CardBody>
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          height="full"
+      <XCardBody>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+          }}
         >
-          <Text responsive align="center" {...textLengthProps}>
+          <XText responsive align="center" {...textLengthProps}>
             {displayTitle}
-          </Text>
-        </Box>
-      </CardBody>
-    </Card>
+          </XText>
+        </div>
+      </XCardBody>
+    </XCard>
   );
 }

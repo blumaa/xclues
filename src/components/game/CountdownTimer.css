@@ -2,15 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--mond-spacing-1);
-  padding: var(--mond-spacing-3) 0;
+  gap: var(--xclues-spacing-1);
+  padding: var(--xclues-spacing-3) 0;
 }
 
 .countdown-time {
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.1em;
-  font-size: 1.5rem;
-  font-weight: 700;
+  letter-spacing: var(--xclues-tracking-wider);
+  font-size: var(--xclues-font-size-xl);
+  font-weight: var(--xclues-font-weight-bold);
   background: linear-gradient(135deg, var(--xclues-primary) 0%, var(--xclues-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

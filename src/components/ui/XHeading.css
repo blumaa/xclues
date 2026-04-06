@@ -1,0 +1,36 @@
+.xheading {
+  margin: 0;
+  font-family: var(--xclues-font-family, inherit);
+  color: inherit;
+  line-height: var(--xclues-heading-line-height, 1.2);
+  letter-spacing: var(--xclues-heading-letter-spacing, 0);
+  font-weight: var(--xclues-heading-weight, 700);
+}
+
+.xheading--xs { font-size: var(--xclues-font-size-sm); }
+.xheading--sm { font-size: var(--xclues-font-size-base); }
+.xheading--md { font-size: var(--xclues-font-size-lg); }
+.xheading--lg { font-size: var(--xclues-font-size-xl); }
+.xheading--xl { font-size: var(--xclues-font-size-2xl); }
+
+.xheading--light { font-weight: var(--xclues-font-weight-light); }
+.xheading--normal { font-weight: var(--xclues-font-weight-normal); }
+.xheading--semibold { font-weight: var(--xclues-font-weight-semibold); }
+.xheading--bold { font-weight: var(--xclues-font-weight-bold); }
+.xheading--extrabold { font-weight: var(--xclues-font-weight-extrabold); }
+
+.xheading--left { text-align: left; }
+.xheading--center { text-align: center; }
+.xheading--right { text-align: right; }
+
+.xheading--responsive {
+  font-size: var(--xclues-font-size-base);
+}
+
+@media (min-width: 640px) {
+  .xheading--responsive { font-size: var(--xclues-font-size-lg); }
+}
+
+@media (min-width: 1025px) {
+  .xheading--responsive { font-size: var(--xclues-font-size-2xl); }
+}

@@ -1,0 +1,52 @@
+.how-to-play-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--xclues-z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--xclues-overlay-bg);
+  backdrop-filter: blur(var(--xclues-blur-sm));
+  -webkit-backdrop-filter: blur(var(--xclues-blur-sm));
+  animation: howToPlayFadeIn var(--xclues-duration-normal) ease-out;
+}
+
+@keyframes howToPlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.how-to-play-dialog {
+  background: var(--xclues-card-bg);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius);
+  padding: var(--xclues-spacing-6);
+  max-width: 380px;
+  width: calc(100% - 48px);
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  box-shadow: var(--xclues-shadow-lg);
+  animation: howToPlaySlideUp var(--xclues-duration-normal) ease-out;
+}
+
+@keyframes howToPlaySlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.how-to-play-colors {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-3);
+  font-size: var(--xclues-font-size-md);
+  color: var(--xclues-text-secondary);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .how-to-play-overlay,
+  .how-to-play-dialog {
+    animation: none;
+  }
+}

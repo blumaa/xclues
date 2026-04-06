@@ -2,28 +2,27 @@
 .stats-container {
   display: flex;
   justify-content: space-around;
-  gap: var(--mond-spacing-md);
-  padding: var(--mond-spacing-5);
-  border: 1px solid var(--xclues-header-border);
-  border-radius: var(--xclues-border-radius);
+  gap: var(--xclues-spacing-md);
+  padding-left: var(--xclues-spacing-5);
+  padding-right: var(--xclues-spacing-5);
+  padding-top: var(--xclues-spacing-2);
   background: var(--xclues-card-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--xclues-card-shadow);
+  backdrop-filter: blur(var(--xclues-blur-md));
+  -webkit-backdrop-filter: blur(var(--xclues-blur-md));
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--mond-spacing-1);
+  gap: var(--xclues-spacing-1);
   min-width: 70px;
 }
 
 .stat-number {
-  font-size: 2.25rem;
+  font-size: var(--xclues-font-size-3xl);
   line-height: 1;
-  font-weight: 800;
+  font-weight: var(--xclues-font-weight-extrabold);
   background: linear-gradient(135deg, var(--xclues-primary) 0%, var(--xclues-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -31,11 +30,11 @@
 }
 
 .stat-label {
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: var(--xclues-font-size-xs);
+  font-weight: var(--xclues-font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--mond-text-tertiary);
+  letter-spacing: var(--xclues-tracking-wide);
+  color: var(--xclues-text-tertiary);
   text-align: center;
   line-height: 1.3;
 }

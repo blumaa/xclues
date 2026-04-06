@@ -1,0 +1,29 @@
+.brand-theme-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--xclues-icon-button-size);
+  height: var(--xclues-icon-button-size);
+  min-height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: var(--xclues-border-radius-xs);
+  background: transparent;
+  cursor: pointer;
+  color: var(--xclues-text-primary);
+  transition: background var(--xclues-transition);
+}
+
+.brand-theme-switcher:hover {
+  background: var(--xclues-primary-8);
+}
+
+.brand-theme-switcher:active {
+  background: var(--xclues-primary-15);
+}
+
+.brand-theme-switcher__icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}

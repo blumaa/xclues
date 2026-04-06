@@ -1,19 +1,26 @@
-@import "@mond-design-system/theme/theme.css";
-
 /* ============================================
-   XCLUES DESIGN SYSTEM - Custom Properties
+   XCLUES DESIGN SYSTEM - Static Properties
+   These do NOT change between themes/brands.
+   Themeable tokens are applied via JS (applyThemeTokens).
    ============================================ */
 
 :root {
-  /* Brand Colors */
-  --xclues-primary: #6c5ce7;
-  --xclues-primary-light: #a29bfe;
-  --xclues-primary-dark: #4834d4;
-  --xclues-accent: #fd79a8;
-  --xclues-accent-light: #fab1cc;
-  --xclues-accent-dark: #e84393;
+  /* Spacing scale */
+  --xclues-spacing-1: 0.25rem;
+  --xclues-spacing-2: 0.5rem;
+  --xclues-spacing-3: 0.75rem;
+  --xclues-spacing-4: 1rem;
+  --xclues-spacing-5: 1.25rem;
+  --xclues-spacing-6: 1.5rem;
+  --xclues-spacing-8: 2rem;
+  --xclues-spacing-12: 3rem;
+  --xclues-spacing-xxs: 0.125rem;
+  --xclues-spacing-xs: 0.25rem;
+  --xclues-spacing-sm: 0.5rem;
+  --xclues-spacing-md: 1rem;
+  --xclues-spacing-lg: 1.5rem;
 
-  /* Warm neutrals */
+  /* Warm neutrals (static palette) */
   --xclues-warm-50: #fdf8f3;
   --xclues-warm-100: #f9f0e6;
   --xclues-warm-200: #f0e2cf;
@@ -25,83 +32,56 @@
   --xclues-warm-800: #3a2e1f;
   --xclues-warm-900: #1e1810;
 
-  /* Game group colors - vibrant, modern */
-  --xclues-yellow: #fbbf24;
-  --xclues-yellow-bg: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  --xclues-green: #34d399;
-  --xclues-green-bg: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  --xclues-blue: #60a5fa;
-  --xclues-blue-bg: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-  --xclues-purple: #c084fc;
-  --xclues-purple-bg: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+  /* Blur */
+  --xclues-blur-sm: 4px;
+  --xclues-blur-md: 12px;
 
-  /* Surfaces - light mode */
-  --xclues-page-bg: linear-gradient(160deg, #fdf8f3 0%, #f0e6f6 40%, #e8f0fe 100%);
-  --xclues-card-bg: rgba(255, 255, 255, 0.85);
-  --xclues-card-bg-hover: rgba(255, 255, 255, 0.95);
-  --xclues-card-selected: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  --xclues-card-selected-text: #ffffff;
-  --xclues-card-shadow: 0 2px 8px rgba(108, 92, 231, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --xclues-card-shadow-hover: 0 8px 25px rgba(108, 92, 231, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08);
-  --xclues-card-shadow-selected: 0 4px 20px rgba(108, 92, 231, 0.35), 0 2px 8px rgba(108, 92, 231, 0.2);
+  /* Typography sizes (static) */
+  --xclues-font-size-xs: 0.7rem;
+  --xclues-font-size-sm: 0.8rem;
+  --xclues-font-size-md: 0.85rem;
+  --xclues-font-size-base: 0.95rem;
+  --xclues-font-size-lg: 1.05rem;
+  --xclues-font-size-xl: 1.5rem;
+  --xclues-font-size-2xl: 2rem;
+  --xclues-font-size-3xl: 2.25rem;
 
-  /* Header */
-  --xclues-header-bg: rgba(255, 255, 255, 0.7);
-  --xclues-header-border: rgba(108, 92, 231, 0.1);
-  --xclues-header-blur: 20px;
+  /* Font weight scale (static reference) */
+  --xclues-font-weight-light: 300;
+  --xclues-font-weight-normal: 400;
+  --xclues-font-weight-semibold: 600;
+  --xclues-font-weight-bold: 700;
+  --xclues-font-weight-extrabold: 800;
 
-  /* Footer */
-  --xclues-footer-bg: rgba(255, 255, 255, 0.5);
-  --xclues-footer-border: rgba(108, 92, 231, 0.08);
+  /* Letter spacing scale (static reference) */
+  --xclues-tracking-tight: 0.02em;
+  --xclues-tracking-normal: 0.04em;
+  --xclues-tracking-wide: 0.08em;
+  --xclues-tracking-wider: 0.12em;
 
-  /* Buttons */
-  --xclues-btn-primary-bg: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  --xclues-btn-primary-hover: linear-gradient(135deg, #5b4cdb 0%, #8b83f7 100%);
-  --xclues-btn-primary-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  /* Z-index scale */
+  --xclues-z-header: 10;
+  --xclues-z-overlay: 100;
 
-  /* Misc */
-  --xclues-glow: 0 0 20px rgba(108, 92, 231, 0.3);
-  --xclues-border-radius: 16px;
-  --xclues-border-radius-sm: 12px;
+  /* Animation durations */
+  --xclues-duration-fast: 0.15s;
+  --xclues-duration-normal: 0.3s;
+  --xclues-duration-slow: 0.5s;
+
+  /* Layout */
+  --xclues-board-width-desktop: 480px;
+  --xclues-board-width-tablet: 500px;
+
+  /* Dot sizes (static) */
+  --xclues-dot-size: 12px;
+  --xclues-dot-size-lg: 18px;
+
+  /* Icon button */
+  --xclues-icon-button-size: 32px;
+
+  /* Transition (static) */
   --xclues-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --xclues-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Mistake dots */
-  --xclues-dot-filled: #6c5ce7;
-  --xclues-dot-empty: rgba(108, 92, 231, 0.15);
-  --xclues-dot-glow: 0 0 8px rgba(108, 92, 231, 0.4);
-}
-
-/* Dark mode overrides */
-[data-theme="dark"] {
-  --xclues-page-bg: linear-gradient(160deg, #0f0a1a 0%, #1a1028 40%, #0d1520 100%);
-  --xclues-card-bg: rgba(30, 25, 50, 0.8);
-  --xclues-card-bg-hover: rgba(40, 35, 65, 0.9);
-  --xclues-card-selected: linear-gradient(135deg, #7c6cf7 0%, #a29bfe 100%);
-  --xclues-card-selected-text: #ffffff;
-  --xclues-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(108, 92, 231, 0.1);
-  --xclues-card-shadow-hover: 0 8px 25px rgba(108, 92, 231, 0.2), 0 4px 10px rgba(0, 0, 0, 0.4);
-  --xclues-card-shadow-selected: 0 4px 20px rgba(108, 92, 231, 0.4), 0 0 40px rgba(108, 92, 231, 0.15);
-
-  --xclues-header-bg: rgba(15, 10, 26, 0.8);
-  --xclues-header-border: rgba(108, 92, 231, 0.15);
-
-  --xclues-footer-bg: rgba(15, 10, 26, 0.6);
-  --xclues-footer-border: rgba(108, 92, 231, 0.1);
-
-  --xclues-dot-filled: #a29bfe;
-  --xclues-dot-empty: rgba(162, 155, 254, 0.15);
-  --xclues-dot-glow: 0 0 12px rgba(162, 155, 254, 0.5);
-
-  /* Slightly brighter group colors for dark mode */
-  --xclues-yellow: #fcd34d;
-  --xclues-yellow-bg: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
-  --xclues-green: #6ee7b7;
-  --xclues-green-bg: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
-  --xclues-blue: #93c5fd;
-  --xclues-blue-bg: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-  --xclues-purple: #d8b4fe;
-  --xclues-purple-bg: linear-gradient(135deg, #d8b4fe 0%, #c084fc 100%);
 }
 
 /* ============================================
@@ -126,9 +106,11 @@ html {
 html,
 body {
   background: var(--xclues-page-bg);
-  color: var(--mond-text-primary);
-  font-family: var(--mond-font-family-sans);
-  line-height: 1.5;
+  color: var(--xclues-text-primary);
+  font-family: var(--xclues-font-family, system-ui, sans-serif);
+  line-height: var(--xclues-body-line-height, 1.5);
+  font-weight: var(--xclues-body-weight, 400);
+  letter-spacing: var(--xclues-body-letter-spacing, 0);
   min-height: 100vh;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
@@ -136,7 +118,7 @@ body {
 
 /* Improve focus visibility globally */
 :focus-visible {
-  outline: 3px solid var(--xclues-primary);
+  outline: var(--xclues-focus-ring-style, 3px solid) var(--xclues-focus-ring-color, var(--xclues-primary));
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -146,7 +128,7 @@ body {
   outline: none;
 }
 
-/* Ensure minimum touch target size for all interactive elements */
+/* Global min touch target */
 button,
 [role="button"],
 a,
@@ -157,19 +139,7 @@ textarea {
   min-width: 44px;
 }
 
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Skip to main content link for keyboard users */
+/* Screen reader only class */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -182,78 +152,41 @@ textarea {
   border-width: 0;
 }
 
-/* Smooth text rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
-/* ============================================
-   TOAST OVERRIDES
-   ============================================ */
-
-/* Ensure toasts appear above sticky header (z-index: 10) */
-.mond-toast-container {
-  z-index: 100;
-}
-
-.mond-toast {
-  border-radius: var(--xclues-border-radius-sm);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(108, 92, 231, 0.1);
-}
-
-.mond-toast--info {
-  background: var(--xclues-card-bg);
-  border-left: 4px solid var(--xclues-primary);
-}
-
-.mond-toast--success {
-  background: var(--xclues-card-bg);
-  border-left: 4px solid var(--xclues-green);
-}
-
-.mond-toast--error {
-  background: var(--xclues-card-bg);
-  border-left: 4px solid var(--xclues-accent-dark);
-}
-
-.mond-toast--warning {
-  background: var(--xclues-card-bg);
-  border-left: 4px solid var(--xclues-yellow);
-}
-
-.mond-toast__title {
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.mond-toast--info .mond-toast__progress {
-  background: var(--xclues-primary);
-}
-
-.mond-toast--success .mond-toast__progress {
-  background: var(--xclues-green);
+/* Gradient text utility */
+.xclues-gradient-text {
+  background: linear-gradient(135deg, var(--xclues-primary) 0%, var(--xclues-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ============================================
    ABOUT LINKS OVERRIDES (in results modal)
    ============================================ */
 
-.about-links .mond-button {
-  border-radius: 999px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+.about-links .xbtn {
+  border-radius: var(--xclues-radius-pill, 999px);
+  font-weight: var(--xclues-font-weight-semibold);
+  letter-spacing: var(--xclues-tracking-tight);
   border-color: var(--xclues-primary-light);
   transition: all var(--xclues-transition);
 }
 
-.about-links .mond-button:hover {
+.about-links .xbtn:hover {
   background: var(--xclues-primary);
   border-color: var(--xclues-primary);
-  color: white;
+  color: var(--xclues-btn-primary-text, var(--xclues-card-selected-text));
   transform: translateY(-2px);
   box-shadow: var(--xclues-btn-primary-shadow);
 }

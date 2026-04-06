@@ -1,98 +1,94 @@
-import { Box, Text, Link } from "@mond-design-system/theme";
 import { Link as RouterLink } from "react-router-dom";
 import { useSite } from "../providers/useSite";
+import { XText, XHeading } from "../components/ui";
 import "./PrivacyPage.css";
 
 export function PrivacyPage() {
   const { siteName } = useSite();
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      padding="4"
-      gap="md"
+    <div
       className="privacy-page"
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--xclues-spacing-4, 1rem)', gap: 'var(--xclues-spacing-md, 1rem)' }}
     >
-      <Text size="xl" weight="bold">
+      <XHeading level={1} responsive>
         Privacy Policy
-      </Text>
+      </XHeading>
 
-      <Box display="flex" flexDirection="column" gap="sm" className="privacy-content">
-        <Text size="md" weight="semibold">
+      <div className="privacy-content" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--xclues-spacing-sm, 0.5rem)' }}>
+        <XText size="md" weight="semibold">
           What We Collect
-        </Text>
-        <Text size="sm">
+        </XText>
+        <XText size="sm">
           We use Amplitude, a third-party analytics service, to understand how people use {siteName}.
           This helps us improve the game. Amplitude automatically collects:
-        </Text>
+        </XText>
         <ul className="privacy-list">
-          <li><Text size="sm">Device type and browser information</Text></li>
-          <li><Text size="sm">General location (country/region, not precise location)</Text></li>
-          <li><Text size="sm">Game interactions (games played, wins, streaks)</Text></li>
-          <li><Text size="sm">Anonymous usage patterns</Text></li>
+          <li><XText size="sm">Device type and browser information</XText></li>
+          <li><XText size="sm">General location (country/region, not precise location)</XText></li>
+          <li><XText size="sm">Game interactions (games played, wins, streaks)</XText></li>
+          <li><XText size="sm">Anonymous usage patterns</XText></li>
         </ul>
 
-        <Box paddingTop="2">
-          <Text size="md" weight="semibold">
+        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+          <XText size="md" weight="semibold">
             What We Don't Collect
-          </Text>
-        </Box>
+          </XText>
+        </div>
         <ul className="privacy-list">
-          <li><Text size="sm">Your name or email (unless you contact us)</Text></li>
-          <li><Text size="sm">Precise location data</Text></li>
-          <li><Text size="sm">Any information you don't voluntarily provide</Text></li>
+          <li><XText size="sm">Your name or email (unless you contact us)</XText></li>
+          <li><XText size="sm">Precise location data</XText></li>
+          <li><XText size="sm">Any information you don't voluntarily provide</XText></li>
         </ul>
 
-        <Box paddingTop="2">
-          <Text size="md" weight="semibold">
+        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+          <XText size="md" weight="semibold">
             Local Storage
-          </Text>
-        </Box>
-        <Text size="sm">
+          </XText>
+        </div>
+        <XText size="sm">
           Your game progress and statistics are stored locally in your browser.
           This data never leaves your device unless you choose to share it.
-        </Text>
+        </XText>
 
-        <Box paddingTop="2">
-          <Text size="md" weight="semibold">
+        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+          <XText size="md" weight="semibold">
             Third-Party Services
-          </Text>
-        </Box>
-        <Text size="sm">
-          We use <Link href="https://amplitude.com/privacy" target="_blank" rel="noopener noreferrer">Amplitude</Link> for
+          </XText>
+        </div>
+        <XText size="sm">
+          We use <a href="https://amplitude.com/privacy" target="_blank" rel="noopener noreferrer">Amplitude</a> for
           analytics. Their privacy policy explains how they handle data.
-        </Text>
+        </XText>
 
-        <Box paddingTop="2">
-          <Text size="md" weight="semibold">
+        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+          <XText size="md" weight="semibold">
             Your Rights
-          </Text>
-        </Box>
-        <Text size="sm">
+          </XText>
+        </div>
+        <XText size="sm">
           Analytics data is anonymized and cannot be traced back to you personally.
           If you have questions or concerns, contact us at{" "}
-          <Link href="mailto:blumaa@gmail.com">blumaa@gmail.com</Link>.
-        </Text>
+          <a href="mailto:blumaa@gmail.com">blumaa@gmail.com</a>.
+        </XText>
 
-        <Box paddingTop="2">
-          <Text size="md" weight="semibold">
+        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+          <XText size="md" weight="semibold">
             Changes
-          </Text>
-        </Box>
-        <Text size="sm">
+          </XText>
+        </div>
+        <XText size="sm">
           We may update this policy occasionally. Check back for the latest version.
-        </Text>
-      </Box>
+        </XText>
+      </div>
 
-      <Box paddingTop="2">
+      <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
         <RouterLink to="/" className="privacy-back-link">
-          <Text size="sm" semantic="primary">
+          <XText size="sm" semantic="primary">
             Back to Game
-          </Text>
+          </XText>
         </RouterLink>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

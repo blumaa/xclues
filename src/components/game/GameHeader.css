@@ -1,18 +1,19 @@
 .game-header {
   text-align: center;
-  padding: var(--mond-spacing-2) 0;
+  padding: var(--xclues-spacing-2) 0;
 }
 
 .game-header-title {
-  font-size: 0.95rem;
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  color: var(--mond-text-secondary);
+  font-family: var(--xclues-font-family, inherit);
+  font-size: var(--xclues-font-size-base);
+  font-weight: var(--xclues-font-weight-light);
+  letter-spacing: var(--xclues-tracking-wide);
+  color: var(--xclues-text-secondary);
 }
 
 @media (min-width: 640px) {
   .game-header-title {
-    font-size: 1.05rem;
+    font-size: var(--xclues-font-size-lg);
   }
 }
 

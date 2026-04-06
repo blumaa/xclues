@@ -6,19 +6,7 @@
  */
 
 import type { IStatsStorage, UserStats, GameResult } from '../types/stats';
-import { getTodayDate } from '../utils/index';
-
-/**
- * Get the date for yesterday in YYYY-MM-DD format
- */
-function getYesterdayDate(): string {
-  const now = new Date();
-  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const year = yesterday.getUTCFullYear();
-  const month = String(yesterday.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(yesterday.getUTCDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+import { getTodayDate, getYesterdayDate } from '../utils/index';
 
 /**
  * Default empty stats

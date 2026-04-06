@@ -71,6 +71,7 @@ export function GenreSwitch() {
         <button
           key={genre}
           className={`genre-switch__button${genre === activeGenre ? " genre-switch__button--active" : ""}`}
+          aria-current={genre === activeGenre ? "true" : undefined}
           onClick={() => handleClick(genre, domain)}
           onMouseEnter={() => handleHoverIntent(genre, domain)}
           onTouchStart={() => handleHoverIntent(genre, domain)}

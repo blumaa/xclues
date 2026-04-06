@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { Button } from "@mond-design-system/theme";
+import { XButton } from "../ui";
 import { PuzzleSubmitDrawer } from "./PuzzleSubmitDrawer";
 import { SiteProvider } from "../../providers/SiteProvider";
 
@@ -34,7 +34,7 @@ function DrawerDemo() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <Button onClick={() => setIsOpen(true)}>Open Submit Drawer</Button>
+      <XButton onClick={() => setIsOpen(true)}>Open Submit Drawer</XButton>
       <PuzzleSubmitDrawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

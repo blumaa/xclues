@@ -1,0 +1,34 @@
+.xinput {
+  width: 100%;
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius-sm);
+  background: var(--xclues-card-bg);
+  color: inherit;
+  font-family: inherit;
+  transition: border-color var(--xclues-transition);
+}
+
+.xinput:focus {
+  outline: none;
+  border-color: var(--xclues-primary);
+  box-shadow: 0 0 0 2px var(--xclues-primary-20);
+}
+
+.xinput::placeholder {
+  opacity: 0.5;
+}
+
+.xinput--sm {
+  padding: var(--xclues-spacing-1) var(--xclues-spacing-2);
+  font-size: var(--xclues-font-size-sm);
+}
+
+.xinput--md {
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-3);
+  font-size: var(--xclues-font-size-base);
+}
+
+.xinput--lg {
+  padding: var(--xclues-spacing-3) var(--xclues-spacing-4);
+  font-size: var(--xclues-font-size-lg);
+}

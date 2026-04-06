@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Text } from "@mond-design-system/theme";
 import { useSite } from "../../providers/useSite";
+import { XText } from "../ui";
 import "./CountdownTimer.css";
 
 function getTimeUntilMidnightUTC(): {
@@ -40,9 +40,9 @@ export function CountdownTimer() {
 
   return (
     <div className="countdown-container" role="timer" aria-label={`Time until next ${siteName} puzzle`}>
-      <Text size="xs" semantic="secondary" align="center">
+      <XText size="xs" semantic="secondary" align="center">
         Next {siteName} puzzle in
-      </Text>
+      </XText>
       <span className="countdown-time">
         {formatCountdown()}
       </span>

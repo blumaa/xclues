@@ -1,0 +1,101 @@
+.xtoast-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--xclues-z-overlay);
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-2);
+  padding: var(--xclues-spacing-4);
+  pointer-events: none;
+  max-width: 420px;
+  width: 100%;
+}
+
+.xtoast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--xclues-spacing-3);
+  border-radius: var(--xclues-border-radius-sm);
+  backdrop-filter: blur(var(--xclues-blur-md));
+  -webkit-backdrop-filter: blur(var(--xclues-blur-md));
+  box-shadow: var(--xclues-shadow-lg);
+  border: 1px solid var(--xclues-primary-10);
+  padding: var(--xclues-spacing-3) var(--xclues-spacing-4);
+  animation: xtoastSlideIn var(--xclues-duration-normal) ease-out;
+}
+
+@keyframes xtoastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.xtoast--info {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-primary);
+}
+
+.xtoast--success {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-green);
+}
+
+.xtoast--error {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-accent-dark);
+}
+
+.xtoast--warning {
+  background: var(--xclues-card-bg);
+  border-left: 4px solid var(--xclues-yellow);
+}
+
+.xtoast__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-1);
+}
+
+.xtoast__title {
+  font-weight: var(--xclues-font-weight-semibold);
+  letter-spacing: var(--xclues-tracking-tight);
+  font-size: var(--xclues-font-size-sm);
+}
+
+.xtoast__message {
+  font-size: var(--xclues-font-size-xs);
+  opacity: 0.8;
+}
+
+.xtoast__close {
+  all: unset;
+  cursor: pointer;
+  font-size: var(--xclues-font-size-xl);
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity var(--xclues-transition);
+  min-height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xtoast__close:hover {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xtoast {
+    animation: none;
+  }
+}

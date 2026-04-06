@@ -1,6 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
+import { BRAND_THEMES, applyThemeTokens } from '../themes';
 
 type Theme = 'light' | 'dark';
+export type BrandTheme = keyof typeof BRAND_THEMES;
+
+const BRAND_NAMES = Object.keys(BRAND_THEMES) as BrandTheme[];
+const BRAND_STORAGE_KEY = 'xclues-brand-theme';
+
+function isValidBrand(value: string): value is BrandTheme {
+  return value in BRAND_THEMES;
+}
+
+function getInitialBrand(): BrandTheme {
+  if (typeof window === 'undefined') return 'claude';
+  const stored = localStorage.getItem(BRAND_STORAGE_KEY);
+  if (stored && isValidBrand(stored)) return stored;
+  return 'claude';
+}
+
+export { BRAND_NAMES };
 
 /**
  * Gets the user's system color scheme preference
@@ -33,6 +51,8 @@ export interface UseThemeReturn {
   isDarkMode: boolean;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  brandTheme: BrandTheme;
+  setBrandTheme: (brand: BrandTheme) => void;
 }
 
 /**
@@ -53,12 +73,24 @@ export interface UseThemeReturn {
 export function useTheme(storagePrefix: string): UseThemeReturn {
   const storageKey = `${storagePrefix}-theme`;
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme(storageKey));
+  const [brandTheme, setBrandThemeState] = useState<BrandTheme>(() => getInitialBrand());
 
-  // Set data-theme on document root and persist to localStorage
+  // Apply theme + brand tokens atomically to avoid flash of wrong theme
   useEffect(() => {
+    // 1. Set data-theme attribute
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
+
+    // 2. Apply brand tokens for the current color scheme
+    const brandDef = BRAND_THEMES[brandTheme];
+    if (brandDef) {
+      const tokens = theme === 'dark' ? brandDef.dark : brandDef.light;
+      applyThemeTokens(tokens);
+    }
+
+    // 3. Persist brand choice
+    localStorage.setItem(BRAND_STORAGE_KEY, brandTheme);
+  }, [brandTheme, theme, storageKey]);
 
   // Set theme to a specific value
   const setTheme = useCallback((newTheme: Theme) => {
@@ -70,10 +102,17 @@ export function useTheme(storagePrefix: string): UseThemeReturn {
     setThemeState(prev => prev === 'light' ? 'dark' : 'light');
   }, []);
 
+  // Set brand theme
+  const setBrandTheme = useCallback((brand: BrandTheme) => {
+    setBrandThemeState(brand);
+  }, []);
+
   return {
     theme,
     isDarkMode: theme === 'dark',
     setTheme,
     toggleTheme,
+    brandTheme,
+    setBrandTheme,
   };
 }

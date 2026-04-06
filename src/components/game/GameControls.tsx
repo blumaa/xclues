@@ -1,4 +1,4 @@
-import { Box, Button } from "@mond-design-system/theme";
+import { XButton } from "../ui";
 import "./GameControls.css";
 
 interface GameControlsProps {
@@ -17,36 +17,33 @@ export function GameControls({
   canSubmit,
 }: GameControlsProps) {
   return (
-    <Box display="flex" gap="sm" justifyContent="center" className="game-controls">
-      <Button
+    <div className="game-controls" style={{ display: 'flex', gap: 'var(--xclues-spacing-sm, 0.5rem)', justifyContent: 'center' }}>
+      <XButton
         variant="outline"
         onClick={onShuffle}
         size="md"
-        corners="rounded-xl"
         aria-label="Shuffle tiles"
       >
         Shuffle
-      </Button>
-      <Button
+      </XButton>
+      <XButton
         variant="outline"
         onClick={onDeselect}
         size="md"
         disabled={!hasSelection}
-        corners="rounded-xl"
         aria-label="Deselect all tiles"
       >
         Deselect All
-      </Button>
-      <Button
+      </XButton>
+      <XButton
         variant="primary"
         onClick={onSubmit}
         size="md"
         disabled={!canSubmit}
-        corners="rounded-xl"
         aria-label="Submit guess"
       >
         Submit
-      </Button>
-    </Box>
+      </XButton>
+    </div>
   );
 }

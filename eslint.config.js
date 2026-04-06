@@ -35,6 +35,12 @@ export default [js.configs.recommended, {
       setInterval: 'readonly',
       clearInterval: 'readonly',
       HTMLInputElement: 'readonly',
+      HTMLElement: 'readonly',
+      HTMLButtonElement: 'readonly',
+      HTMLDivElement: 'readonly',
+      HTMLHeadingElement: 'readonly',
+      HTMLAnchorElement: 'readonly',
+      HTMLSpanElement: 'readonly',
       crypto: 'readonly',
       Storage: 'readonly',
       React: 'readonly',
@@ -86,5 +92,5 @@ export default [js.configs.recommended, {
     },
   },
 }, {
-  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase'],
+  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase', '.storybook'],
 }, ...storybook.configs["flat/recommended"]];

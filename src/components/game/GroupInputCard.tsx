@@ -1,9 +1,8 @@
-import { Box, Text } from "@mond-design-system/theme";
-import { Input } from "@mond-design-system/theme/client";
+import { XText, XInput } from "../ui";
 import type { ChangeEvent } from "react";
+import type { DifficultyColor } from "../../types";
+import { Dot } from "../Dot";
 import "./GroupInputCard.css";
-
-export type DifficultyColor = "yellow" | "green" | "blue" | "purple";
 
 const COLOR_LABELS: Record<DifficultyColor, string> = {
   yellow: "Easy",
@@ -35,25 +34,25 @@ export function GroupInputCard({ color, value, onChange }: GroupInputCardProps) 
   };
 
   return (
-    <Box className={`group-input-card group-input-card--${color}`}>
-      <Box display="flex" alignItems="center" gap="xs" marginBottom="2">
-        <Box className={`group-input-card__color-dot group-input-card__color-dot--${color}`} />
-        <Text weight="semibold" size="sm">
+    <div className={`group-input-card group-input-card--${color}`}>
+      <div style={{ display: "flex", alignItems: "center", gap: "var(--xclues-spacing-xs)", marginBottom: "var(--xclues-spacing-2)" }}>
+        <Dot size="sm" variant="color" color={color} />
+        <XText weight="semibold" size="sm">
           {COLOR_LABELS[color]}
-        </Text>
-      </Box>
+        </XText>
+      </div>
 
-      <Box display="flex" flexDirection="column" gap="xs">
-        <Input
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--xclues-spacing-xs)" }}>
+        <XInput
           placeholder="Connection (e.g., 'Directed by Spielberg')"
           value={value.connection}
           onChange={(e: ChangeEvent<HTMLInputElement>) => handleConnectionChange(e.target.value)}
           inputSize="sm"
         />
 
-        <Box display="flex" flexDirection="column" gap="xs">
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--xclues-spacing-xs)" }}>
           {value.items.map((item, index) => (
-            <Input
+            <XInput
               key={index}
               placeholder={`Item ${index + 1}`}
               value={item}
@@ -61,8 +60,8 @@ export function GroupInputCard({ color, value, onChange }: GroupInputCardProps) 
               inputSize="sm"
             />
           ))}
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }

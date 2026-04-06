@@ -1,0 +1,47 @@
+.xmodal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--xclues-z-overlay);
+  background: var(--xclues-overlay-bg);
+  backdrop-filter: blur(var(--xclues-blur-sm));
+  -webkit-backdrop-filter: blur(var(--xclues-blur-sm));
+  animation: xmodal-fade-in var(--xclues-duration-normal) ease-out;
+}
+
+.xmodal__content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: calc(var(--xclues-z-overlay) + 1);
+  background: var(--xclues-card-bg);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius);
+  max-width: 480px;
+  width: calc(100% - var(--xclues-spacing-8));
+  max-height: calc(100vh - var(--xclues-spacing-12));
+  overflow-y: auto;
+  box-shadow: var(--xclues-shadow-lg);
+  animation: xmodal-slide-up var(--xclues-duration-normal) ease-out;
+}
+
+.xmodal__content:focus {
+  outline: none;
+}
+
+@keyframes xmodal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes xmodal-slide-up {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmodal__overlay,
+  .xmodal__content {
+    animation: none;
+  }
+}

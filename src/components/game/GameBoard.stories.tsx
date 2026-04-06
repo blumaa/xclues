@@ -1,70 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GameBoard } from "./GameBoard";
 import { useGameStore } from "../../store/gameStore";
-import { ToastProvider } from "../../providers/ToastProvider";
-import { SiteProvider } from "../../providers/SiteProvider";
-import { MockThemeProvider } from "../../../.storybook/MockThemeProvider";
+import { withProviders } from "../../__mocks__/storyDecorators";
+import { mockItems, mockGroups } from "../../__mocks__/puzzleData";
 import type { Item, Group } from "../../types";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const mockItems: Item[] = [
-  { id: 1, title: "Pulp Fiction", year: 1994 },
-  { id: 2, title: "Kill Bill", year: 2003 },
-  { id: 3, title: "Reservoir Dogs", year: 1992 },
-  { id: 4, title: "Django Unchained", year: 2012 },
-  { id: 5, title: "The Godfather", year: 1972 },
-  { id: 6, title: "Goodfellas", year: 1990 },
-  { id: 7, title: "Casino", year: 1995 },
-  { id: 8, title: "Scarface", year: 1983 },
-  { id: 9, title: "Inception", year: 2010 },
-  { id: 10, title: "The Matrix", year: 1999 },
-  { id: 11, title: "Tenet", year: 2020 },
-  { id: 12, title: "Memento", year: 2000 },
-  { id: 13, title: "Interstellar", year: 2014 },
-  { id: 14, title: "Arrival", year: 2016 },
-  { id: 15, title: "2001: A Space Odyssey", year: 1968 },
-  { id: 16, title: "Contact", year: 1997 },
-];
-
-const mockGroups: Group[] = [
-  {
-    id: "1",
-    items: mockItems.slice(0, 4),
-    connection: "Directed by Quentin Tarantino",
-    difficulty: "easy",
-    color: "yellow",
-  },
-  {
-    id: "2",
-    items: mockItems.slice(4, 8),
-    connection: "Classic mob films",
-    difficulty: "medium",
-    color: "green",
-  },
-  {
-    id: "3",
-    items: mockItems.slice(8, 12),
-    connection: "Mind-bending narratives",
-    difficulty: "hard",
-    color: "blue",
-  },
-  {
-    id: "4",
-    items: mockItems.slice(12, 16),
-    connection: "Films about human connection across space/time",
-    difficulty: "hardest",
-    color: "purple",
-  },
-];
 
 // Helper to initialize store state
 function StoreInitializer({
@@ -108,19 +48,7 @@ const meta: Meta<typeof GameBoard> = {
     layout: "center",
   },
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={queryClient}>
-        <SiteProvider>
-          <MockThemeProvider>
-            <ToastProvider>
-              <Story />
-            </ToastProvider>
-          </MockThemeProvider>
-        </SiteProvider>
-      </QueryClientProvider>
-    ),
-  ],
+  decorators: [withProviders],
 };
 
 export default meta;
@@ -217,9 +145,8 @@ export const Completed: Story = {
 // Story showing the animation in action
 function AnimatingStoreInitializer() {
   useEffect(() => {
-    // Set up state with animation in progress
     useGameStore.setState({
-      items: mockItems, // All items still visible
+      items: mockItems,
       groups: mockGroups,
       foundGroups: [],
       selectedItemIds: [],
@@ -230,7 +157,6 @@ function AnimatingStoreInitializer() {
       puzzleDate: "2024-01-15",
       previousGuesses: [],
       isLoading: false,
-      animatingGroup: mockGroups[0], // First group is animating
     });
   }, []);
 

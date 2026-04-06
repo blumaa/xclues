@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { Modal } from "@mond-design-system/theme/client";
-import { Box, Text, Button, Icon } from "@mond-design-system/theme";
+import { XModal, XText, XButton, XIcon } from "../ui";
 import { useStats } from "../../providers/useStats";
 import { useSite } from "../../providers/useSite";
 import { Stats } from "./Stats";
 import { GameResultDisplay } from "./GameResultDisplay";
 import { CountdownTimer } from "./CountdownTimer";
 import { trackEvent, EVENTS } from "../../services/analytics";
-import { generateShareText, copyToClipboard } from "../../utils/shareResults";
+import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "./ShareIcon";
 import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
@@ -48,20 +47,9 @@ export function ResultsModal({
             maxStreak: loadedStats.maxStreak,
           });
         })
-        .catch((error) => {
-          console.error("Failed to load stats:", error);
+        .catch(() => {
+          // Stats may not be available yet
         });
-
-      const timer = setTimeout(() => {
-        stats
-          .getStats()
-          .then(setUserStats)
-          .catch((error) => {
-            console.error("Failed to reload stats:", error);
-          });
-      }, 100);
-
-      return () => clearTimeout(timer);
     }
   }, [isOpen, stats]);
 
@@ -75,7 +63,7 @@ export function ResultsModal({
       domain,
     });
 
-    const success = await copyToClipboard(shareText);
+    const success = await shareResults(shareText);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -83,19 +71,22 @@ export function ResultsModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <XModal isOpen={isOpen} onClose={onClose}>
       <div className="results-modal-content">
+        <button className="results-close" onClick={onClose} aria-label="Close">
+          ✕
+        </button>
         {/* Result heading */}
         <div className="results-heading">
           <span className="results-heading-title">
             {gameStatus === "won" ? "You Won!" : "Game Over"}
           </span>
           <div className="results-heading-subtitle">
-            <Text align="center">
+            <XText align="center">
               {gameStatus === "won"
                 ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
                 : "Better luck next time!"}
-            </Text>
+            </XText>
           </div>
         </div>
 
@@ -115,32 +106,24 @@ export function ResultsModal({
         {/* Share button */}
         {guessHistory && guessHistory.length > 0 && (
           <div className="results-share">
-            <Button
+            <XButton
               variant="outline"
               onClick={handleShare}
               size="md"
               aria-label={copied ? "Results copied to clipboard" : "Share your results"}
             >
-              <Box display="flex" alignItems="center" gap="xxs">
+              <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                 {!copied && (
-                  <Icon color="currentColor" size="sm">
+                  <XIcon color="currentColor" size="sm">
                     <ShareIcon />
-                  </Icon>
+                  </XIcon>
                 )}
                 {copied ? "Copied!" : "Share Your Results"}
-              </Box>
-            </Button>
+              </div>
+            </XButton>
           </div>
         )}
-
-        {/* Back to game */}
-        <div className="results-back">
-          <Button variant="primary" onClick={onClose} size="lg" fullWidth>
-            Back to Game
-          </Button>
-        </div>
-
       </div>
-    </Modal>
+    </XModal>
   );
 }

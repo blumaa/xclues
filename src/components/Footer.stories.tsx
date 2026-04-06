@@ -1,22 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Footer } from "./Footer";
-import { MockThemeProvider } from "../../.storybook/MockThemeProvider";
+import { withSiteAndRouter } from "../__mocks__/storyDecorators";
 
 const meta: Meta<typeof Footer> = {
-  title: "Components/Footer",
+  title: "App/Footer",
   component: Footer,
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
   decorators: [
+    withSiteAndRouter,
     (Story) => (
-      <MockThemeProvider>
-        <div style={{ minHeight: "200px", display: "flex", flexDirection: "column" }}>
-          <div style={{ flex: 1 }} />
-          <Story />
-        </div>
-      </MockThemeProvider>
+      <div style={{ minHeight: "200px", display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1 }} />
+        <Story />
+      </div>
     ),
   ],
 };

@@ -9,8 +9,9 @@ describe('useTheme', () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear();
-    // Reset data-theme attribute
+    // Reset data-theme attribute and clear inline styles
     document.documentElement.removeAttribute('data-theme');
+    document.documentElement.style.cssText = '';
     // Mock matchMedia
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
@@ -143,6 +144,58 @@ describe('useTheme', () => {
     // Should use stored preference, not system preference
     expect(result.current.theme).toBe('light');
     expect(result.current.isDarkMode).toBe(false);
+  });
+
+  it('brandTheme defaults to claude', () => {
+    const { result } = renderHook(() => useTheme(TEST_PREFIX));
+    expect(result.current.brandTheme).toBe('claude');
+  });
+
+  it('setBrandTheme updates brandTheme', () => {
+    const { result } = renderHook(() => useTheme(TEST_PREFIX));
+
+    act(() => {
+      result.current.setBrandTheme('superhuman');
+    });
+
+    expect(result.current.brandTheme).toBe('superhuman');
+  });
+
+  it('setBrandTheme persists to localStorage key xclues-brand-theme', () => {
+    const { result } = renderHook(() => useTheme(TEST_PREFIX));
+
+    act(() => {
+      result.current.setBrandTheme('superhuman');
+    });
+
+    expect(localStorage.getItem('xclues-brand-theme')).toBe('superhuman');
+  });
+
+  it('setBrandTheme applies theme tokens to document root', () => {
+    const { result } = renderHook(() => useTheme(TEST_PREFIX));
+
+    act(() => {
+      result.current.setBrandTheme('superhuman');
+    });
+
+    // Superhuman primary is #714cb6
+    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#714cb6');
+  });
+
+  it('setBrandTheme switches back to xclues tokens', () => {
+    const { result } = renderHook(() => useTheme(TEST_PREFIX));
+
+    act(() => {
+      result.current.setBrandTheme('superhuman');
+    });
+
+    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#714cb6');
+
+    act(() => {
+      result.current.setBrandTheme('xclues');
+    });
+
+    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#6c5ce7');
   });
 
   it('should use different storage keys for different prefixes', () => {

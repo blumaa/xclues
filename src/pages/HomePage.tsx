@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
-import { Box, Spinner, Text } from "@mond-design-system/theme";
 import { useGameStore } from "../store/gameStore";
 import { GameBoard } from "../components/game/GameBoard";
+import { GameSkeleton } from "../components/game/GameSkeleton";
 import { ResultsModal } from "../components/game/ResultsModal";
 import { useStorage } from "../providers/useStorage";
 import { useStats } from "../providers/useStats";
@@ -10,11 +10,12 @@ import { useDailyPuzzle } from "../lib/supabase/storage";
 import { getTodayDate } from "../utils/index";
 import { guessesToColorHistory } from "../utils/guessHistory";
 import { trackEvent, EVENTS } from "../services/analytics";
+import { XText } from "../components/ui";
 import type { GameResult } from "../types";
 import "./HomePage.css";
 
 export function HomePage() {
-  const { gameStatus, groups, mistakes, previousGuesses, initializeGame, restoreCompletedGame } =
+  const { gameStatus, groups, mistakes, previousGuesses, initializeGame, restoreCompletedGame, restoreInProgressGame } =
     useGameStore();
   const [resultsDismissed, setResultsDismissed] = useState(false);
   const [showResultsDelayed, setShowResultsDelayed] = useState(false);
@@ -70,7 +71,17 @@ export function HomePage() {
   // Initialize game when puzzle loads (only if not already played)
   useEffect(() => {
     if (puzzle && statsLoaded && !alreadyPlayedToday) {
-      initializeGame(puzzle.items, puzzle.groups, today);
+      // Try to restore in-progress game first
+      const restored = restoreInProgressGame(today, puzzle.groups, genre);
+      if (restored) {
+        trackEvent(EVENTS.GAME_RESUMED, {
+          puzzleId: puzzle.id,
+          puzzleDate: today,
+          genre,
+        });
+        return;
+      }
+      initializeGame(puzzle.items, puzzle.groups, today, genre);
       trackEvent(EVENTS.GAME_STARTED, {
         puzzleId: puzzle.id,
         puzzleDate: today,
@@ -96,6 +107,7 @@ export function HomePage() {
     alreadyPlayedToday,
     initializeGame,
     restoreCompletedGame,
+    restoreInProgressGame,
     today,
     genre,
   ]);
@@ -150,16 +162,7 @@ export function HomePage() {
   if (isLoading || !statsLoaded) {
     return (
       <div className="homepage-state" role="status" aria-label="Loading puzzle">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          gap="lg"
-        >
-          <Spinner size="lg" />
-          <Text>Loading today&apos;s puzzle...</Text>
-        </Box>
+        <GameSkeleton />
       </div>
     );
   }
@@ -167,16 +170,10 @@ export function HomePage() {
   if (error) {
     return (
       <div className="homepage-state" role="alert">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          gap="lg"
-        >
-          <Text size="lg" weight="semibold">Failed to load puzzle</Text>
-          <Text semantic="secondary">{error.message}</Text>
-        </Box>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--xclues-spacing-lg, 1.5rem)' }}>
+          <XText size="lg" weight="semibold">Failed to load puzzle</XText>
+          <XText semantic="secondary">{error.message}</XText>
+        </div>
       </div>
     );
   }
@@ -184,16 +181,10 @@ export function HomePage() {
   if (!puzzle || !groups.length) {
     return (
       <div className="homepage-state" role="status">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          gap="lg"
-        >
-          <Text size="lg" weight="semibold">No puzzle available for today</Text>
-          <Text semantic="secondary">Check back soon!</Text>
-        </Box>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--xclues-spacing-lg, 1.5rem)' }}>
+          <XText size="lg" weight="semibold">No puzzle available for today</XText>
+          <XText semantic="secondary">Check back soon!</XText>
+        </div>
       </div>
     );
   }

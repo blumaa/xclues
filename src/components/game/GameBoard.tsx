@@ -1,4 +1,3 @@
-import { Box, Button, Icon, Text } from "@mond-design-system/theme";
 import { useGameStore } from "../../store/gameStore";
 import { useToast } from "../../providers/useToast";
 import { GroupCard } from "./GroupCard";
@@ -6,8 +5,8 @@ import { ItemGrid } from "./ItemGrid";
 import { GameControls } from "./GameControls";
 import { GameHeader } from "./GameHeader";
 import { MistakesIndicator } from "./MistakesIndicator";
-import StatsIcon from "./StatsIcon";
-import PuzzleSubmitIcon from "./PuzzleSubmitIcon";
+import { PostGameActions } from "./PostGameActions";
+import { WinCelebration } from "./WinCelebration";
 import { PuzzleSubmitDrawer } from "./PuzzleSubmitDrawer";
 import { usePuzzleSubmit } from "../../hooks/usePuzzleSubmit";
 import { trackEvent, EVENTS } from "../../services/analytics";
@@ -52,8 +51,8 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
   }, [notification, showInfo]);
 
   return (
-    <Box>
-      <Box display="flex" flexDirection="column" gap="md">
+    <div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--xclues-spacing-md)" }}>
         <GameHeader puzzleDate={puzzleDate || undefined} />
 
         {/* Found groups as colored rows */}
@@ -87,43 +86,13 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
             gameStatus={gameStatus}
           />
         ) : (
-          <div className="game-actions">
-            {onViewStats && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onViewStats}
-                aria-label="View statistics"
-              >
-                <Box display="flex" flexDirection="column" alignItems="center">
-                  <Icon size="lg">
-                    <StatsIcon />
-                  </Icon>
-                  <Text responsive size="xs">
-                    Stats
-                  </Text>
-                </Box>
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                trackEvent(EVENTS.CREATE_PUZZLE_CLICKED);
-                setIsSubmitDrawerOpen(true);
-              }}
-              aria-label="Create a new puzzle"
-            >
-              <Box display="flex" flexDirection="column" alignItems="center">
-                <Icon size="lg">
-                  <PuzzleSubmitIcon />
-                </Icon>
-                <Text responsive size="xs">
-                  Create Puzzle
-                </Text>
-              </Box>
-            </Button>
-          </div>
+          <PostGameActions
+            onViewStats={onViewStats}
+            onCreatePuzzle={() => {
+              trackEvent(EVENTS.CREATE_PUZZLE_CLICKED);
+              setIsSubmitDrawerOpen(true);
+            }}
+          />
         )}
 
         {gameStatus === "playing" && (
@@ -135,7 +104,9 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
             canSubmit={selectedItemIds.length === MAX_SELECTIONS}
           />
         )}
-      </Box>
+
+        {gameStatus === "won" && <WinCelebration />}
+      </div>
 
       <PuzzleSubmitDrawer
         isOpen={isSubmitDrawerOpen}
@@ -158,6 +129,6 @@ export function GameBoard({ onViewStats }: GameBoardProps) {
         }}
         isSubmitting={isSubmitting}
       />
-    </Box>
+    </div>
   );
 }

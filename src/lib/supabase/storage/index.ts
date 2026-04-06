@@ -10,7 +10,3 @@ export * from './IPuzzleStorage';
 export * from './SupabaseStorage';
 export * from './usePuzzleStorage';
 
-// Group storage
-export * from './IGroupStorage';
-export * from './SupabaseGroupStorage';
-export * from './useGroupStorage';

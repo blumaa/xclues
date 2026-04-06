@@ -1,7 +1,7 @@
-/* Item tile — use .item-tile.mond-card to beat single-class Mond selectors
-   without resorting to !important, while letting .mond-card--shake / --jump win */
+/* Item tile — use .item-tile.xcard to beat single-class selectors
+   without resorting to !important, while letting .xcard--shake / --jump win */
 
-.item-tile.mond-card {
+.item-tile.xcard {
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
@@ -11,9 +11,9 @@
   border-radius: var(--xclues-border-radius);
   box-shadow: var(--xclues-card-shadow);
   background: var(--xclues-card-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(108, 92, 231, 0.06);
+  backdrop-filter: blur(var(--xclues-blur-md));
+  -webkit-backdrop-filter: blur(var(--xclues-blur-md));
+  border: 1px solid var(--xclues-primary-6);
   transition:
     transform var(--xclues-transition),
     box-shadow var(--xclues-transition),
@@ -22,15 +22,15 @@
 }
 
 /* Hover state - lift and glow */
-.item-tile.mond-card:hover {
+.item-tile.xcard:hover {
   transform: translateY(-3px) scale(1.03);
   box-shadow: var(--xclues-card-shadow-hover);
   background: var(--xclues-card-bg-hover);
-  border-color: rgba(108, 92, 231, 0.15);
+  border-color: var(--xclues-primary-15);
 }
 
 /* Selected state - dramatic color fill with glow */
-.item-tile.mond-card[aria-pressed="true"] {
+.item-tile.xcard[aria-pressed="true"] {
   background: var(--xclues-card-selected);
   color: var(--xclues-card-selected-text);
   box-shadow: var(--xclues-card-shadow-selected);
@@ -38,12 +38,12 @@
   transform: scale(1.04);
 }
 
-.item-tile.mond-card[aria-pressed="true"] * {
+.item-tile.xcard[aria-pressed="true"] * {
   color: var(--xclues-card-selected-text);
 }
 
 /* Selected + hover */
-.item-tile.mond-card[aria-pressed="true"]:hover {
+.item-tile.xcard[aria-pressed="true"]:hover {
   transform: scale(1.06);
   box-shadow: var(--xclues-card-shadow-selected), var(--xclues-glow);
 }
@@ -54,21 +54,44 @@
 }
 
 .item-tile:focus-visible {
-  outline: 3px solid var(--xclues-primary);
+  outline: var(--xclues-focus-ring-style, 3px solid) var(--xclues-focus-ring-color, var(--xclues-primary));
   outline-offset: 2px;
   z-index: 1;
 }
 
+/* Prevent long titles from overflowing the square tile */
+.item-tile .xcard__body {
+  overflow: hidden;
+  padding: var(--xclues-spacing-2);
+}
+
+@media (min-width: 640px) {
+  .item-tile .xcard__body {
+    padding: var(--xclues-spacing-3);
+  }
+}
+
+.item-tile .xtext {
+  overflow: hidden;
+  font-weight: var(--xclues-font-weight-semibold);
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  width: 100%;
+  text-align: center;
+}
+
 /* Active/pressed state for touch feedback — skip during animations */
-.item-tile.mond-card:active:not(.mond-card--shake):not(.mond-card--jump) {
+.item-tile.xcard:active:not(.xcard--shake):not(.xcard--jump) {
   transform: scale(0.96);
-  transition: transform 0.1s ease;
+  transition: transform var(--xclues-duration-fast) ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .item-tile.mond-card:hover,
-  .item-tile.mond-card:active,
-  .item-tile.mond-card[aria-pressed="true"] {
+  .item-tile.xcard:hover,
+  .item-tile.xcard:active,
+  .item-tile.xcard[aria-pressed="true"] {
     transform: none;
   }
 }

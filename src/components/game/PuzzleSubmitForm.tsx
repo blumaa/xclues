@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Box, Button, Text } from "@mond-design-system/theme";
-import { GroupInputCard, type GroupInputValue, type DifficultyColor } from "./GroupInputCard";
+import { XButton, XText } from "../ui";
+import { GroupInputCard, type GroupInputValue } from "./GroupInputCard";
+import type { DifficultyColor } from "../../types";
 import type { Genre } from "../../config";
 import "./PuzzleSubmitForm.css";
 
@@ -66,11 +67,11 @@ export function PuzzleSubmitForm({ genre, onSubmit, isSubmitting = false }: Puzz
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap="md">
-      <Box display="flex" flexDirection="column" gap="sm">
-        <Text size="sm" weight="semibold">
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--xclues-spacing-md)" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--xclues-spacing-sm)" }}>
+        <XText size="sm" weight="semibold">
           Create 4 groups of 4 items each
-        </Text>
+        </XText>
         {COLORS.map((color, index) => (
           <GroupInputCard
             key={color}
@@ -79,15 +80,15 @@ export function PuzzleSubmitForm({ genre, onSubmit, isSubmitting = false }: Puzz
             onChange={(value) => handleGroupChange(index, value)}
           />
         ))}
-      </Box>
+      </div>
 
-      <Button
+      <XButton
         variant="primary"
         onClick={handleSubmit}
         disabled={!isFormValid || isSubmitting}
       >
         {isSubmitting ? "Submitting..." : "Submit Puzzle"}
-      </Button>
-    </Box>
+      </XButton>
+    </div>
   );
 }
