@@ -1,5 +1,4 @@
-import { Box, Heading, Spinner, Text } from "@mond-design-system/theme";
-import { Drawer, DrawerHeader, DrawerBody } from "@mond-design-system/theme/client";
+import { XDrawer, XDrawerHeader, XDrawerBody, XHeading, XSpinner, XText } from "../ui";
 import { PuzzleSubmitForm, type PuzzleSubmission } from "./PuzzleSubmitForm";
 import { useSite } from "../../providers/useSite";
 
@@ -23,24 +22,26 @@ export function PuzzleSubmitDrawer({
   };
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} width="lg">
-      <DrawerHeader onClose={onClose}>
-        <Heading level={3}>Submit a Puzzle</Heading>
-      </DrawerHeader>
-      <DrawerBody>
-        <Box padding="4">
+    <XDrawer isOpen={isOpen} onClose={onClose} width="lg">
+      <XDrawerHeader onClose={onClose}>
+        <XHeading level={3}>Submit a Puzzle</XHeading>
+      </XDrawerHeader>
+      <XDrawerBody>
+        <div style={{ padding: "var(--xclues-spacing-4)" }}>
           {isSubmitting ? (
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-              gap="md"
-              padding="4"
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "var(--xclues-spacing-md)",
+                padding: "var(--xclues-spacing-4)",
+              }}
             >
-              <Spinner size="lg" label="Submitting your puzzle..." />
-              <Text semantic="secondary">Submitting your puzzle...</Text>
-            </Box>
+              <XSpinner size="lg" label="Submitting your puzzle..." />
+              <XText semantic="secondary">Submitting your puzzle...</XText>
+            </div>
           ) : (
             <PuzzleSubmitForm
               genre={genre}
@@ -48,8 +49,8 @@ export function PuzzleSubmitDrawer({
               isSubmitting={isSubmitting}
             />
           )}
-        </Box>
-      </DrawerBody>
-    </Drawer>
+        </div>
+      </XDrawerBody>
+    </XDrawer>
   );
 }

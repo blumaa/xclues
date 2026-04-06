@@ -1,0 +1,103 @@
+.xbtn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-2);
+  border-radius: var(--xclues-border-radius-sm);
+  font-weight: var(--xclues-font-weight-semibold);
+  letter-spacing: var(--xclues-button-letter-spacing, var(--xclues-tracking-normal));
+  text-transform: var(--xclues-button-text-transform, none);
+  cursor: pointer;
+  transition: all var(--xclues-transition);
+  min-height: 44px;
+  min-width: 44px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sizes */
+.xbtn--sm {
+  padding: var(--xclues-spacing-1) var(--xclues-spacing-3);
+  font-size: var(--xclues-font-size-sm);
+}
+
+.xbtn--md {
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-4);
+  font-size: var(--xclues-font-size-base);
+}
+
+.xbtn--lg {
+  padding: var(--xclues-spacing-3) var(--xclues-spacing-6);
+  font-size: var(--xclues-font-size-lg);
+}
+
+/* Primary variant */
+.xbtn--primary {
+  background: var(--xclues-btn-primary-bg);
+  color: var(--xclues-btn-primary-text, var(--xclues-card-selected-text));
+  box-shadow: var(--xclues-btn-primary-shadow);
+}
+
+.xbtn--primary:hover:not(:disabled) {
+  background: var(--xclues-btn-primary-hover);
+  transform: var(--xclues-hover-transform, translateY(-2px));
+  opacity: var(--xclues-hover-opacity, 1);
+}
+
+.xbtn--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Outline variant */
+.xbtn--outline {
+  background: transparent;
+  border: 1px solid var(--xclues-primary);
+  color: var(--xclues-primary);
+}
+
+.xbtn--outline:hover:not(:disabled) {
+  background: var(--xclues-primary-8);
+  transform: var(--xclues-hover-transform, translateY(-1px));
+  opacity: var(--xclues-hover-opacity, 1);
+}
+
+/* Ghost variant */
+.xbtn--ghost {
+  background: transparent;
+  color: inherit;
+}
+
+.xbtn--ghost:hover:not(:disabled) {
+  background: var(--xclues-primary-8);
+  opacity: var(--xclues-hover-opacity, 1);
+}
+
+/* Icon only */
+.xbtn--icon-only {
+  padding: var(--xclues-spacing-2);
+}
+
+/* Full width */
+.xbtn--full-width {
+  width: 100%;
+}
+
+/* Disabled */
+.xbtn--disabled {
+  opacity: var(--xclues-disabled-opacity, 0.5);
+  cursor: not-allowed;
+}
+
+/* Focus */
+.xbtn:focus-visible {
+  outline: var(--xclues-focus-ring-style, 3px solid) var(--xclues-focus-ring-color, var(--xclues-primary));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xbtn:hover {
+    transform: none;
+  }
+}

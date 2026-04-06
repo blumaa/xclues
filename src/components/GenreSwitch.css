@@ -1,6 +1,6 @@
 .genre-switch {
   display: inline-flex;
-  border-radius: 999px;
+  border-radius: var(--xclues-radius-pill, 999px);
   border: 1px solid var(--xclues-header-border);
   background: var(--xclues-card-bg);
   padding: 2px;
@@ -12,29 +12,31 @@
   box-sizing: border-box;
   min-height: 0;
   padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.8rem;
+  border-radius: var(--xclues-radius-pill, 999px);
+  font-size: var(--xclues-font-size-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  color: var(--mond-color-text-secondary, #888);
+  transition: background var(--xclues-transition), color var(--xclues-transition);
+  color: var(--xclues-text-secondary);
   text-align: center;
 }
 
 .genre-switch__button:hover:not(.genre-switch__button--active) {
-  background: rgba(108, 92, 231, 0.08);
+  background: var(--xclues-primary-8);
 }
 
 .genre-switch__button--active {
   background: var(--xclues-primary);
-  color: #fff;
+  color: var(--xclues-card-selected-text);
   cursor: default;
 }
 
 @media (max-width: 480px) {
   .genre-switch__button {
-    padding: 4px 10px;
-    font-size: 0.7rem;
+    padding: 6px 12px;
+    font-size: var(--xclues-font-size-xs);
+    min-height: 44px;
+    min-width: 44px;
   }
 }

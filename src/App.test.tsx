@@ -45,10 +45,6 @@ vi.mock("./providers/AuthProvider", () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("./components/UserMenuButton", () => ({
-  UserMenuButton: () => <div>UserMenuButton</div>,
-}));
-
 vi.mock("./providers/ThemeContext", () => ({
   ThemeContextProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
@@ -62,14 +58,6 @@ vi.mock("./providers/useThemeContext", () => ({
 vi.mock("./providers/useSite", () => ({
   useSite: () => ({ genre: "films" }),
 }));
-
-vi.mock("@mond-design-system/theme", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mond-design-system/theme")>();
-  return {
-    ...actual,
-    ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  };
-});
 
 vi.mock("@tanstack/react-query", () => ({
   QueryClient: class MockQueryClient {},
@@ -89,6 +77,10 @@ vi.mock("./pages/PrivacyPage", () => ({
 
 vi.mock("./pages/AboutPage", () => ({
   AboutPage: () => <div>AboutPage</div>,
+}));
+
+vi.mock("./pages/NotFoundPage", () => ({
+  NotFoundPage: () => <div>NotFoundPage</div>,
 }));
 
 import { Capacitor } from "@capacitor/core";
@@ -112,7 +104,7 @@ describe("App native setup", () => {
 
     render(<App />);
 
-    expect(screen.getByText("xclues")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
   });
 
   it("renders after successful native setup", async () => {
@@ -125,7 +117,7 @@ describe("App native setup", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("xclues")).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
     });
   });
 
@@ -141,7 +133,7 @@ describe("App native setup", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("xclues")).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
     });
   });
 
@@ -155,7 +147,7 @@ describe("App native setup", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("xclues")).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
     });
   });
 
@@ -171,7 +163,7 @@ describe("App native setup", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("xclues")).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
     });
   });
 
@@ -185,7 +177,7 @@ describe("App native setup", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("xclues")).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "xClues" })).toBeInTheDocument();
     });
   });
 });

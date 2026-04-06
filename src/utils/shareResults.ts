@@ -69,6 +69,22 @@ export function generateShareText({
 }
 
 /**
+ * Share text via Web Share API (mobile native share sheet).
+ * Falls back to clipboard copy if unavailable.
+ */
+export async function shareResults(text: string): Promise<boolean> {
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return true;
+    } catch {
+      // User cancelled or API failed — fall through to clipboard
+    }
+  }
+  return copyToClipboard(text);
+}
+
+/**
  * Copy text to clipboard and return success status.
  */
 export async function copyToClipboard(text: string): Promise<boolean> {

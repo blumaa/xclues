@@ -8,11 +8,60 @@ interface GameActions {
   deselectAll: () => void;
   submitGuess: () => void;
   shuffleItems: () => void;
-  initializeGame: (items: Item[], groups: Group[], puzzleDate: string) => void;
+  initializeGame: (items: Item[], groups: Group[], puzzleDate: string, genre?: string) => void;
   restoreCompletedGame: (groups: Group[], won: boolean, mistakes: number) => void;
+  restoreInProgressGame: (puzzleDate: string, groups: Group[], genre?: string) => boolean;
   resetGame: () => void;
   clearNotification: () => void;
-  completeGroupAnimation: () => void;
+}
+
+function getGameStorageKey(puzzleDate: string, genre?: string): string {
+  return genre ? `xclues-game-${puzzleDate}-${genre}` : `xclues-game-${puzzleDate}`;
+}
+
+interface SavedGameState {
+  items: Item[];
+  foundGroups: Group[];
+  previousGuesses: number[][];
+  mistakes: number;
+  gameStatus: 'playing' | 'won' | 'lost';
+  selectedItemIds: number[];
+}
+
+function saveGameState(state: GameState, genre?: string): void {
+  if (!state.puzzleDate || state.gameStatus !== 'playing') return;
+  const key = getGameStorageKey(state.puzzleDate, genre);
+  const saved: SavedGameState = {
+    items: state.items,
+    foundGroups: state.foundGroups,
+    previousGuesses: state.previousGuesses,
+    mistakes: state.mistakes,
+    gameStatus: state.gameStatus,
+    selectedItemIds: state.selectedItemIds,
+  };
+  try {
+    localStorage.setItem(key, JSON.stringify(saved));
+  } catch {
+    // localStorage full or unavailable
+  }
+}
+
+function loadGameState(puzzleDate: string, genre?: string): SavedGameState | null {
+  try {
+    const raw = localStorage.getItem(getGameStorageKey(puzzleDate, genre));
+    if (!raw) return null;
+    return JSON.parse(raw) as SavedGameState;
+  } catch {
+    return null;
+  }
+}
+
+function clearGameState(puzzleDate: string, genre?: string): void {
+  try {
+    localStorage.removeItem(getGameStorageKey(puzzleDate, genre));
+  } catch {
+    // ignore
+  }
 }
 
 type GameStore = GameState & GameActions;
@@ -33,7 +82,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   notification: null,
   isShaking: false,
   puzzleDate: null,
-  animatingGroup: null,
+  puzzleGenre: null,
   jumpingItemIds: [],
   rejectedItemId: null,
 
@@ -101,25 +150,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
 
     // Check if user is "one away" (3 out of 4 correct)
-    if (!matchedGroup) {
-      const oneAwayGroup = groups.find((group) => {
-        const groupItemIds = group.items.map((f) => f.id);
-        const matches = sortedGuess.filter((id) => groupItemIds.includes(id));
-        return matches.length === 3;
-      });
+    const oneAwayGroup = !matchedGroup
+      ? groups.find((group) => {
+          const groupItemIds = group.items.map((f) => f.id);
+          return sortedGuess.filter((id) => groupItemIds.includes(id)).length === 3;
+        })
+      : null;
 
-      if (oneAwayGroup) {
-        set({ notification: 'One away!' });
-        setTimeout(() => set({ notification: null }), 2000);
-      }
+    if (oneAwayGroup) {
+      set({ notification: 'One away!' });
+      setTimeout(() => set({ notification: null }), 2000);
     }
 
     const { puzzleDate } = get();
-    const wasOneAway = !matchedGroup && groups.some((group) => {
-      const groupItemIds = group.items.map((f) => f.id);
-      const matchCount = sortedGuess.filter((id) => groupItemIds.includes(id)).length;
-      return matchCount === 3;
-    });
+    const wasOneAway = !!oneAwayGroup;
 
     if (matchedGroup) {
       // Correct guess! First trigger staggered jump animation
@@ -190,8 +234,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         mistakes: newMistakes,
         previousGuesses: [...previousGuesses, sortedGuess],
         gameStatus: isGameLost ? 'lost' : 'playing',
-        // Reveal all groups when game is lost
-        foundGroups: isGameLost ? groups : foundGroups,
+        // Reveal all groups when game is lost — player's found groups first, then remaining
+        foundGroups: isGameLost
+          ? [...foundGroups, ...groups.filter((g) => !foundGroups.some((f) => f.id === g.id))]
+          : foundGroups,
         items: isGameLost ? [] : items,
         isShaking: true,
       });
@@ -231,7 +277,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
    * @param groups - Array of groups
    * @param puzzleDate - Date of puzzle in YYYY-MM-DD format
    */
-  initializeGame: (items: Item[], groups: Group[], puzzleDate: string) => {
+  initializeGame: (items: Item[], groups: Group[], puzzleDate: string, genre?: string) => {
     set({
       items: shuffleArray(items),
       groups,
@@ -242,8 +288,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gameStatus: 'playing',
       isLoading: false,
       puzzleDate,
-      animatingGroup: null,
-      jumpingItemIds: [],
+      puzzleGenre: genre ?? null,
+          jumpingItemIds: [],
     });
   },
 
@@ -267,48 +313,32 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isLoading: false,
       notification: null,
       isShaking: false,
-      animatingGroup: null,
-      jumpingItemIds: [],
+          jumpingItemIds: [],
     });
   },
 
   /**
-   * Complete the group found animation and update state.
-   * Called after GSAP animation finishes.
+   * Restore an in-progress game from localStorage.
+   * Returns true if game was restored, false if no saved state found.
    */
-  completeGroupAnimation: () => {
-    const { animatingGroup, foundGroups, items, mistakes, puzzleDate } = get();
-
-    if (!animatingGroup) return;
-
-    const newFoundGroups = [...foundGroups, animatingGroup];
-    const remainingItems = items.filter(
-      (item) => !animatingGroup.items.some((f) => f.id === item.id)
-    );
-    const isGameWon = newFoundGroups.length === 4;
+  restoreInProgressGame: (puzzleDate: string, groups: Group[], genre?: string): boolean => {
+    const saved = loadGameState(puzzleDate, genre);
+    if (!saved || saved.gameStatus !== 'playing') return false;
 
     set({
-      foundGroups: newFoundGroups,
-      items: remainingItems,
-      animatingGroup: null,
-      gameStatus: isGameWon ? 'won' : 'playing',
-    });
-
-    // Track events
-    trackEvent(EVENTS.GROUP_FOUND, {
+      items: saved.items,
+      groups,
+      selectedItemIds: saved.selectedItemIds,
+      foundGroups: saved.foundGroups,
+      previousGuesses: saved.previousGuesses,
+      mistakes: saved.mistakes,
+      gameStatus: 'playing',
+      isLoading: false,
       puzzleDate,
-      groupIndex: newFoundGroups.length,
-      difficulty: animatingGroup.difficulty,
-      mistakesSoFar: mistakes,
+      puzzleGenre: genre ?? null,
+          jumpingItemIds: [],
     });
-
-    if (isGameWon) {
-      trackEvent(EVENTS.GAME_WON, {
-        puzzleDate,
-        mistakes,
-        groupsFound: 4,
-      });
-    }
+    return true;
   },
 
   resetGame: () => {
@@ -324,8 +354,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       notification: null,
       isShaking: false,
       puzzleDate: null,
-      animatingGroup: null,
-      jumpingItemIds: [],
+      puzzleGenre: null,
+          jumpingItemIds: [],
     });
   },
 
@@ -333,3 +363,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ notification: null });
   },
 }));
+
+// Persist game state to localStorage on changes
+useGameStore.subscribe((state) => {
+  if (state.gameStatus === 'playing' && state.puzzleDate) {
+    saveGameState(state, state.puzzleGenre ?? undefined);
+  } else if (state.puzzleDate && (state.gameStatus === 'won' || state.gameStatus === 'lost')) {
+    clearGameState(state.puzzleDate, state.puzzleGenre ?? undefined);
+  }
+});

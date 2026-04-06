@@ -1,0 +1,54 @@
+.xtext {
+  margin: 0;
+  font-family: inherit;
+  color: inherit;
+}
+
+/* Sizes */
+.xtext--xs { font-size: var(--xclues-font-size-xs); }
+.xtext--sm { font-size: var(--xclues-font-size-sm); }
+.xtext--md { font-size: var(--xclues-font-size-base); }
+.xtext--lg { font-size: var(--xclues-font-size-lg); }
+.xtext--xl { font-size: var(--xclues-font-size-xl); }
+
+/* Weights */
+.xtext--light { font-weight: var(--xclues-font-weight-light); }
+.xtext--normal { font-weight: var(--xclues-font-weight-normal); }
+.xtext--semibold { font-weight: var(--xclues-font-weight-semibold); }
+.xtext--bold { font-weight: var(--xclues-font-weight-bold); }
+.xtext--extrabold { font-weight: var(--xclues-font-weight-extrabold); }
+
+/* Alignment */
+.xtext--left { text-align: left; }
+.xtext--center { text-align: center; }
+.xtext--right { text-align: right; }
+
+/* Semantic */
+.xtext--secondary { opacity: 0.7; }
+
+/* Responsive text scaling — standard tier */
+.xtext--responsive {
+  font-size: 0.8125rem; /* 13px */
+}
+
+@media (min-width: 640px) {
+  .xtext--responsive { font-size: 0.9375rem; } /* 15px */
+}
+
+@media (min-width: 1025px) {
+  .xtext--responsive { font-size: 1.0625rem; } /* 17px */
+}
+
+/* Compact tier for long titles (16+ chars) */
+.xtext--long.xtext--responsive {
+  font-size: 0.72rem; /* 11.5px */
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 640px) {
+  .xtext--long.xtext--responsive { font-size: 0.8125rem; } /* 13px */
+}
+
+@media (min-width: 1025px) {
+  .xtext--long.xtext--responsive { font-size: 0.9rem; } /* 14.5px */
+}

@@ -22,6 +22,8 @@ describe('ThemeToggle', () => {
       isDarkMode: false,
       setTheme: vi.fn(),
       toggleTheme: vi.fn(),
+      brandTheme: 'xclues' as const,
+      setBrandTheme: vi.fn(),
     });
 
     render(<ThemeToggle />);
@@ -36,6 +38,8 @@ describe('ThemeToggle', () => {
       isDarkMode: false,
       setTheme: vi.fn(),
       toggleTheme,
+      brandTheme: 'xclues' as const,
+      setBrandTheme: vi.fn(),
     });
 
     const user = userEvent.setup();
@@ -53,6 +57,8 @@ describe('ThemeToggle', () => {
       isDarkMode: false,
       setTheme: vi.fn(),
       toggleTheme: vi.fn(),
+      brandTheme: 'xclues' as const,
+      setBrandTheme: vi.fn(),
     });
 
     render(<ThemeToggle />);
@@ -66,6 +72,8 @@ describe('ThemeToggle', () => {
       isDarkMode: true,
       setTheme: vi.fn(),
       toggleTheme: vi.fn(),
+      brandTheme: 'xclues' as const,
+      setBrandTheme: vi.fn(),
     });
 
     render(<ThemeToggle />);

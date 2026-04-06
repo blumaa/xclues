@@ -93,11 +93,7 @@ export function formatPuzzleHeader(dateString: string, siteName: string): string
 }
 
 export function getTextLengthProps(title: string) {
-  const length = title.length;
-  if (length > 20) {
-    return { isReallyLongText: true };
-  }
-  if (length > 12) {
+  if (title.length > 15) {
     return { isLongText: true };
   }
   return {};

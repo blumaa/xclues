@@ -1,7 +1,7 @@
-.group-card.mond-card {
-  transition: all 0.3s ease;
+.group-card.xcard {
+  transition: all var(--xclues-transition);
   aspect-ratio: 4 / 1;
-  animation: groupCardAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: groupCardAppear var(--xclues-transition-bounce) both;
   border-radius: var(--xclues-border-radius);
   min-height: 64px;
   border: none;
@@ -41,10 +41,10 @@
 
 /* Compact group cards on desktop so game fits in viewport */
 @media (min-width: 1025px) {
-  .group-card.mond-card {
+  .group-card.xcard {
     aspect-ratio: unset;
     min-height: unset;
-    padding: var(--mond-spacing-2) var(--mond-spacing-3);
+    padding: var(--xclues-spacing-2) var(--xclues-spacing-3);
   }
 }
 
@@ -57,40 +57,40 @@
 /* Group card colors - vibrant gradients with shadows */
 .group-card.yellow {
   background: var(--xclues-yellow-bg);
-  color: #1a1a1a;
-  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.35), 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: var(--xclues-group-text);
+  box-shadow: var(--xclues-shadow-yellow-group);
 }
 
 .group-card.green {
   background: var(--xclues-green-bg);
-  color: #1a1a1a;
-  box-shadow: 0 4px 15px rgba(52, 211, 153, 0.35), 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: var(--xclues-group-text);
+  box-shadow: var(--xclues-shadow-green-group);
 }
 
 .group-card.blue {
   background: var(--xclues-blue-bg);
-  color: #1a1a1a;
-  box-shadow: 0 4px 15px rgba(96, 165, 250, 0.35), 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: var(--xclues-group-text);
+  box-shadow: var(--xclues-shadow-blue-group);
 }
 
 .group-card.purple {
   background: var(--xclues-purple-bg);
-  color: #1a1a1a;
-  box-shadow: 0 4px 15px rgba(192, 132, 252, 0.35), 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: var(--xclues-group-text);
+  box-shadow: var(--xclues-shadow-purple-group);
 }
 
 /* Ensure text inside group cards is readable */
 .group-card .group-card-connection {
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: var(--xclues-font-weight-extrabold);
+  letter-spacing: var(--xclues-tracking-normal);
   text-transform: uppercase;
-  font-size: 0.85em;
+  font-size: var(--xclues-font-size-base);
 }
 
 .group-card .group-card-items {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 4px;
+  gap: var(--xclues-spacing-1);
   row-gap: 1px;
 }

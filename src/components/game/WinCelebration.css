@@ -1,0 +1,49 @@
+.win-celebration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.win-particle {
+  position: absolute;
+  font-size: 2rem;
+  animation: winParticle 2s ease-out forwards;
+}
+
+/* Distribute particles across the viewport with different delays and trajectories */
+.win-particle--0 { left: 10%; top: 50%; animation-delay: 0s; }
+.win-particle--1 { left: 25%; top: 50%; animation-delay: 0.1s; }
+.win-particle--2 { left: 40%; top: 50%; animation-delay: 0.05s; }
+.win-particle--3 { left: 55%; top: 50%; animation-delay: 0.15s; }
+.win-particle--4 { left: 70%; top: 50%; animation-delay: 0.08s; }
+.win-particle--5 { left: 85%; top: 50%; animation-delay: 0.12s; }
+.win-particle--6 { left: 15%; top: 50%; animation-delay: 0.2s; }
+.win-particle--7 { left: 30%; top: 50%; animation-delay: 0.25s; }
+.win-particle--8 { left: 50%; top: 50%; animation-delay: 0.18s; }
+.win-particle--9 { left: 65%; top: 50%; animation-delay: 0.22s; }
+.win-particle--10 { left: 80%; top: 50%; animation-delay: 0.3s; }
+.win-particle--11 { left: 45%; top: 50%; animation-delay: 0.28s; }
+
+@keyframes winParticle {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-200px) scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-400px) scale(0.3) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .win-particle {
+    animation: none;
+    display: none;
+  }
+}

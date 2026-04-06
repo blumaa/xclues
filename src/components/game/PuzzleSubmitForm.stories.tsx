@@ -19,7 +19,7 @@ const meta: Meta<typeof PuzzleSubmitForm> = {
     onSubmit: { action: "submit" },
     genre: {
       control: { type: "select" },
-      options: ["films", "music", "sports", "books"],
+      options: ["films", "music", "books"],
     },
   },
 };

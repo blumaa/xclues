@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Modal } from "@mond-design-system/theme/client";
-import { Box, Text, Button, Icon } from "@mond-design-system/theme";
+import { XModal, XText, XButton, XIcon } from "../ui";
 import { useStats } from "../../providers/useStats";
 import { useSite } from "../../providers/useSite";
 import { Stats } from "./Stats";
 import { GameResultDisplay } from "./GameResultDisplay";
 import { CountdownTimer } from "./CountdownTimer";
 import { trackEvent, EVENTS } from "../../services/analytics";
-import { generateShareText, copyToClipboard } from "../../utils/shareResults";
+import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "./ShareIcon";
+import { CrossGenreLinks } from "./CrossGenreLinks";
 import { getTodayDate } from "../../utils/index";
 import type { UserStats } from "../../types";
 import type { GuessColor } from "../../types/stats";
@@ -31,7 +31,7 @@ export function ResultsModal({
   guessHistory,
 }: ResultsModalProps) {
   const stats = useStats();
-  const { siteName, domain } = useSite();
+  const { siteName, domain, genre } = useSite();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -48,20 +48,9 @@ export function ResultsModal({
             maxStreak: loadedStats.maxStreak,
           });
         })
-        .catch((error) => {
-          console.error("Failed to load stats:", error);
+        .catch(() => {
+          // Stats may not be available yet
         });
-
-      const timer = setTimeout(() => {
-        stats
-          .getStats()
-          .then(setUserStats)
-          .catch((error) => {
-            console.error("Failed to reload stats:", error);
-          });
-      }, 100);
-
-      return () => clearTimeout(timer);
     }
   }, [isOpen, stats]);
 
@@ -75,7 +64,7 @@ export function ResultsModal({
       domain,
     });
 
-    const success = await copyToClipboard(shareText);
+    const success = await shareResults(shareText);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -83,7 +72,7 @@ export function ResultsModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <XModal isOpen={isOpen} onClose={onClose}>
       <div className="results-modal-content">
         {/* Result heading */}
         <div className="results-heading">
@@ -91,11 +80,11 @@ export function ResultsModal({
             {gameStatus === "won" ? "You Won!" : "Game Over"}
           </span>
           <div className="results-heading-subtitle">
-            <Text align="center">
+            <XText align="center">
               {gameStatus === "won"
                 ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
                 : "Better luck next time!"}
-            </Text>
+            </XText>
           </div>
         </div>
 
@@ -115,32 +104,35 @@ export function ResultsModal({
         {/* Share button */}
         {guessHistory && guessHistory.length > 0 && (
           <div className="results-share">
-            <Button
+            <XButton
               variant="outline"
               onClick={handleShare}
               size="md"
               aria-label={copied ? "Results copied to clipboard" : "Share your results"}
             >
-              <Box display="flex" alignItems="center" gap="xxs">
+              <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                 {!copied && (
-                  <Icon color="currentColor" size="sm">
+                  <XIcon color="currentColor" size="sm">
                     <ShareIcon />
-                  </Icon>
+                  </XIcon>
                 )}
                 {copied ? "Copied!" : "Share Your Results"}
-              </Box>
-            </Button>
+              </div>
+            </XButton>
           </div>
         )}
 
+        {/* Cross-genre CTA */}
+        <CrossGenreLinks currentGenre={genre} />
+
         {/* Back to game */}
         <div className="results-back">
-          <Button variant="primary" onClick={onClose} size="lg" fullWidth>
+          <XButton variant="primary" onClick={onClose} size="lg" fullWidth>
             Back to Game
-          </Button>
+          </XButton>
         </div>
 
       </div>
-    </Modal>
+    </XModal>
   );
 }

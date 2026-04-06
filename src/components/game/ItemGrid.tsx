@@ -1,4 +1,3 @@
-import { Box } from "@mond-design-system/theme";
 import { ItemTile } from "./ItemTile";
 import type { Item } from "../../types";
 import "./ItemGrid.css";
@@ -21,7 +20,7 @@ export function ItemGrid({
   onSelectItem,
 }: ItemGridProps) {
   return (
-    <Box display="grid" gap="sm" gridTemplateColumns="repeat(4, 1fr)" responsiveWidth className="item-grid">
+    <div className="item-grid">
       {items.map((item) => (
         <ItemTile
           key={item.id}
@@ -33,6 +32,6 @@ export function ItemGrid({
           onClick={() => onSelectItem(item.id)}
         />
       ))}
-    </Box>
+    </div>
   );
 }

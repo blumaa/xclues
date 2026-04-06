@@ -8,7 +8,8 @@ export {
 } from './domainDetector';
 
 export {
-  type SiteConfig,
-  SITE_CONFIGS,
-  getSiteConfig,
-} from './siteConfig';
+  type SeoConfig as SiteConfig,
+  SEO_CONFIGS as SITE_CONFIGS,
+  getSeoConfig as getSiteConfig,
+  VALID_GENRES,
+} from './seoConfig';

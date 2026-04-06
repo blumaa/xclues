@@ -1,17 +1,9 @@
-import { Box } from "@mond-design-system/theme";
 import type { GuessColor } from "../../types/stats";
 import "./GameResultDisplay.css";
 
 interface GameResultDisplayProps {
   guessHistory: GuessColor[][];
 }
-
-const COLOR_MAP: Record<GuessColor, string> = {
-  yellow: "#fbbf24",
-  green: "#34d399",
-  blue: "#60a5fa",
-  purple: "#c084fc",
-};
 
 const COLOR_LABELS: Record<GuessColor, string> = {
   yellow: "yellow",
@@ -26,11 +18,8 @@ export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      gap="xxs"
+    <div
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
       role="img"
       aria-label={`Guess history: ${guessHistory.length} guesses made`}
     >
@@ -39,14 +28,13 @@ export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
           {row.map((color, colIndex) => (
             <div
               key={colIndex}
-              className="guess-square"
-              style={{ backgroundColor: COLOR_MAP[color] }}
-              aria-hidden="true"
-              title={COLOR_LABELS[color]}
+              className={`guess-square guess-square--${color}`}
+              role="img"
+              aria-label={COLOR_LABELS[color]}
             />
           ))}
         </div>
       ))}
-    </Box>
+    </div>
   );
 }

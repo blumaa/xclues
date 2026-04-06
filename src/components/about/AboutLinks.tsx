@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Icon,
-} from "@mond-design-system/theme";
+import { XButton, XHeading, XIcon } from "../ui";
 import { useSite } from "../../providers/useSite";
 import { BookIcon } from "./icons/BookIcon";
 import { PopcornIcon } from "./icons/PopcornIcon";
@@ -56,53 +51,58 @@ export function AboutLinks({ showHeading = true }: AboutLinksProps) {
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap="xs" paddingBottom="4" className="about-links">
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--xclues-spacing-xs)", paddingBottom: "var(--xclues-spacing-4)" }} className="about-links">
       {showHeading && (
-        <Heading size="xs" weight="semibold" responsive>
+        <XHeading level={4} size="xs" weight="semibold" responsive>
           {siteName} is part of the Puzzle Clues Suite of games:
-        </Heading>
+        </XHeading>
       )}
-      <Box
-        display="flex"
-        gap="xxs"
-        flexWrap="wrap"
-        justifyContent="center"
+      <div
+        style={{
+          display: "flex",
+          gap: "0.25rem",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
       >
         {GAME_LINKS.map((link) => {
           if (isNative) {
             return (
-              <Button
+              <XButton
                 key={link.genre}
                 size="sm"
                 variant={link.genre === activeGenre ? "primary" : "outline"}
                 onClick={() => handleClick(link.genre)}
               >
-                <Icon color="currentColor" size="md">
+                <XIcon color="currentColor" size="md">
                   {link.icon}
-                </Icon>
+                </XIcon>
                 {link.label}
-              </Button>
+              </XButton>
             );
           }
 
           return (
-            <Button
+            <a
               key={link.genre}
-              size="sm"
-              variant={link.genre === activeGenre ? "primary" : "outline"}
-              as="a"
               href={`https://${link.domain}`}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
             >
-              <Icon color="currentColor" size="md">
-                {link.icon}
-              </Icon>
-              {link.label}
-            </Button>
+              <XButton
+                size="sm"
+                variant={link.genre === activeGenre ? "primary" : "outline"}
+              >
+                <XIcon color="currentColor" size="md">
+                  {link.icon}
+                </XIcon>
+                {link.label}
+              </XButton>
+            </a>
           );
         })}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

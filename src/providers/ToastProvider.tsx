@@ -1,7 +1,15 @@
-import React, { useState, useCallback } from 'react';
-import { ToastContainer } from '@mond-design-system/theme/client';
-import type { ToastData, ToastPosition } from '@mond-design-system/theme/client';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ToastContext, ToastContextValue } from './useToast';
+import './ToastProvider.css';
+
+interface ToastData {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message?: string;
+  duration: number;
+  dismissible: boolean;
+}
 
 interface ToastProviderProps {
   children?: React.ReactNode;
@@ -33,6 +41,29 @@ function createToastData(
     duration: durationMap[type],
     dismissible: true,
   };
+}
+
+function Toast({ toast, onDismiss }: { toast: ToastData; onDismiss: (id: string) => void }) {
+  useEffect(() => {
+    if (toast.duration > 0) {
+      const timer = setTimeout(() => onDismiss(toast.id), toast.duration);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.id, toast.duration, onDismiss]);
+
+  return (
+    <div className={`xtoast xtoast--${toast.type}`} role="alert">
+      <div className="xtoast__content">
+        <span className="xtoast__title">{toast.title}</span>
+        {toast.message && <span className="xtoast__message">{toast.message}</span>}
+      </div>
+      {toast.dismissible && (
+        <button className="xtoast__close" onClick={() => onDismiss(toast.id)} aria-label="Dismiss">
+          &times;
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function ToastProvider({ children }: ToastProviderProps) {
@@ -75,17 +106,18 @@ export function ToastProvider({ children }: ToastProviderProps) {
     clearAllToasts,
   };
 
-  const position: ToastPosition = 'top-center';
+  const visibleToasts = toasts.slice(-5);
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastContainer
-        toasts={toasts}
-        position={position}
-        maxToasts={5}
-        onDismiss={dismissToast}
-      />
+      {visibleToasts.length > 0 && (
+        <div className="xtoast-container">
+          {visibleToasts.map((toast) => (
+            <Toast key={toast.id} toast={toast} onDismiss={dismissToast} />
+          ))}
+        </div>
+      )}
     </ToastContext.Provider>
   );
 }

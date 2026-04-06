@@ -16,7 +16,7 @@ var config = {
             showSpinner: false,
         },
         StatusBar: {
-            style: 'LIGHT',
+            style: 'DARK',
             backgroundColor: '#0f0a1a',
         },
     },

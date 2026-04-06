@@ -1,0 +1,24 @@
+.xspinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xspinner__circle {
+  border: 3px solid var(--xclues-primary-20);
+  border-top-color: var(--xclues-primary);
+  border-radius: 50%;
+  animation: xspin 0.8s linear infinite;
+}
+
+@keyframes xspin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xspinner__circle {
+    animation: none;
+    border-top-color: var(--xclues-primary-20);
+    border-left-color: var(--xclues-primary);
+  }
+}

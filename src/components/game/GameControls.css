@@ -1,28 +1,28 @@
 /* Game control buttons */
 .game-controls {
-  padding: var(--mond-spacing-3) 0;
+  padding: var(--xclues-spacing-3) 0;
 }
 
-.game-controls .mond-button {
+.game-controls .xbtn {
   min-height: 48px;
   min-width: 44px;
-  padding-left: var(--mond-spacing-5);
-  padding-right: var(--mond-spacing-5);
-  border-radius: 999px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  padding-left: var(--xclues-spacing-5);
+  padding-right: var(--xclues-spacing-5);
+  border-radius: var(--xclues-radius-pill, 999px);
+  font-weight: var(--xclues-font-weight-semibold);
+  letter-spacing: var(--xclues-tracking-tight);
   transition: all var(--xclues-transition);
 }
 
 /* Secondary buttons (Shuffle, Deselect) */
-.game-controls .mond-button--outline {
-  border-color: rgba(108, 92, 231, 0.2);
+.game-controls .xbtn--outline {
+  border-color: var(--xclues-primary-20);
   background: var(--xclues-card-bg);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--xclues-blur-md));
   color: inherit;
 }
 
-.game-controls .mond-button--outline:hover:not(:disabled) {
+.game-controls .xbtn--outline:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--xclues-card-shadow-hover);
   border-color: var(--xclues-primary);
@@ -32,39 +32,39 @@
 
 /* Prevent sticky hover on touch devices */
 @media (hover: none) {
-  .game-controls .mond-button--outline:hover:not(:disabled) {
+  .game-controls .xbtn--outline:hover:not(:disabled) {
     transform: none;
     box-shadow: none;
-    border-color: rgba(108, 92, 231, 0.2);
+    border-color: var(--xclues-primary-20);
     background: var(--xclues-card-bg);
   }
 }
 
 /* Primary button (Submit) - hero treatment */
-.game-controls .mond-button--primary {
+.game-controls .xbtn--primary {
   background: var(--xclues-btn-primary-bg);
   border: none;
-  color: white;
+  color: var(--xclues-card-selected-text);
   box-shadow: var(--xclues-btn-primary-shadow);
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: var(--xclues-font-weight-bold);
+  letter-spacing: var(--xclues-tracking-normal);
   text-transform: uppercase;
-  font-size: 0.9em;
+  font-size: var(--xclues-font-size-md);
 }
 
-.game-controls .mond-button--primary:hover:not(:disabled) {
+.game-controls .xbtn--primary:hover:not(:disabled) {
   background: var(--xclues-btn-primary-hover);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+  box-shadow: var(--xclues-shadow-primary-glow);
 }
 
-.game-controls .mond-button--primary:active:not(:disabled) {
+.game-controls .xbtn--primary:active:not(:disabled) {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+  box-shadow: var(--xclues-shadow-primary-sm);
 }
 
 /* Disabled state */
-.game-controls .mond-button:disabled {
+.game-controls .xbtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
@@ -74,7 +74,7 @@
 /* Tighter spacing on desktop */
 @media (min-width: 1025px) {
   .game-controls {
-    padding: var(--mond-spacing-1) 0;
+    padding: var(--xclues-spacing-1) 0;
   }
 }
 
@@ -86,7 +86,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .game-controls .mond-button:hover {
+  .game-controls .xbtn:hover {
     transform: none;
   }
 }

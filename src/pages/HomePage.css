@@ -6,7 +6,7 @@
   justify-content: center;
   flex: 1;
   min-height: 60vh;
-  padding: var(--mond-spacing-6);
+  padding: var(--xclues-spacing-6);
 }
 
 /* Main game layout */
@@ -15,8 +15,8 @@
   flex-direction: column;
   flex: 1;
   justify-content: center;
-  padding: var(--mond-spacing-4) var(--mond-spacing-3);
-  padding-bottom: max(var(--mond-spacing-4), env(safe-area-inset-bottom));
+  padding: var(--xclues-spacing-4) var(--xclues-spacing-3);
+  padding-bottom: max(var(--xclues-spacing-4), env(safe-area-inset-bottom));
   animation: gameSlideIn 0.5s ease-out;
 }
 
@@ -33,13 +33,13 @@
 
 @media (min-width: 640px) {
   .homepage-game {
-    padding: var(--mond-spacing-6) var(--mond-spacing-4);
+    padding: var(--xclues-spacing-6) var(--xclues-spacing-4);
   }
 }
 
 @media (min-width: 1025px) {
   .homepage-game {
-    padding: var(--mond-spacing-2) var(--mond-spacing-4);
+    padding: var(--xclues-spacing-2) var(--xclues-spacing-4);
   }
 }
 

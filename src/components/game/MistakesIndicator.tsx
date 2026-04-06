@@ -1,4 +1,5 @@
-import { Text } from "@mond-design-system/theme";
+import { Dot } from "../Dot";
+import { XText } from "../ui";
 import "./MistakesIndicator.css";
 import { CountdownTimer } from "./CountdownTimer";
 
@@ -18,9 +19,9 @@ export function MistakesIndicator({
   return (
     <div className="mistakes-container">
       {gameStatus === "playing" ? (
-        <Text align="center" size="sm">
+        <XText align="center" size="sm">
           Create four groups of four!
-        </Text>
+        </XText>
       ) : (
         <CountdownTimer />
       )}
@@ -29,14 +30,16 @@ export function MistakesIndicator({
         role="status"
         aria-label={`${remainingMistakes} mistake${remainingMistakes !== 1 ? "s" : ""} remaining`}
       >
-        <Text size="xs" weight="extralight">
+        <XText size="xs" weight="light">
           Mistakes remaining:
-        </Text>
+        </XText>
         <div className="mistakes-dots" aria-hidden="true">
           {Array.from({ length: maxMistakes }).map((_, index) => (
-            <div
+            <Dot
               key={index}
-              className={`mistake-dot ${index < remainingMistakes ? "filled" : "empty"}`}
+              size="lg"
+              variant={index < remainingMistakes ? "filled" : "empty"}
+              className={`mistake-dot ${index < remainingMistakes ? "mistake-dot--filled" : "mistake-dot--empty"}`}
             />
           ))}
         </div>
