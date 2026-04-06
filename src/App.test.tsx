@@ -45,6 +45,10 @@ vi.mock("./providers/AuthProvider", () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+vi.mock("./pages/ResetPasswordPage", () => ({
+  ResetPasswordPage: () => <div>ResetPasswordPage</div>,
+}));
+
 vi.mock("./providers/ThemeContext", () => ({
   ThemeContextProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
