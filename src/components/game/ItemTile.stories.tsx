@@ -46,6 +46,13 @@ export const VeryLongTitle: Story = {
   },
 };
 
+export const LongSingleWord: Story = {
+  args: {
+    item: { id: 1, title: "Dreamcatcher" },
+    isSelected: false,
+  },
+};
+
 export const Shaking: Story = {
   args: {
     item: { id: 1, title: "Wrong Guess" },

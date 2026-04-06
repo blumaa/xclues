@@ -8,6 +8,7 @@ import {
   formatPuzzleHeader,
   shuffleArray,
   getTextLengthProps,
+  addSoftHyphens,
 } from '../index';
 
 describe('getTodayDate', () => {
@@ -137,9 +138,15 @@ describe('shuffleArray', () => {
 });
 
 describe('getTextLengthProps', () => {
-  it('returns isLongText for text longer than 15 chars', () => {
+  it('returns isVeryLongText for text longer than 25 chars', () => {
+    expect(getTextLengthProps('Eternal Sunshine of the Spotless Mind')).toEqual({ isVeryLongText: true });
+    expect(getTextLengthProps('The Curious Incident of the Dog')).toEqual({ isVeryLongText: true });
+  });
+
+  it('returns isLongText for text between 16 and 25 chars', () => {
     expect(getTextLengthProps('a'.repeat(16))).toEqual({ isLongText: true });
     expect(getTextLengthProps('The Shawshank Redemption')).toEqual({ isLongText: true });
+    expect(getTextLengthProps('a'.repeat(25))).toEqual({ isLongText: true });
   });
 
   it('returns empty object for text 15 chars or fewer', () => {
@@ -154,5 +161,37 @@ describe('getTextLengthProps', () => {
 
   it('returns empty object for empty string', () => {
     expect(getTextLengthProps('')).toEqual({});
+  });
+});
+
+describe('addSoftHyphens', () => {
+  const SHY = '\u00AD';
+
+  it('does not modify short words', () => {
+    expect(addSoftHyphens('Jaws')).toBe('Jaws');
+    expect(addSoftHyphens('The Matrix')).toBe('The Matrix');
+  });
+
+  it('inserts soft hyphens into long single words', () => {
+    const result = addSoftHyphens('Dreamcatcher');
+    expect(result).toContain(SHY);
+    // Should break roughly every 5 chars
+    expect(result.replace(new RegExp(SHY, 'g'), '-')).toBe('Dream-catch-er');
+  });
+
+  it('only hyphenates words longer than 7 chars', () => {
+    expect(addSoftHyphens('Contact')).toBe('Contact'); // 7 chars, no break
+    expect(addSoftHyphens('Scarecrow')).toContain(SHY); // 9 chars, should break
+  });
+
+  it('handles multi-word titles — only hyphenates long individual words', () => {
+    const result = addSoftHyphens('Saving Private Ryan');
+    // "Saving" (6) and "Ryan" (4) are short, "Private" (7) is borderline
+    expect(result).toBe('Saving Private Ryan');
+  });
+
+  it('handles absurd words', () => {
+    const result = addSoftHyphens('Supercalifragilisticexpialidocious');
+    expect(result).toContain(SHY);
   });
 });

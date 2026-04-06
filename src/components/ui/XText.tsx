@@ -9,6 +9,7 @@ interface XTextProps extends React.HTMLAttributes<HTMLElement> {
   semantic?: "primary" | "secondary";
   responsive?: boolean;
   isLongText?: boolean;
+  isVeryLongText?: boolean;
 }
 
 export const XText = forwardRef<HTMLElement, XTextProps>(
@@ -21,6 +22,7 @@ export const XText = forwardRef<HTMLElement, XTextProps>(
       semantic,
       responsive,
       isLongText,
+      isVeryLongText,
       className = "",
       children,
       ...rest
@@ -35,6 +37,7 @@ export const XText = forwardRef<HTMLElement, XTextProps>(
       semantic && `xtext--${semantic}`,
       responsive && "xtext--responsive",
       isLongText && "xtext--long",
+      isVeryLongText && "xtext--very-long",
       className,
     ]
       .filter(Boolean)

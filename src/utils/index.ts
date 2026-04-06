@@ -93,10 +93,36 @@ export function formatPuzzleHeader(dateString: string, siteName: string): string
 }
 
 export function getTextLengthProps(title: string) {
+  if (title.length > 25) {
+    return { isVeryLongText: true };
+  }
   if (title.length > 15) {
     return { isLongText: true };
   }
   return {};
+}
+
+/**
+ * Insert soft hyphens into long words so the browser can break them.
+ * Only affects individual words longer than 7 characters.
+ * Breaks roughly every 5 characters.
+ */
+export function addSoftHyphens(text: string): string {
+  const SHY = '\u00AD';
+  return text
+    .split(' ')
+    .map((word) => {
+      if (word.length <= 7) return word;
+      let result = '';
+      for (let i = 0; i < word.length; i++) {
+        result += word[i];
+        if (i > 0 && (i + 1) % 5 === 0 && i < word.length - 1) {
+          result += SHY;
+        }
+      }
+      return result;
+    })
+    .join(' ');
 }
 
 /**

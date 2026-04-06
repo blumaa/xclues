@@ -1,6 +1,6 @@
 import { XCard, XCardBody, XText } from "../ui";
 import type { Item } from "../../types";
-import { getTextLengthProps } from "../../utils";
+import { getTextLengthProps, addSoftHyphens } from "../../utils";
 import { getDisplayTitle } from "../../utils/displayTitle";
 import type { KeyboardEvent } from "react";
 import "./ItemTile.css";
@@ -22,7 +22,7 @@ export function ItemTile({
   isRejected,
   onClick,
 }: ItemTileProps) {
-  const displayTitle = getDisplayTitle(item);
+  const displayTitle = addSoftHyphens(getDisplayTitle(item));
   const textLengthProps = getTextLengthProps(displayTitle);
 
   const handleKeyDown = (e: KeyboardEvent) => {

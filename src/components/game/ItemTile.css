@@ -72,15 +72,14 @@
 }
 
 .item-tile .xtext {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
   overflow: hidden;
   font-weight: var(--xclues-font-weight-semibold);
   overflow-wrap: break-word;
   word-break: normal;
-  hyphens: none;
-  -webkit-hyphens: none;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  width: 100%;
+  text-align: center;
 }
 
 /* Active/pressed state for touch feedback — skip during animations */

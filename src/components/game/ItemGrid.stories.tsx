@@ -1,13 +1,33 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ItemGrid } from "./ItemGrid";
-import { mockItems } from "../../__mocks__/puzzleData";
+import type { Item } from "../../types";
+
+const edgeCaseItems: Item[] = [
+  { id: 1, title: "Up" },
+  { id: 2, title: "Dreamcatcher" },
+  { id: 3, title: "The Shawshank Redemption" },
+  { id: 4, title: "Eternal Sunshine of the Spotless Mind" },
+  { id: 5, title: "X" },
+  { id: 6, title: "Schwarzenegger" },
+  { id: 7, title: "12 Years a Slave" },
+  { id: 8, title: "The Blair Witch Project" },
+  { id: 9, title: "Goodfellas" },
+  { id: 10, title: "2001: A Space Odyssey" },
+  { id: 11, title: "Her" },
+  { id: 12, title: "Ratatouille" },
+  { id: 13, title: "The Curious Incident of the Dog in the Night-Time" },
+  { id: 14, title: "Jaws" },
+  { id: 15, title: "Matchstick Men" },
+  { id: 16, title: "Supercalifragilisticexpialidocious" },
+];
 
 const meta: Meta<typeof ItemGrid> = {
   title: "Game/ItemGrid",
   component: ItemGrid,
   tags: ["autodocs"],
+  parameters: { layout: "fullscreen" },
   args: {
-    items: mockItems,
+    items: edgeCaseItems,
     selectedItemIds: [],
     isShaking: false,
     jumpingItemIds: [],
@@ -19,29 +39,4 @@ const meta: Meta<typeof ItemGrid> = {
 export default meta;
 type Story = StoryObj<typeof ItemGrid>;
 
-export const Mobile: Story = {
-  parameters: {
-    viewport: { defaultViewport: "mobile1" },
-    layout: "fullscreen",
-  },
-};
-
-export const Tablet: Story = {
-  parameters: {
-    viewport: { defaultViewport: "tablet" },
-    layout: "fullscreen",
-  },
-};
-
-export const Desktop: Story = {
-  parameters: {
-    viewport: { defaultViewport: "desktop" },
-    layout: "fullscreen",
-  },
-};
-
-export const WithSelections: Story = {
-  args: {
-    selectedItemIds: [1, 5, 9, 13],
-  },
-};
+export const EdgeCases: Story = {};
