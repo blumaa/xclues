@@ -8,6 +8,45 @@
 import type { IStatsStorage, UserStats, GameResult } from '../types/stats';
 import { getTodayDate, getYesterdayDate } from '../utils/index';
 
+export interface GenreStats {
+  gamesPlayed: number;
+  currentStreak: number;
+  maxStreak: number;
+}
+
+/**
+ * Derive per-genre stats from the global game history.
+ */
+export function getGenreStats(gameHistory: GameResult[], genre: string): GenreStats {
+  const genreGames = gameHistory
+    .filter((g) => g.genre === genre)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const gamesPlayed = genreGames.length;
+  let currentStreak = 0;
+  let maxStreak = 0;
+  let streak = 0;
+  let lastDate: string | null = null;
+
+  for (const game of genreGames) {
+    if (!game.won) {
+      streak = 0;
+    } else if (!lastDate) {
+      streak = 1;
+    } else {
+      const prev = new Date(lastDate + "T00:00:00Z");
+      const curr = new Date(game.date + "T00:00:00Z");
+      const diffDays = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
+      streak = diffDays === 1 ? streak + 1 : 1;
+    }
+    lastDate = game.date;
+    if (streak > maxStreak) maxStreak = streak;
+  }
+  currentStreak = streak;
+
+  return { gamesPlayed, currentStreak, maxStreak };
+}
+
 /**
  * Default empty stats
  */

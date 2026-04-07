@@ -56,10 +56,14 @@ const meta: Meta<typeof ResultsModal> = {
       </SiteProvider>
     ),
   ],
+  args: {
+    genre: 'films',
+  },
   argTypes: {
     isOpen: { control: 'boolean' },
     gameStatus: { control: 'select', options: ['won', 'lost'] },
     mistakes: { control: { type: 'number', min: 0, max: 4 } },
+    genre: { control: 'select', options: ['films', 'books', 'music'] },
     onClose: { action: 'closed' },
   },
 };

@@ -22,7 +22,6 @@
   max-height: calc(100vh - var(--xclues-spacing-12));
   overflow-y: auto;
   box-shadow: var(--xclues-shadow-lg);
-  animation: xmodal-slide-up var(--xclues-duration-normal) ease-out;
 }
 
 .xmodal__content:focus {

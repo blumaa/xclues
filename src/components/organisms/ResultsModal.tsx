@@ -9,7 +9,8 @@ import { trackEvent, EVENTS } from "../../services/analytics";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
 import { getTodayDate } from "../../utils/index";
-import type { UserStats } from "../../types";
+import { getGenreStats } from "../../services/LocalStatsStorage";
+import type { GenreStats } from "../../services/LocalStatsStorage";
 import type { GuessColor } from "../../types/stats";
 
 import "./ResultsModal.css";
@@ -19,6 +20,7 @@ interface ResultsModalProps {
   onClose: () => void;
   gameStatus: "won" | "lost";
   mistakes: number;
+  genre: string;
   guessHistory: GuessColor[][] | null;
 }
 
@@ -27,34 +29,35 @@ export function ResultsModal({
   onClose,
   gameStatus,
   mistakes,
+  genre,
   guessHistory,
 }: ResultsModalProps) {
   const stats = useStats();
   const context = useSite();
   const siteName = context?.siteName || "xClues";
   const domain = context?.domain || "xclues.space";
-  const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [showStats, setShowStats] = useState(false);
+  const [genreStats, setGenreStats] = useState<GenreStats | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Load stats when modal opens
+  // Load per-genre stats when modal opens
   useEffect(() => {
     if (isOpen) {
       stats
         .getStats()
         .then((loadedStats) => {
-          setUserStats(loadedStats);
+          const derived = getGenreStats(loadedStats.gameHistory, genre);
+          setGenreStats(derived);
           trackEvent(EVENTS.STATS_VIEWED, {
-            gamesPlayed: loadedStats.gamesPlayed,
-            currentStreak: loadedStats.currentStreak,
-            maxStreak: loadedStats.maxStreak,
+            gamesPlayed: derived.gamesPlayed,
+            currentStreak: derived.currentStreak,
+            maxStreak: derived.maxStreak,
           });
         })
         .catch(() => {
           // Stats may not be available yet
         });
     }
-  }, [isOpen, stats]);
+  }, [isOpen, stats, genre]);
 
   const handleShare = async () => {
     if (!guessHistory) return;
@@ -80,58 +83,51 @@ export function ResultsModal({
           ✕
         </button>
         {/* Result heading */}
-        {!showStats ? (
-          <>
-            <div className="results-heading">
-              <span className="results-heading-title">
-                {gameStatus === "won" ? "You Won!" : "Game Over"}
-              </span>
-              <div className="results-heading-subtitle">
-                <XText align="center">
-                  {gameStatus === "won"
-                    ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
-                    : "Better luck next time!"}
-                </XText>
-              </div>
-            </div>
+        <div className="results-heading">
+          <span className="results-heading-title">
+            {gameStatus === "won" ? "You Won!" : "Game Over"}
+          </span>
+          <div className="results-heading-subtitle">
+            <XText align="center">
+              {gameStatus === "won"
+                ? `You found all connections with ${mistakes} mistake${mistakes !== 1 ? "s" : ""}.`
+                : "Better luck next time!"}
+            </XText>
+          </div>
+        </div>
 
-            {/* Countdown */}
-            <CountdownTimer />
+        {/* Stats */}
+        {genreStats && <Stats stats={genreStats} />}
 
-            {/* Guess history visualization */}
-            {guessHistory && guessHistory.length > 0 && (
-              <div className="results-guess-history">
-                <GameResultDisplay guessHistory={guessHistory} />
-              </div>
-            )}
+        {/* Countdown */}
+        <CountdownTimer />
 
-            {/* Share button */}
-            {guessHistory && guessHistory.length > 0 && (
-              <div className="results-share">
-                <XButton
-                  variant="outline"
-                  onClick={handleShare}
-                  size="md"
-                  aria-label={copied ? "Results copied to clipboard" : "Share your results"}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                    {!copied && (
-                      <XIcon color="currentColor" size="sm">
-                        <ShareIcon />
-                      </XIcon>
-                    )}
-                    {copied ? "Copied!" : "Share Your Results"}
-                  </div>
-                </XButton>
+        {/* Guess history visualization */}
+        {guessHistory && guessHistory.length > 0 && (
+          <div className="results-guess-history">
+            <GameResultDisplay guessHistory={guessHistory} />
+          </div>
+        )}
+
+        {/* Share button */}
+        {guessHistory && guessHistory.length > 0 && (
+          <div className="results-share">
+            <XButton
+              variant="outline"
+              onClick={handleShare}
+              size="md"
+              aria-label={copied ? "Results copied to clipboard" : "Share your results"}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                {!copied && (
+                  <XIcon color="currentColor" size="sm">
+                    <ShareIcon />
+                  </XIcon>
+                )}
+                {copied ? "Copied!" : "Share Your Results"}
               </div>
-            )}
-          </>
-        ) : (
-          /* Stats section */
-          <>
-            <XButton variant="ghost" onClick={() => setShowStats(false)}>← Back</XButton>
-            {userStats && <Stats stats={userStats} />}
-          </>
+            </XButton>
+          </div>
         )}
       </div>
     </XModal>

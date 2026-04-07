@@ -134,6 +134,7 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
           }}
           gameStatus={gameStatus as "won" | "lost"}
           mistakes={mistakes}
+          genre={genre}
           guessHistory={currentGuessHistory}
         />
       )}

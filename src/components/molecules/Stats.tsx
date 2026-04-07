@@ -1,8 +1,8 @@
-import type { UserStats } from "../../types";
+import type { GenreStats } from "../../services/LocalStatsStorage";
 import "./Stats.css";
 
 interface StatsProps {
-  stats: UserStats;
+  stats: GenreStats;
 }
 
 export function Stats({ stats }: StatsProps) {

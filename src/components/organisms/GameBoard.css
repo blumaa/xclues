@@ -7,6 +7,8 @@
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  padding-right: var(--xclues-spacing-3);
+  padding-left: var(--xclues-spacing-3);
 }
 
 /* Mobile: match the item grid width */
