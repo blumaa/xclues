@@ -1,7 +1,7 @@
 import * as amplitude from "@amplitude/analytics-browser";
 import type { Genre } from "../../config/seoConfig";
 
-const AMPLITUDE_API_KEY = import.meta.env.VITE_AMPLITUDE_API_KEY as
+const AMPLITUDE_API_KEY = (process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || process.env.VITE_AMPLITUDE_API_KEY) as
   | string
   | undefined;
 

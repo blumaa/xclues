@@ -6,19 +6,20 @@
  * Genre can be changed reactively via setGenre (for dev/Capacitor).
  */
 
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { detectGenreFromDomain, getSiteConfig, type Genre } from '../config';
+import { ReactNode, useEffect, useMemo } from 'react';
+import { getSiteConfig, type Genre } from '../config';
 import { SiteContext, type SiteContextValue } from './useSiteContext';
-import { useGameStore } from '../store/gameStore';
 
 interface SiteProviderProps {
   children: ReactNode;
+  initialGenre?: Genre;
 }
 
 /**
  * Helper to update a meta tag's content attribute
  */
 function updateMetaTag(selector: string, content: string): void {
+  if (typeof window === 'undefined') return;
   const element = document.querySelector(selector);
   if (element) {
     element.setAttribute('content', content);
@@ -29,6 +30,7 @@ function updateMetaTag(selector: string, content: string): void {
  * Helper to update a link tag's href attribute
  */
 function updateLinkTag(selector: string, href: string): void {
+  if (typeof window === 'undefined') return;
   const element = document.querySelector(selector);
   if (element) {
     element.setAttribute('href', href);
@@ -39,6 +41,7 @@ function updateLinkTag(selector: string, href: string): void {
  * Update all meta tags based on site config
  */
 function updateMetaTags(config: SiteContextValue): void {
+  if (typeof window === 'undefined') return;
   const siteUrl = `https://www.${config.domain}`;
 
   // Primary meta tags
@@ -86,21 +89,10 @@ function updateMetaTags(config: SiteContextValue): void {
  * Detects genre from domain and provides config.
  * Supports reactive genre switching via setGenre.
  */
-export function SiteProvider({ children }: SiteProviderProps) {
-  const [genre, setGenreState] = useState<Genre>(detectGenreFromDomain);
-  const config = useMemo(() => getSiteConfig(genre), [genre]);
+export function SiteProvider({ children, initialGenre }: SiteProviderProps) {
+  const config = useMemo(() => getSiteConfig(initialGenre || 'films'), [initialGenre]);
 
-  const setGenre = useCallback((newGenre: Genre) => {
-    setGenreState(newGenre);
-    // Reset game state so stale puzzle data doesn't flash
-    useGameStore.getState().resetGame();
-  }, []);
-
-  // Update all meta tags when config changes
-  const contextValue: SiteContextValue = useMemo(
-    () => ({ ...config, setGenre }),
-    [config, setGenre]
-  );
+  const contextValue: SiteContextValue = config;
 
   useEffect(() => {
     updateMetaTags(contextValue);

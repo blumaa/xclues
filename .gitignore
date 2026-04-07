@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 dist/
+out/
+.next/
 
 # TypeScript composite build artifacts
 vite.config.js
@@ -44,3 +46,4 @@ storybook-static/
 .supabase/
 
 .tool-versions
+.aider*

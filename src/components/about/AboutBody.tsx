@@ -1,8 +1,11 @@
-import { XCard, XCardBody, XText, XHeading, XButton } from "../ui";
+import { XCard, XCardBody, XText, XHeading, XButton } from "../atoms";
 import { useSite } from "../../providers/useSite";
 
 export function AboutBody() {
-  const { siteName, siteDescription, itemNamePlural } = useSite();
+  const context = useSite();
+  const siteName = context?.siteName || "xClues";
+  const siteDescription = context?.siteDescription || "connections puzzle";
+  const itemNamePlural = context?.itemNamePlural || "items";
 
   return (
     <XCard variant="elevated">

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import { BrandThemeSwitcher } from '../BrandThemeSwitcher';
+import { BrandThemeSwitcher } from '../organisms/BrandThemeSwitcher';
 import { BRAND_NAMES } from '../../hooks/useTheme';
 
 const mockSetBrandTheme = vi.fn();

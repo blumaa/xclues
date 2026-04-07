@@ -202,6 +202,7 @@ const TOKEN_TO_CSS: Record<keyof ThemeTokens, string> = {
  * Apply a theme's tokens to the document root as CSS custom properties.
  */
 export function applyThemeTokens(tokens: ThemeTokens): void {
+  if (typeof window === 'undefined' || !document.documentElement) return;
   const root = document.documentElement;
   for (const [key, cssVar] of Object.entries(TOKEN_TO_CSS)) {
     root.style.setProperty(cssVar, tokens[key as keyof ThemeTokens]);

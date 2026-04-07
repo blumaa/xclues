@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { XButton } from "./components/ui";
-import { Dot } from "./components/Dot";
+import { XButton } from "./components/atoms";
+import { Dot } from "./components/atoms/Dot";
 import "./index.css";
 
 function TokenSwatch({ name, token, items }: { name: string; token: string; items: { label: string; value: string }[] }) {

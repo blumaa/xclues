@@ -1,20 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, act } from "@testing-library/react";
 
-// Mock framer-motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    span: (props: { children?: React.ReactNode; [key: string]: unknown }) => {
-      const { initial, animate, exit, transition, ...rest } = props;
-      void initial; void animate; void exit; void transition;
-      return <span {...(rest as Record<string, string>)}>{props.children}</span>;
-    },
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useReducedMotion: () => false,
-}));
-
-import { Logo } from "../Logo";
+import { Logo } from "../organisms/Logo";
 
 describe("Logo", () => {
   beforeEach(() => {

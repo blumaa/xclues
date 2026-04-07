@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Site Context
  *
@@ -6,18 +8,9 @@
  */
 
 import { createContext } from 'react';
-import { detectGenreFromDomain, getSiteConfig, type SiteConfig, type Genre } from '../config';
+import { type SiteConfig } from '../config';
 
-export interface SiteContextValue extends SiteConfig {
-  setGenre: (genre: Genre) => void;
-}
+export type SiteContextValue = SiteConfig;
 
-// Detect genre from domain and get initial config
-const initialGenre = detectGenreFromDomain();
-const initialConfig = getSiteConfig(initialGenre);
-
-// Create context with the initial config
-export const SiteContext = createContext<SiteContextValue>({
-  ...initialConfig,
-  setGenre: () => {},
-});
+// Create context with undefined initial value
+export const SiteContext = createContext<SiteContextValue | undefined>(undefined);

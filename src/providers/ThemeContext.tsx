@@ -4,7 +4,8 @@ import { ThemeContext } from './useThemeContext';
 import { useSite } from './useSite';
 
 export function ThemeContextProvider({ children }: { children: ReactNode }) {
-  const { storagePrefix } = useSite();
+  const context = useSite();
+  const storagePrefix = context?.storagePrefix || "xclues";
   const themeValue = useTheme(storagePrefix);
 
   return (

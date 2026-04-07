@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import { IconButton } from '../IconButton';
+import { IconButton } from '../atoms/IconButton';
 
 describe('IconButton', () => {
   it('renders children', () => {

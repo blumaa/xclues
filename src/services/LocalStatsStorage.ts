@@ -97,9 +97,11 @@ export class LocalStatsStorage implements IStatsStorage {
       const stats = await this.getStats();
       const today = getTodayDate();
 
-      // Don't record duplicate games for the same day
-      const alreadyPlayedToday = stats.gameHistory.some((game) => game.date === today);
-      if (alreadyPlayedToday) {
+      // Don't record duplicate games for the same day+genre
+      const alreadyPlayed = stats.gameHistory.some(
+        (game) => game.date === today && game.genre === result.genre
+      );
+      if (alreadyPlayed) {
         console.warn('Game already recorded for today');
         return stats;
       }

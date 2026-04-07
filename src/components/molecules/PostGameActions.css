@@ -1,0 +1,6 @@
+.game-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--xclues-spacing-4, 1rem);
+  padding: var(--xclues-spacing-4, 1rem) 0;
+}

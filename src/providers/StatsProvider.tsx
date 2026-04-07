@@ -19,7 +19,8 @@ interface StatsProviderProps {
  * Creates storage instance with genre-specific prefix.
  */
 export function StatsProvider({ children }: StatsProviderProps) {
-  const { storagePrefix } = useSite();
+  const context = useSite();
+  const storagePrefix = context?.storagePrefix || "xclues";
 
   // Create storage instance with genre-specific prefix
   // Memoized to avoid recreating on every render
