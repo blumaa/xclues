@@ -68,6 +68,84 @@
   --xclues-duration-normal: 0.3s;
   --xclues-duration-slow: 0.5s;
 
+  /* ---- Default theme tokens (claude light) ----
+     Inlined here so the first paint has correct styles before JS runs.
+     applyThemeTokens() in Providers will override these if the user
+     has a different brand/theme saved in localStorage.
+  */
+  --xclues-font-family: system-ui, -apple-system, sans-serif;
+  --xclues-heading-weight: 500;
+  --xclues-body-weight: 400;
+  --xclues-heading-letter-spacing: 0;
+  --xclues-body-letter-spacing: 0;
+  --xclues-heading-line-height: 1.1;
+  --xclues-body-line-height: 1.6;
+  --xclues-button-text-transform: none;
+  --xclues-button-letter-spacing: 0;
+  --xclues-text-primary: #141413;
+  --xclues-text-secondary: #5e5d59;
+  --xclues-text-tertiary: #87867f;
+  --xclues-primary: #c96442;
+  --xclues-primary-light: #d97757;
+  --xclues-primary-dark: #a84e32;
+  --xclues-accent: #d97757;
+  --xclues-accent-light: #f0c8b4;
+  --xclues-accent-dark: #a84e32;
+  --xclues-page-bg: #f5f4ed;
+  --xclues-card-bg: #faf9f5;
+  --xclues-card-bg-hover: #f0eee6;
+  --xclues-card-selected: linear-gradient(135deg, #c96442 0%, #a84e32 100%);
+  --xclues-card-selected-text: rgba(255, 255, 255, 0.95);
+  --xclues-card-shadow: 0 0 0 1px #e8e6dc;
+  --xclues-card-shadow-hover: 0 0 0 1px #c96442, 0 2px 8px rgba(201, 100, 66, 0.12);
+  --xclues-card-shadow-selected: 0 4px 20px rgba(201, 100, 66, 0.25);
+  --xclues-header-bg: rgba(245, 244, 237, 0.95);
+  --xclues-header-border: #e8e6dc;
+  --xclues-header-blur: 12px;
+  --xclues-footer-bg: rgba(245, 244, 237, 0.9);
+  --xclues-footer-border: #e8e6dc;
+  --xclues-btn-primary-bg: #c96442;
+  --xclues-btn-primary-hover: #a84e32;
+  --xclues-btn-primary-shadow: 0 2px 8px rgba(201, 100, 66, 0.2);
+  --xclues-btn-primary-text: #ffffff;
+  --xclues-shadow-sm: 0 0 0 1px #e8e6dc;
+  --xclues-shadow-md: 0 0 0 1px #e8e6dc, 0 2px 8px rgba(0, 0, 0, 0.04);
+  --xclues-shadow-lg: 0 0 0 1px #e8e6dc, 0 4px 16px rgba(0, 0, 0, 0.06);
+  --xclues-shadow-primary-sm: 0 2px 8px rgba(201, 100, 66, 0.12);
+  --xclues-shadow-primary-glow: 0 4px 16px rgba(201, 100, 66, 0.18);
+  --xclues-shadow-yellow-group: 0 2px 8px rgba(251, 191, 36, 0.2);
+  --xclues-shadow-green-group: 0 2px 8px rgba(52, 211, 153, 0.2);
+  --xclues-shadow-blue-group: 0 2px 8px rgba(96, 165, 250, 0.2);
+  --xclues-shadow-purple-group: 0 2px 8px rgba(167, 139, 250, 0.2);
+  --xclues-primary-6: rgba(201, 100, 66, 0.06);
+  --xclues-primary-8: rgba(201, 100, 66, 0.08);
+  --xclues-primary-10: rgba(201, 100, 66, 0.1);
+  --xclues-primary-15: rgba(201, 100, 66, 0.15);
+  --xclues-primary-20: rgba(201, 100, 66, 0.2);
+  --xclues-overlay-bg: rgba(20, 20, 19, 0.4);
+  --xclues-hover-transform: translateY(-1px);
+  --xclues-hover-opacity: 1;
+  --xclues-focus-ring-color: #c96442;
+  --xclues-focus-ring-style: 2px solid;
+  --xclues-disabled-opacity: 0.5;
+  --xclues-radius-pill: 24px;
+  --xclues-glow: 0 0 16px rgba(201, 100, 66, 0.2);
+  --xclues-border-radius: 12px;
+  --xclues-border-radius-sm: 8px;
+  --xclues-border-radius-xs: 6px;
+  --xclues-group-text: #1a1a1a;
+  --xclues-dot-filled: #c96442;
+  --xclues-dot-empty: rgba(201, 100, 66, 0.15);
+  --xclues-dot-glow: 0 0 8px rgba(201, 100, 66, 0.3);
+  --xclues-yellow: #fbbf24;
+  --xclues-yellow-bg: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --xclues-green: #34d399;
+  --xclues-green-bg: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --xclues-blue: #60a5fa;
+  --xclues-blue-bg: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --xclues-purple: #a78bfa;
+  --xclues-purple-bg: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+
   /* Layout */
   --xclues-board-width-desktop: 480px;
   --xclues-board-width-tablet: 500px;

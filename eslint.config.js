@@ -23,6 +23,7 @@ export default [js.configs.recommended, {
       // Browser globals
       window: 'readonly',
       document: 'readonly',
+      requestAnimationFrame: 'readonly',
       navigator: 'readonly',
       console: 'readonly',
       localStorage: 'readonly',
@@ -92,5 +93,9 @@ export default [js.configs.recommended, {
     },
   },
 }, {
-  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase', '.storybook'],
+  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase', '.storybook', '.next', 'out'],
+}, {
+  rules: {
+    "react-refresh/only-export-components": "off",
+  },
 }, ...storybook.configs["flat/recommended"]];

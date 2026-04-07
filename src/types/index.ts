@@ -37,8 +37,6 @@ export interface GameState {
   isLoading: boolean;
   notification: string | null; // For "One away!" and other messages
   isShaking: boolean; // Trigger shake animation on wrong guess
-  puzzleDate: string | null; // YYYY-MM-DD format of current puzzle
-  puzzleGenre: string | null; // Genre of current puzzle
   jumpingItemIds: number[]; // Item IDs currently playing jump animation
   rejectedItemId: number | null; // Item ID that was rejected (5th selection attempt)
 }

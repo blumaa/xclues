@@ -1,0 +1,25 @@
+/* Prevent grid from overflowing parent on mobile */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--xclues-spacing-sm);
+  max-width: 100%;
+  padding-right: .5rem;
+  padding-left: .5rem;
+}
+
+/* Tablet: constrain to board width */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .item-grid {
+    max-width: var(--xclues-board-width-tablet);
+    margin: 0 auto;
+  }
+}
+
+/* Desktop: tighter constraint */
+@media (min-width: 1025px) {
+  .item-grid {
+    max-width: var(--xclues-board-width-desktop);
+    margin: 0 auto;
+  }
+}

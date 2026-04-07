@@ -48,6 +48,8 @@ export function isValidGenre(value: string | null | undefined): value is Genre {
  * Checks URL parameter first, then localStorage
  */
 export function getDevGenre(): Genre {
+  if (typeof window === 'undefined') return DEFAULT_GENRE;
+
   // Check URL param first: ?genre=music
   const urlParams = new URLSearchParams(window.location.search);
   const genreParam = urlParams.get('genre');
@@ -70,6 +72,7 @@ export function getDevGenre(): Genre {
  * Falls back to dev genre for localhost/unknown domains
  */
 export function detectGenreFromDomain(): Genre {
+  if (typeof window === 'undefined') return DEFAULT_GENRE;
   const hostname = window.location.hostname;
 
   // Check direct domain match
@@ -85,6 +88,7 @@ export function detectGenreFromDomain(): Genre {
  * Set the favicon dynamically based on genre
  */
 export function setFavicon(genre: Genre): void {
+  if (typeof window === 'undefined') return;
   const faviconPath = `/assets/favicon-${genre}.ico`;
 
   // Update existing favicon link
@@ -110,6 +114,7 @@ export function setFavicon(genre: Genre): void {
  * Update document title based on genre
  */
 export function setDocumentTitle(genre: Genre): void {
+  if (typeof window === 'undefined') return;
   const config = getSeoConfig(genre);
   document.title = config.metaTitle;
 }

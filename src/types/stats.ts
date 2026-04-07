@@ -13,6 +13,8 @@ export type GuessColor = 'yellow' | 'green' | 'blue' | 'purple';
 export interface GameResult {
   /** Date of the game (YYYY-MM-DD format) */
   date: string;
+  /** Genre of the puzzle (e.g. 'films', 'books', 'music') */
+  genre?: string;
   /** Whether the game was won */
   won: boolean;
   /** Number of mistakes made */

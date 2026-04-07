@@ -1,35 +1,37 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, act } from "@testing-library/react";
+import gsap from "gsap";
 
-// Mock framer-motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    span: (props: { children?: React.ReactNode; [key: string]: unknown }) => {
-      const { initial, animate, exit, transition, ...rest } = props;
-      void initial; void animate; void exit; void transition;
-      return <span {...(rest as Record<string, string>)}>{props.children}</span>;
-    },
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useReducedMotion: () => false,
-}));
+import { Logo } from "../organisms/Logo";
 
-import { Logo } from "../Logo";
+/** Advance both fake timers (for useEffect) and GSAP's global timeline. */
+let gsapTime: number;
+function advanceGSAP(ms: number) {
+  vi.advanceTimersByTime(ms);
+  gsapTime += ms / 1000;
+  gsap.globalTimeline.time(gsapTime);
+}
 
 describe("Logo", () => {
   beforeEach(() => {
+    gsapTime = 0;
     vi.useFakeTimers();
+    gsap.ticker.lagSmoothing(0);
+    gsap.globalTimeline.time(0);
   });
 
   afterEach(() => {
+    gsap.globalTimeline.clear();
     vi.useRealTimers();
   });
 
   // Requirement 1: shows "xClues" with correct casing
   it("renders xClues with lowercase x, uppercase C, lowercase lues", () => {
     const { container } = render(<Logo genre="films" static />);
-    const text = container.querySelector(".logo")?.textContent;
-    expect(text).toBe("xClues");
+    const logo = container.querySelector(".logo");
+    // aria-label carries the display name; Clues text is always visible
+    expect(logo?.getAttribute("aria-label")).toBe("xClues");
+    expect(logo?.textContent).toContain("Clues");
   });
 
   // Requirement 2: starts on x, cycles through icons, settles on genre
@@ -40,38 +42,48 @@ describe("Logo", () => {
 
   it("settles on films icon after animation", () => {
     const { container } = render(<Logo genre="films" />);
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="films"]')).toBeTruthy();
   });
 
   it("settles on books icon after animation", () => {
     const { container } = render(<Logo genre="books" />);
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="books"]')).toBeTruthy();
   });
 
   it("settles on music icon after animation", () => {
     const { container } = render(<Logo genre="music" />);
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="music"]')).toBeTruthy();
   });
 
-  it("cycles through x → films → books → music → target", () => {
-    const { container } = render(<Logo genre="films" />);
+  it("cycles through icons like a slot machine before landing on target", () => {
+    const { container } = render(<Logo genre="books" />);
 
+    // Starts at x
     expect(container.querySelector('[data-slot="x"]')).toBeTruthy();
 
-    act(() => { vi.advanceTimersByTime(500); });
-    expect(container.querySelector('[data-slot="films"]')).toBeTruthy();
+    // Collect all slots seen during animation by advancing in small increments
+    const seen: string[] = ["x"];
+    for (let ms = 0; ms < 3000; ms += 50) {
+      act(() => { advanceGSAP(50); });
+      const slot = container.querySelector("[data-slot]")?.getAttribute("data-slot");
+      if (slot && slot !== seen[seen.length - 1]) {
+        seen.push(slot);
+      }
+    }
 
-    act(() => { vi.advanceTimersByTime(500); });
-    expect(container.querySelector('[data-slot="books"]')).toBeTruthy();
+    // Should have cycled through all icons multiple times (3 full cycles + partial)
+    const filmsCount = seen.filter((s) => s === "films").length;
+    const booksCount = seen.filter((s) => s === "books").length;
+    const musicCount = seen.filter((s) => s === "music").length;
+    expect(filmsCount).toBeGreaterThanOrEqual(3);
+    expect(booksCount).toBeGreaterThanOrEqual(3);
+    expect(musicCount).toBeGreaterThanOrEqual(3);
 
-    act(() => { vi.advanceTimersByTime(500); });
-    expect(container.querySelector('[data-slot="music"]')).toBeTruthy();
-
-    act(() => { vi.advanceTimersByTime(500); });
-    expect(container.querySelector('[data-slot="films"]')).toBeTruthy();
+    // Must end on the target
+    expect(seen[seen.length - 1]).toBe("books");
   });
 
   // Requirement 3: "Clues" must not shift — the x text is always in the slot
@@ -108,7 +120,7 @@ describe("Logo", () => {
     const { container } = render(<Logo genre="films" />);
     expect(container.textContent).toContain("Clues");
 
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => { advanceGSAP(3000); });
     expect(container.textContent).toContain("Clues");
   });
 });

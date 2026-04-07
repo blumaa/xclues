@@ -1,68 +1,68 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
-import { ThemeContextProvider } from "../providers/ThemeContext";
-import { StorageProvider } from "../providers/StorageProvider";
-import { StatsProvider } from "../providers/StatsProvider";
-import { SiteProvider } from "../providers/SiteProvider";
-import { ToastProvider } from "../providers/ToastProvider";
-import { puzzleKeys } from "../lib/supabase/storage";
-import { mockPuzzle } from "./puzzleData";
-import type { Decorator } from "@storybook/react-vite";
+/**
+ * Storybook Decorators for Next.js App
+ *
+ * Provides mock providers for stories that need routing or app context.
+ */
 
-function createMockQueryClient() {
-  const today = new Date().toISOString().split("T")[0];
-  const client = new QueryClient({
-    defaultOptions: { queries: { staleTime: Infinity, retry: false } },
-  });
-  client.setQueryData(puzzleKeys.daily(today, "films"), mockPuzzle);
-  return client;
+import { createElement, type ReactNode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SiteProvider } from '../providers/SiteProvider';
+import { ThemeContextProvider } from '../providers/ThemeContext';
+import { ToastProvider } from '../providers/ToastProvider';
+import { StatsProvider } from '../providers/StatsProvider';
+import { StorageProvider } from '../providers/StorageProvider';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: Infinity,
+    },
+  },
+});
+
+/**
+ * Basic providers for components that need site context and theme
+ */
+export function withNavProviders(Story: () => ReactNode) {
+  return createElement(
+    QueryClientProvider,
+    { client: queryClient },
+    createElement(
+      SiteProvider,
+      null,
+      createElement(
+        ThemeContextProvider,
+        null,
+        createElement(ToastProvider, null, createElement(Story))
+      )
+    )
+  );
 }
 
-/** Full app provider stack — use for stories that render complete app sections */
-export const withProviders: Decorator = (Story) => {
-  const queryClient = createMockQueryClient();
-  return (
-    <SiteProvider>
-      <QueryClientProvider client={queryClient}>
-        <StorageProvider>
-          <StatsProvider>
-            <ThemeContextProvider>
-              <ToastProvider>
-                <BrowserRouter>
-                  <Story />
-                </BrowserRouter>
-              </ToastProvider>
-            </ThemeContextProvider>
-          </StatsProvider>
-        </StorageProvider>
-      </QueryClientProvider>
-    </SiteProvider>
+/**
+ * Full provider stack for game components
+ */
+export function withProviders(Story: () => ReactNode) {
+  return createElement(
+    QueryClientProvider,
+    { client: queryClient },
+    createElement(
+      SiteProvider,
+      null,
+      createElement(
+        StorageProvider,
+        null,
+        createElement(
+          StatsProvider,
+          null,
+          createElement(
+            ThemeContextProvider,
+            null,
+            createElement(ToastProvider, null, createElement(Story))
+          )
+        )
+      )
+    )
   );
-};
-
-/** Minimal providers for components that only need routing + site config */
-export const withSiteAndRouter: Decorator = (Story) => (
-  <SiteProvider>
-    <BrowserRouter>
-      <Story />
-    </BrowserRouter>
-  </SiteProvider>
-);
-
-/** Theme context only — for components that call useThemeContext */
-export const withTheme: Decorator = (Story) => (
-  <ThemeContextProvider>
-    <Story />
-  </ThemeContextProvider>
-);
-
-/** Theme + site + router — for header/nav components */
-export const withNavProviders: Decorator = (Story) => (
-  <SiteProvider>
-    <ThemeContextProvider>
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    </ThemeContextProvider>
-  </SiteProvider>
-);
+}

@@ -5,16 +5,6 @@
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  animation: appFadeIn 0.6s ease-out;
-}
-
-@keyframes appFadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 
 .app-header {
@@ -30,6 +20,8 @@
   backdrop-filter: blur(var(--xclues-header-blur));
   -webkit-backdrop-filter: blur(var(--xclues-header-blur));
   border-bottom: 1px solid var(--xclues-header-border);
+  will-change: transform;
+  contain: layout style;
 }
 
 .app-header-brand {
@@ -73,8 +65,3 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .app-layout {
-    animation: none;
-  }
-}

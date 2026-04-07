@@ -7,11 +7,16 @@ const STORAGE_KEY = `${TEST_PREFIX}-theme`;
 
 describe('useTheme', () => {
   beforeEach(() => {
-    // Clear localStorage before each test
+    // Clear localStorage and cookies
     localStorage.clear();
+    document.cookie.split(";").forEach(c => {
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
     // Reset data-theme attribute and clear inline styles
     document.documentElement.removeAttribute('data-theme');
     document.documentElement.style.cssText = '';
+
     // Mock matchMedia
     Object.defineProperty(window, 'matchMedia', {
       writable: true,

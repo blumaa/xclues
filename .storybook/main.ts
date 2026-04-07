@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from '@storybook/nextjs-vite';
 
 const config: StorybookConfig = {
   "stories": [
@@ -14,7 +14,7 @@ const config: StorybookConfig = {
     "@storybook/addon-themes"
   ],
   "framework": {
-    "name": "@storybook/react-vite",
+    "name": "@storybook/nextjs-vite",
     "options": {}
   }
 };

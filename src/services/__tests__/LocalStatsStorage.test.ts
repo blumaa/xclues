@@ -58,6 +58,7 @@ describe('LocalStatsStorage', () => {
   function makeResult(overrides: Partial<GameResult> = {}): GameResult {
     return {
       date: '2025-06-15',
+      genre: 'films',
       won: true,
       mistakes: 0,
       completedAt: Date.now(),
@@ -119,10 +120,19 @@ describe('LocalStatsStorage', () => {
       expect(stats.winRate).toBe(50);
     });
 
-    it('prevents duplicate recording for the same day', async () => {
+    it('prevents duplicate recording for the same day and genre', async () => {
       await storage.recordCompletion(makeResult());
       const stats = await storage.recordCompletion(makeResult());
       expect(stats.gamesPlayed).toBe(1);
+    });
+
+    it('allows recording different genres on the same day', async () => {
+      await storage.recordCompletion(makeResult({ genre: 'films' }));
+      const stats = await storage.recordCompletion(makeResult({ genre: 'books' }));
+      expect(stats.gamesPlayed).toBe(2);
+      expect(stats.gameHistory).toHaveLength(2);
+      expect(stats.gameHistory[0].genre).toBe('films');
+      expect(stats.gameHistory[1].genre).toBe('books');
     });
   });
 

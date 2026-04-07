@@ -1,0 +1,55 @@
+/* Found groups container - responsive width matching the grid */
+.found-groups-container {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-sm);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  padding-right: var(--xclues-spacing-3);
+  padding-left: var(--xclues-spacing-3);
+}
+
+/* Mobile: match the item grid width */
+@media (max-width: 639px) {
+  .found-groups-container {
+    width: calc(3 * 12px + 4 * 22.5vw);
+  }
+}
+
+/* Tablet */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .found-groups-container {
+    width: var(--xclues-board-width-tablet);
+    max-width: 90vw;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .found-groups-container {
+    width: var(--xclues-board-width-desktop);
+    max-width: 80vw;
+  }
+}
+
+/* Post-game action buttons */
+.game-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--xclues-spacing-md);
+  padding: var(--xclues-spacing-3) 0;
+}
+
+.game-actions .xbtn {
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: var(--xclues-border-radius-sm);
+  transition: all var(--xclues-transition);
+}
+
+.game-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--xclues-card-shadow-hover);
+}

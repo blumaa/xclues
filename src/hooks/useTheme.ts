@@ -6,13 +6,14 @@ export type BrandTheme = keyof typeof BRAND_THEMES;
 
 const BRAND_NAMES = Object.keys(BRAND_THEMES) as BrandTheme[];
 const BRAND_STORAGE_KEY = 'xclues-brand-theme';
+const THEME_STORAGE_KEY = 'xclues-theme';
 
 function isValidBrand(value: string): value is BrandTheme {
   return value in BRAND_THEMES;
 }
 
 function getInitialBrand(): BrandTheme {
-  if (typeof window === 'undefined') return 'claude';
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return 'claude';
   const stored = localStorage.getItem(BRAND_STORAGE_KEY);
   if (stored && isValidBrand(stored)) return stored;
   return 'claude';
@@ -31,16 +32,18 @@ function getSystemTheme(): Theme {
 }
 
 /**
- * Gets the initial theme from localStorage or system preference
+ * Gets the initial theme from localStorage or cookie or system preference
  */
 function getInitialTheme(storageKey: string): Theme {
   if (typeof window === 'undefined') return 'light';
 
-  // Check localStorage first
+  // Check cookie (SSR)
+  const cookieMatch = document.cookie.match(new RegExp('(^| )' + THEME_STORAGE_KEY + '=([^;]+)'));
+  if (cookieMatch) return cookieMatch[2] as Theme;
+
+  // Check localStorage
   const stored = localStorage.getItem(storageKey);
-  if (stored === 'light' || stored === 'dark') {
-    return stored;
-  }
+  if (stored === 'light' || stored === 'dark') return stored;
 
   // Fall back to system preference
   return getSystemTheme();
@@ -55,54 +58,37 @@ export interface UseThemeReturn {
   setBrandTheme: (brand: BrandTheme) => void;
 }
 
-/**
- * Hook for managing theme (light/dark mode)
- *
- * Features:
- * - Persists theme preference to localStorage
- * - Respects system preference (prefers-color-scheme)
- * - Provides toggle and setter functions
- *
- * Following SOLID principles:
- * - Single Responsibility: Only handles theme state
- * - Open/Closed: Can be extended without modification
- * - Dependency Inversion: Depends on abstractions (localStorage, window APIs)
- *
- * @param storagePrefix - Prefix for localStorage key (e.g., 'xclues' -> 'xclues-theme')
- */
 export function useTheme(storagePrefix: string): UseThemeReturn {
-  const storageKey = `${storagePrefix}-theme`;
-  const [theme, setThemeState] = useState<Theme>(() => getInitialTheme(storageKey));
+  const themeStorageKey = `${storagePrefix}-theme`;
+  const [theme, setThemeState] = useState<Theme>(() => getInitialTheme(themeStorageKey));
   const [brandTheme, setBrandThemeState] = useState<BrandTheme>(() => getInitialBrand());
 
-  // Apply theme + brand tokens atomically to avoid flash of wrong theme
   useEffect(() => {
-    // 1. Set data-theme attribute
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(storageKey, theme);
+    if (typeof window === 'undefined' || !document.documentElement) return;
 
-    // 2. Apply brand tokens for the current color scheme
+    // Set data-theme attribute
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(themeStorageKey, theme);
+    // Sync cookie for SSR consistency
+    document.cookie = `${THEME_STORAGE_KEY}=${theme}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // Apply brand tokens
     const brandDef = BRAND_THEMES[brandTheme];
     if (brandDef) {
-      const tokens = theme === 'dark' ? brandDef.dark : brandDef.light;
-      applyThemeTokens(tokens);
+      applyThemeTokens(theme === 'dark' ? brandDef.dark : brandDef.light);
     }
 
-    // 3. Persist brand choice
     localStorage.setItem(BRAND_STORAGE_KEY, brandTheme);
-  }, [brandTheme, theme, storageKey]);
+  }, [brandTheme, theme, themeStorageKey]);
 
-  // Set theme to a specific value
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
   }, []);
 
-  // Toggle between light and dark
   const toggleTheme = useCallback(() => {
     setThemeState(prev => prev === 'light' ? 'dark' : 'light');
   }, []);
 
-  // Set brand theme
   const setBrandTheme = useCallback((brand: BrandTheme) => {
     setBrandThemeState(brand);
   }, []);

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { Dot } from '../Dot';
+import { Dot } from '../atoms/Dot';
 
 describe('Dot', () => {
   it('renders with sm size class by default', () => {

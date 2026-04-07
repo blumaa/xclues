@@ -8,21 +8,26 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+// Allow missing variables during testing and build (SSG prerendering)
+const isTestOrBuild = process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local'
-  );
+  if (!isTestOrBuild) {
+    throw new Error(
+      'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local'
+    );
+  }
 }
 
 /**
  * Supabase client instance with type safety
  */
 export const supabase: SupabaseClient<Database> = createClient<Database>(
-  supabaseUrl,
-  supabaseAnonKey,
+  supabaseUrl || 'https://mock.supabase.co',
+  supabaseAnonKey || 'mock-key',
   {
     auth: {
       persistSession: true,
@@ -31,4 +36,3 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
     },
   }
 );
-
