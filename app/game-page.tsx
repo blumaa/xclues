@@ -92,7 +92,7 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
         .then(() => setRecordedDate(puzzleDate))
         .catch(() => {});
     }
-  }, [gameStatus, recordedDate, puzzleDate, mistakes, currentGuessHistory, stats]);
+  }, [gameStatus, recordedDate, puzzleDate, genre, mistakes, currentGuessHistory, stats]);
 
   // Show results modal after delay
   useEffect(() => {

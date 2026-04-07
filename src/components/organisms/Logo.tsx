@@ -47,7 +47,17 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
   const finalPos = CYCLES * SEQUENCE.length + targetIdx;
 
   const reelRef = useRef<HTMLSpanElement>(null);
-  const [active, setActive] = useState<SlotItem>(skipAnimation ? target : "x");
+  const [animActive, setAnimActive] = useState<SlotItem>("x");
+  const [prevTarget, setPrevTarget] = useState(target);
+
+  // Reset animation state when target changes (render-time adjustment per React docs)
+  if (target !== prevTarget) {
+    setPrevTarget(target);
+    if (!skipAnimation) setAnimActive("x");
+  }
+
+  // When static, active is always target; otherwise use animation state
+  const active = skipAnimation ? target : animActive;
 
   // Build reel: enough copies of SEQUENCE to cover max position
   const copies = Math.ceil((finalPos + 1) / SEQUENCE.length);
@@ -58,8 +68,7 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
 
   useEffect(() => {
     if (skipAnimation) {
-      setActive(target);
-      // Snap reel to final position (pixel-based when measurable)
+      // Snap reel to final position (DOM side-effect only)
       if (reelRef.current) {
         const h = reelRef.current.children[0]?.getBoundingClientRect().height || 0;
         if (h > 0) gsap.set(reelRef.current, { y: -targetIdx * h });
@@ -70,8 +79,7 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
     // Measure one reel item's height (0 in jsdom / test env)
     const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
 
-    // Reset reel to start
-    setActive("x");
+    // Reset reel position
     if (reelRef.current && itemH > 0) {
       gsap.set(reelRef.current, { y: 0 });
     }
@@ -90,14 +98,14 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
         const item = SEQUENCE[p % SEQUENCE.length];
         if (item !== lastItem) {
           lastItem = item;
-          setActive(item);
+          setAnimActive(item);
         }
         if (reelRef.current && itemH > 0) {
           gsap.set(reelRef.current, { y: -proxy.pos * itemH });
         }
       },
       onComplete() {
-        setActive(target);
+        setAnimActive(target);
         if (reelRef.current && itemH > 0) {
           gsap.set(reelRef.current, { y: -finalPos * itemH });
         }
