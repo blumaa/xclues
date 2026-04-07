@@ -11,11 +11,11 @@ import type { Database } from './types';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-// Allow missing variables during testing
-const isTest = process.env.NODE_ENV === 'test';
+// Allow missing variables during testing and build (SSG prerendering)
+const isTestOrBuild = process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  if (!isTest) {
+  if (!isTestOrBuild) {
     throw new Error(
       'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local'
     );
