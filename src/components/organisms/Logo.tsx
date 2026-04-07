@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import "./Logo.css";
 import type { Genre } from "../../config/seoConfig";
 
@@ -21,6 +22,7 @@ function MusicIcon() {
 type SlotItem = "x" | "films" | "books" | "music";
 const ICONS: Record<Exclude<SlotItem, "x">, React.ComponentType> = { films: FilmIcon, books: BookIcon, music: MusicIcon };
 const SEQUENCE: SlotItem[] = ["x", "films", "books", "music"];
+const CYCLES = 3;
 
 function genreToSlot(genre?: Genre): SlotItem {
   if (genre === "films" || genre === "books" || genre === "music") return genre;
@@ -41,32 +43,88 @@ interface LogoProps {
 export function Logo({ genre, static: isStatic }: LogoProps) {
   const target = genreToSlot(genre);
   const skipAnimation = isStatic || prefersReducedMotion();
+  const targetIdx = SEQUENCE.indexOf(target);
+  const finalPos = CYCLES * SEQUENCE.length + targetIdx;
+
+  const reelRef = useRef<HTMLSpanElement>(null);
   const [active, setActive] = useState<SlotItem>(skipAnimation ? target : "x");
 
-  useEffect(() => {
-    if (skipAnimation) return;
-    const seq = [...SEQUENCE];
-    if (seq[seq.length - 1] !== target) seq.push(target);
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    for (let i = 1; i < seq.length; i++) {
-      timers.push(setTimeout(() => setActive(seq[i]), i * 500));
-    }
-    return () => timers.forEach(clearTimeout);
-  }, [skipAnimation, target]);
+  // Build reel: enough copies of SEQUENCE to cover max position
+  const copies = Math.ceil((finalPos + 1) / SEQUENCE.length);
+  const reelItems: SlotItem[] = [];
+  for (let c = 0; c < copies; c++) {
+    reelItems.push(...SEQUENCE);
+  }
 
-  const showIcon = active !== "x";
-  const IconComponent = showIcon ? ICONS[active] : null;
+  useEffect(() => {
+    if (skipAnimation) {
+      setActive(target);
+      // Snap reel to final position (pixel-based when measurable)
+      if (reelRef.current) {
+        const h = reelRef.current.children[0]?.getBoundingClientRect().height || 0;
+        if (h > 0) gsap.set(reelRef.current, { y: -targetIdx * h });
+      }
+      return;
+    }
+
+    // Measure one reel item's height (0 in jsdom / test env)
+    const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
+
+    // Reset reel to start
+    setActive("x");
+    if (reelRef.current && itemH > 0) {
+      gsap.set(reelRef.current, { y: 0 });
+    }
+
+    // Animate a proxy value from 0 → finalPos.
+    // On each tick, derive the active slot item and slide the reel.
+    const proxy = { pos: 0 };
+    let lastItem: SlotItem = "x";
+
+    const tween = gsap.to(proxy, {
+      pos: finalPos,
+      duration: 1.8,
+      ease: "power4.out",
+      onUpdate() {
+        const p = Math.round(proxy.pos);
+        const item = SEQUENCE[p % SEQUENCE.length];
+        if (item !== lastItem) {
+          lastItem = item;
+          setActive(item);
+        }
+        if (reelRef.current && itemH > 0) {
+          gsap.set(reelRef.current, { y: -proxy.pos * itemH });
+        }
+      },
+      onComplete() {
+        setActive(target);
+        if (reelRef.current && itemH > 0) {
+          gsap.set(reelRef.current, { y: -finalPos * itemH });
+        }
+      },
+    });
+
+    return () => { tween.kill(); };
+  }, [skipAnimation, target, targetIdx, finalPos]);
 
   return (
     <span className="logo" role="img" aria-label="xClues" data-slot={active}>
       <span className="logo-word">
         <span className="logo-slot">
-          <span className={`logo-x ${showIcon ? "logo-x--hidden" : ""}`}>x</span>
-          {IconComponent && (
-            <span className="logo-icon-cell" data-slot={active}>
-              <IconComponent />
-            </span>
-          )}
+          {/* Hidden x always in flow — defines slot width */}
+          <span className="logo-x" aria-hidden="true">x</span>
+          {/* Vertical reel — GSAP controls y transform */}
+          <span className="logo-reel" ref={reelRef}>
+            {reelItems.map((item, i) => (
+              <span key={i} className="logo-reel-item">
+                {item === "x" ? (
+                  <span className="logo-reel-x">x</span>
+                ) : (
+                  (() => { const Icon = ICONS[item]; return <Icon />; })()
+                )}
+              </span>
+            ))}
+          </span>
         </span>
         Clues
       </span>

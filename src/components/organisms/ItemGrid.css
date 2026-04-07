@@ -4,6 +4,8 @@
   grid-template-columns: repeat(4, 1fr);
   gap: var(--xclues-spacing-sm);
   max-width: 100%;
+  padding-right: .5rem;
+  padding-left: .5rem;
 }
 
 /* Tablet: constrain to board width */

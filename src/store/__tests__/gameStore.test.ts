@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import type { Item, Group } from '../../types';
 
-import { getGameStore, resetAllStores } from '../gameStore';
+import { getGameStore } from '../gameStore';
 
 const GENRE = 'films';
 const store = () => getGameStore(GENRE);

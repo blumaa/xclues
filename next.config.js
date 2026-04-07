@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  // Use src directory for app router
-  experimental: {
-    // Allow importing CSS in server components
-  },
+  // Static export only for Capacitor/iOS builds; web builds use SSR
+  ...(process.env.CAPACITOR ? { output: 'export' } : {}),
 };
 
 export default nextConfig;
