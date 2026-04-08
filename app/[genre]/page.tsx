@@ -3,7 +3,6 @@ import { GamePage } from "../game-page";
 import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/config/seoConfig";
 import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { puzzleKeys } from "../../src/lib/supabase/storage/usePuzzleStorage";
-import { SupabaseStorage } from "../../src/lib/supabase/storage/SupabaseStorage";
 import { createServerSupabaseClient } from "../../src/lib/supabase/server";
 
 function getTodayDate(): string {
@@ -12,6 +11,41 @@ function getTodayDate(): string {
   const month = String(now.getUTCMonth() + 1).padStart(2, "0");
   const day = String(now.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+async function fetchDailyPuzzle(genre: string, date: string) {
+  const supabase = createServerSupabaseClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("puzzles")
+    .select("id, groups, puzzle_date, created_at, metadata")
+    .eq("puzzle_date", date)
+    .eq("genre", genre)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  const row = data as Record<string, unknown>;
+  const groups = (row.groups as Array<{ id: string; items: Array<Record<string, unknown>>; connection: string; difficulty: string; color: string }>).map((g) => ({
+    id: g.id,
+    items: g.items,
+    connection: g.connection,
+    difficulty: g.difficulty,
+    color: g.color,
+  }));
+
+  const items = groups.flatMap((g) => g.items);
+
+  return {
+    id: row.id as string,
+    groups,
+    items,
+    createdAt: new Date(row.created_at as string).getTime(),
+    metadata: row.metadata as Record<string, unknown> | undefined,
+    puzzleDate: row.puzzle_date as string,
+  };
 }
 
 export async function generateStaticParams() {
@@ -54,15 +88,10 @@ export default async function Page({
   const today = getTodayDate();
 
   const queryClient = new QueryClient();
-  const supabase = createServerSupabaseClient();
-
-  if (supabase) {
-    const storage = new SupabaseStorage(supabase);
-    await queryClient.prefetchQuery({
-      queryKey: puzzleKeys.daily(today, genre),
-      queryFn: () => storage.getDailyPuzzle(today, genre),
-    });
-  }
+  await queryClient.prefetchQuery({
+    queryKey: puzzleKeys.daily(today, genre),
+    queryFn: () => fetchDailyPuzzle(genre, today),
+  });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
