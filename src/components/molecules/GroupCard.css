@@ -1,28 +1,12 @@
 .group-card.xcard {
-  transition: all var(--xclues-transition);
+  /* transition: all var(--xclues-transition); */
   aspect-ratio: 4 / 1;
-  animation: groupCardAppear var(--xclues-transition-bounce) both;
+  /* animation: groupCardAppear var(--xclues-transition-bounce) both; */
   border-radius: var(--xclues-border-radius);
   min-height: 64px;
   border: none;
   position: relative;
   overflow: hidden;
-}
-
-/* Subtle shimmer overlay on group cards */
-.group-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.15) 45%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(255, 255, 255, 0.15) 55%,
-    transparent 60%
-  );
-  pointer-events: none;
 }
 
 @keyframes groupCardAppear {
@@ -58,7 +42,6 @@
 .group-card.yellow {
   background: var(--xclues-yellow-bg);
   color: var(--xclues-group-text);
-  box-shadow: var(--xclues-shadow-yellow-group);
 }
 
 .group-card.green {
