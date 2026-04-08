@@ -14,7 +14,9 @@ export { VALID_GENRES as GENRES, DEFAULT_GENRE };
  * Domain to genre mapping
  */
 const DOMAIN_TO_GENRE: Record<string, Genre> = {
-  // Production .space domains
+  // Production domains
+  'filmclues.com': 'films',
+  'www.filmclues.com': 'films',
   'filmecules.space': 'films',
   'www.filmecules.space': 'films',
   'musicules.space': 'music',
@@ -23,16 +25,23 @@ const DOMAIN_TO_GENRE: Record<string, Genre> = {
   'www.filmclues.space': 'films',
   'musiclues.space': 'music',
   'www.musiclues.space': 'music',
-  'sportsclues.space': 'sports',
-  'www.sportsclues.space': 'sports',
   'litclues.space': 'books',
   'www.litclues.space': 'books',
   // Vercel preview/staging domains
   'filmclues.vercel.app': 'films',
   'musiclues.vercel.app': 'music',
-  'sportsclues.vercel.app': 'sports',
   'litclues.vercel.app': 'books',
 };
+
+/**
+ * Get genre from a hostname string (works server-side).
+ * Strips port numbers and matches against known domains.
+ */
+export function getGenreFromHost(host: string | undefined): Genre {
+  if (!host) return DEFAULT_GENRE;
+  const hostname = host.split(':')[0];
+  return DOMAIN_TO_GENRE[hostname] ?? DEFAULT_GENRE;
+}
 
 /**
  * Check if a string is a valid genre

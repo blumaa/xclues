@@ -28,7 +28,6 @@ describe('domainDetector', () => {
     it('returns true for valid genres', () => {
       expect(isValidGenre('films')).toBe(true);
       expect(isValidGenre('music')).toBe(true);
-      expect(isValidGenre('sports')).toBe(true);
       expect(isValidGenre('books')).toBe(true);
     });
 
@@ -60,11 +59,6 @@ describe('domainDetector', () => {
       expect(detectGenreFromDomain()).toBe('music');
     });
 
-    it('detects sports from sportsclues.space', () => {
-      window.location.hostname = 'sportsclues.space';
-      expect(detectGenreFromDomain()).toBe('sports');
-    });
-
     it('detects books from litclues.space', () => {
       window.location.hostname = 'litclues.space';
       expect(detectGenreFromDomain()).toBe('books');
@@ -88,13 +82,13 @@ describe('domainDetector', () => {
     });
 
     it('returns genre from localStorage when no URL param', () => {
-      localStorage.setItem('xclues-dev-genre', 'sports');
-      expect(getDevGenre()).toBe('sports');
+      localStorage.setItem('xclues-dev-genre', 'books');
+      expect(getDevGenre()).toBe('books');
     });
 
     it('prioritizes URL param over localStorage', () => {
       window.location.search = '?genre=music';
-      localStorage.setItem('xclues-dev-genre', 'sports');
+      localStorage.setItem('xclues-dev-genre', 'books');
       expect(getDevGenre()).toBe('music');
     });
 

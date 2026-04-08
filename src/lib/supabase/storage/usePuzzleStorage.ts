@@ -31,8 +31,6 @@ export function useDailyPuzzle(
   return useQuery({
     queryKey: puzzleKeys.daily(date, genre),
     queryFn: () => storage.getDailyPuzzle(date, genre),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
     ...options,
   });
 }

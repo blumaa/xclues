@@ -2,10 +2,9 @@
  * Build Script: Generate SEO Files
  *
  * Generates sitemap.xml, robots.txt, and copies the correct favicon
- * based on VITE_GENRE env variable.
- * Run this before the Vite build to ensure correct SEO files for each domain.
+ * based on GENRE env variable.
  *
- * Usage: VITE_GENRE=films bun run scripts/generate-seo.ts
+ * Usage: GENRE=films bun run scripts/generate-seo.ts
  */
 
 import { writeFileSync, mkdirSync, existsSync, copyFileSync } from 'fs';
@@ -13,10 +12,10 @@ import { join } from 'path';
 import { SEO_CONFIGS, DEFAULT_GENRE, isValidGenre, type Genre } from '../src/config/seoConfig';
 
 // Get genre from environment variable
-const genre = process.env.VITE_GENRE;
+const genre = process.env.GENRE;
 
 if (!genre) {
-  console.log(`ℹ️  VITE_GENRE not set, using default: ${DEFAULT_GENRE}`);
+  console.log(`ℹ️  GENRE not set, using default: ${DEFAULT_GENRE}`);
 }
 
 const activeGenre: Genre = isValidGenre(genre) ? genre : DEFAULT_GENRE;

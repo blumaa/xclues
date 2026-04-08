@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.blumaa.xclues',
   appName: 'xclues',
-  webDir: 'dist',
+  webDir: 'out',
   ios: {
     preferredContentMode: 'mobile',
     allowsLinkPreview: false,
