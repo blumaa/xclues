@@ -83,7 +83,6 @@
 .group-card .group-card-connection {
   font-weight: var(--xclues-font-weight-extrabold);
   letter-spacing: var(--xclues-tracking-normal);
-  text-transform: uppercase;
   font-size: var(--xclues-font-size-base);
 }
 

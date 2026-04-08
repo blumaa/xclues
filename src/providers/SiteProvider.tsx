@@ -42,7 +42,7 @@ function updateLinkTag(selector: string, href: string): void {
  */
 function updateMetaTags(config: SiteContextValue): void {
   if (typeof window === 'undefined') return;
-  const siteUrl = `https://www.${config.domain}`;
+  const siteUrl = `https://${config.domain}`;
 
   // Primary meta tags
   document.title = config.metaTitle;

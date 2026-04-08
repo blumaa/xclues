@@ -54,3 +54,9 @@ export const AllColors: Story = {
     </div>
   ),
 };
+
+export const LongConnectionTitle: Story = {
+  args: {
+    group: makeGroup("purple", "this is a very long Hidden word and it keeps going: CAT", ["Caterpillar", "Scatter", "Education", "Vacation"]),
+  },
+};

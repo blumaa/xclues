@@ -62,7 +62,7 @@ export async function generateMetadata({
 
   const config = getSeoConfig(genre);
   return {
-    title: config.metaTitle,
+    title: { absolute: config.metaTitle },
     description: config.metaDescription,
     openGraph: {
       title: config.metaTitle,
@@ -93,9 +93,32 @@ export default async function Page({
     queryFn: () => fetchDailyPuzzle(genre, today),
   });
 
+  const config = getSeoConfig(genre as Genre);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: config.siteName,
+    description: config.metaDescription,
+    url: `https://filmclues.com/${genre}`,
+    applicationCategory: "Game",
+    genre: "Puzzle",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
+
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <GamePage genre={genre as Genre} puzzleDate={today} />
-    </HydrationBoundary>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <GamePage genre={genre as Genre} puzzleDate={today} />
+      </HydrationBoundary>
+    </>
   );
 }

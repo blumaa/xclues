@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Header } from "./header";
@@ -35,13 +34,19 @@ export const metadata: Metadata = {
   },
 };
 
+async function getTheme(): Promise<string> {
+  if (process.env.CAPACITOR) return 'light';
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+  return getServerTheme(cookieStore.get("xclues-theme")?.value);
+}
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const theme = getServerTheme(cookieStore.get("xclues-theme")?.value);
+  const theme = await getTheme();
 
   return (
     <html lang="en" data-theme={theme} suppressHydrationWarning>

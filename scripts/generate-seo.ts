@@ -20,7 +20,7 @@ if (!genre) {
 
 const activeGenre: Genre = isValidGenre(genre) ? genre : DEFAULT_GENRE;
 const config = SEO_CONFIGS[activeGenre];
-const siteUrl = `https://www.${config.domain}`;
+const siteUrl = `https://${config.domain}`;
 
 console.log(`🔧 Generating SEO files for: ${config.siteName} (${config.domain})`);
 

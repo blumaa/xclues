@@ -22,8 +22,6 @@ export function GroupCard({ group }: GroupCardProps) {
           flexDirection: "column",
           paddingRight: "0.5rem",
           paddingLeft: "0.5rem",
-          paddingTop: "0.25rem",
-          paddingBottom: "0.25rem",
           alignItems: "center",
           justifyContent: "center",
           height: "100%",

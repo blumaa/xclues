@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "prebuild": "bun run scripts/generate-seo.ts",
+    "prebuild": "[ \"$CAPACITOR\" = true ] && bun run scripts/generate-seo.ts || true",
     "build": "next build",
-    "build:ios": "CAPACITOR=true next build && CAPACITOR=true next export",
+    "build:ios": "mv app/robots.ts app/robots.ts.bak && mv app/sitemap.ts app/sitemap.ts.bak && CAPACITOR=true next build; mv app/robots.ts.bak app/robots.ts; mv app/sitemap.ts.bak app/sitemap.ts",
     "start": "next start",
     "preview": "next start",
     "test": "vitest run",
