@@ -15,8 +15,6 @@ export { VALID_GENRES as GENRES, DEFAULT_GENRE };
  */
 const DOMAIN_TO_GENRE: Record<string, Genre> = {
   // Production domains
-  'filmclues.com': 'films',
-  'www.filmclues.com': 'films',
   'filmecules.space': 'films',
   'www.filmecules.space': 'films',
   'musicules.space': 'music',

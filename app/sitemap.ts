@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { VALID_GENRES } from "../src/config/seoConfig";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://filmclues.com";
+  const baseUrl = "https://filmclues.space";
 
   const genrePages = VALID_GENRES.map((genre) => ({
     url: `${baseUrl}/${genre}`,

@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://filmclues.com/sitemap.xml",
+    sitemap: "https://filmclues.space/sitemap.xml",
   };
 }

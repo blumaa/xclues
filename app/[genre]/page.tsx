@@ -67,14 +67,14 @@ export async function generateMetadata({
     openGraph: {
       title: config.metaTitle,
       description: config.metaDescription,
-      url: `https://filmclues.com/${genre}`,
+      url: `https://${config.domain}`,
     },
     twitter: {
       title: config.metaTitle,
       description: config.metaDescription,
     },
     alternates: {
-      canonical: `https://filmclues.com/${genre}`,
+      canonical: `https://${config.domain}`,
     },
   };
 }
@@ -99,7 +99,7 @@ export default async function Page({
     "@type": "WebApplication",
     name: config.siteName,
     description: config.metaDescription,
-    url: `https://filmclues.com/${genre}`,
+    url: `https://${config.domain}`,
     applicationCategory: "Game",
     genre: "Puzzle",
     operatingSystem: "Any",

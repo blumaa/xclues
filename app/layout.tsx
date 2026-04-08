@@ -8,7 +8,7 @@ import "../src/index.css";
 import "../src/App.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://filmclues.com"),
+  metadataBase: new URL("https://filmclues.space"),
   title: {
     default: "xClues - Daily Connection Puzzles",
     template: "%s | xClues",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "xClues - Daily Connection Puzzles",
     description:
       "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
-    url: "https://filmclues.com",
+    url: "https://filmclues.space",
   },
   twitter: {
     card: "summary_large_image",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       "Daily connection puzzle games for films, books, and music.",
   },
   alternates: {
-    canonical: "https://filmclues.com",
+    canonical: "https://filmclues.space",
   },
 };
 

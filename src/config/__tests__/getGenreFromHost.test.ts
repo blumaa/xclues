@@ -2,10 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { getGenreFromHost } from '../domainDetector';
 
 describe('getGenreFromHost', () => {
-  it('returns films for filmclues.com', () => {
-    expect(getGenreFromHost('filmclues.com')).toBe('films');
-  });
-
   it('returns films for filmclues.space', () => {
     expect(getGenreFromHost('filmclues.space')).toBe('films');
   });

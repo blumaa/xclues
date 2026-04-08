@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { SEO_CONFIGS, VALID_GENRES, isValidGenre, getSeoConfig } from '../seoConfig';
 
 describe('seoConfig', () => {
-  it('all genres use filmclues.com as the domain', () => {
-    for (const genre of VALID_GENRES) {
-      expect(SEO_CONFIGS[genre].domain).toBe('filmclues.com');
-    }
+  it('each genre has its own .space domain', () => {
+    expect(SEO_CONFIGS.films.domain).toBe('filmclues.space');
+    expect(SEO_CONFIGS.music.domain).toBe('musiclues.space');
+    expect(SEO_CONFIGS.books.domain).toBe('litclues.space');
   });
 
   it('no config has metaKeywords', () => {
