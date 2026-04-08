@@ -1,21 +1,16 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { GameBoard } from "../src/components/organisms/GameBoard";
 import { ResultsModal } from "../src/components/organisms/ResultsModal";
 import { useGameStore } from "../src/store/gameStore";
 import { useStats } from "../src/providers/useStats";
 import { guessesToColorHistory } from "../src/utils/guessHistory";
 import { XText } from "../src/components/atoms";
+import { useDailyPuzzle } from "../src/lib/supabase/storage/usePuzzleStorage";
+import { useStorage } from "../src/providers/useStorage";
 import type { Genre } from "../src/config/seoConfig";
-import type { Item, Group } from "../src/types";
 import type { GuessColor } from "../src/types/stats";
-
-interface Puzzle {
-  items: Item[];
-  groups: Group[];
-}
 
 interface GamePageProps {
   genre: Genre;
@@ -30,10 +25,8 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
   const initializeGame = useGameStore(genre, (s) => s.initializeGame);
   const restoreCompletedGame = useGameStore(genre, (s) => s.restoreCompletedGame);
 
-  const { data: puzzle } = useQuery<Puzzle | null>({
-    queryKey: ['puzzle', genre, puzzleDate],
-    queryFn: () => Promise.resolve(null), // Data is hydrated
-  });
+  const storage = useStorage();
+  const { data: puzzle } = useDailyPuzzle(puzzleDate, genre, storage);
 
   const [resultsDismissed, setResultsDismissed] = useState(false);
   const [showStats, setShowStats] = useState(false);

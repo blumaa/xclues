@@ -2,6 +2,7 @@ import { GamePage } from "../game-page";
 import { createClient } from "@supabase/supabase-js";
 import { type Genre } from "../../src/config/seoConfig";
 import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { puzzleKeys } from "../../src/lib/supabase/storage/usePuzzleStorage";
 
 function getTodayDate(): string {
   const now = new Date();
@@ -67,7 +68,7 @@ export default async function Page({
   
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ['puzzle', genre, today],
+    queryKey: puzzleKeys.daily(today, genre),
     queryFn: () => fetchDailyPuzzle(genre, today),
   });
 
