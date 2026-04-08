@@ -162,6 +162,63 @@
   --xclues-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ---- Dark theme defaults (claude dark) ----
+   Matches the default brand so first paint is correct when data-theme="dark".
+   applyThemeTokens() will override with the user's chosen brand after hydration.
+*/
+[data-theme="dark"] {
+  --xclues-text-primary: rgba(255, 255, 255, 0.95);
+  --xclues-text-secondary: #b0aea5;
+  --xclues-text-tertiary: #87867f;
+  --xclues-primary: #d97757;
+  --xclues-primary-light: #f0c8b4;
+  --xclues-primary-dark: #c96442;
+  --xclues-accent: #d97757;
+  --xclues-accent-light: #f0c8b4;
+  --xclues-accent-dark: #c96442;
+  --xclues-page-bg: #141413;
+  --xclues-card-bg: #1e1e1c;
+  --xclues-card-bg-hover: #2a2a27;
+  --xclues-card-selected: linear-gradient(135deg, #d97757 0%, #c96442 100%);
+  --xclues-card-selected-text: rgba(255, 255, 255, 0.95);
+  --xclues-card-shadow: 0 0 0 1px #30302e;
+  --xclues-card-shadow-hover: 0 0 0 1px rgba(217, 119, 87, 0.3), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --xclues-card-shadow-selected: 0 4px 20px rgba(217, 119, 87, 0.3);
+  --xclues-header-bg: rgba(20, 20, 19, 0.85);
+  --xclues-header-border: #30302e;
+  --xclues-footer-bg: rgba(20, 20, 19, 0.7);
+  --xclues-footer-border: #30302e;
+  --xclues-btn-primary-bg: #d97757;
+  --xclues-btn-primary-hover: #e68a6c;
+  --xclues-btn-primary-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --xclues-btn-primary-text: #ffffff;
+  --xclues-shadow-sm: 0 0 0 1px #30302e;
+  --xclues-shadow-md: 0 0 0 1px #30302e, 0 2px 8px rgba(0, 0, 0, 0.2);
+  --xclues-shadow-lg: 0 0 0 1px #30302e, 0 4px 16px rgba(0, 0, 0, 0.3);
+  --xclues-shadow-primary-sm: 0 2px 8px rgba(217, 119, 87, 0.15);
+  --xclues-shadow-primary-glow: 0 4px 16px rgba(217, 119, 87, 0.2);
+  --xclues-primary-6: rgba(217, 119, 87, 0.06);
+  --xclues-primary-8: rgba(217, 119, 87, 0.08);
+  --xclues-primary-10: rgba(217, 119, 87, 0.1);
+  --xclues-primary-15: rgba(217, 119, 87, 0.15);
+  --xclues-primary-20: rgba(217, 119, 87, 0.2);
+  --xclues-overlay-bg: rgba(0, 0, 0, 0.7);
+  --xclues-focus-ring-color: #c96442;
+  --xclues-glow: 0 0 16px rgba(217, 119, 87, 0.2);
+  --xclues-group-text: #1a1a1a;
+  --xclues-dot-filled: #d97757;
+  --xclues-dot-empty: rgba(217, 119, 87, 0.15);
+  --xclues-dot-glow: 0 0 8px rgba(217, 119, 87, 0.3);
+  --xclues-yellow: #fcd34d;
+  --xclues-yellow-bg: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+  --xclues-green: #6ee7b7;
+  --xclues-green-bg: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
+  --xclues-blue: #93c5fd;
+  --xclues-blue-bg: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+  --xclues-purple: #c4b5fd;
+  --xclues-purple-bg: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+}
+
 /* ============================================
    GLOBAL RESETS
    ============================================ */

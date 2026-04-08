@@ -6,7 +6,6 @@ import { ResultsModal } from "../src/components/organisms/ResultsModal";
 import { useGameStore } from "../src/store/gameStore";
 import { useStats } from "../src/providers/useStats";
 import { guessesToColorHistory } from "../src/utils/guessHistory";
-import { XText } from "../src/components/atoms";
 import { useDailyPuzzle } from "../src/lib/supabase/storage/usePuzzleStorage";
 import { useStorage } from "../src/providers/useStorage";
 import type { Genre } from "../src/config/seoConfig";
@@ -26,7 +25,7 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
   const restoreCompletedGame = useGameStore(genre, (s) => s.restoreCompletedGame);
 
   const storage = useStorage();
-  const { data: puzzle } = useDailyPuzzle(puzzleDate, genre, storage);
+  const { data: puzzle, isPending } = useDailyPuzzle(puzzleDate, genre, storage);
 
   const [resultsDismissed, setResultsDismissed] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -102,23 +101,17 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
 
   const showResults = (showResultsDelayed && !resultsDismissed) || showStats;
 
-  if (!puzzle) {
-    return (
-      <div className="homepage-state" role="status">
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "var(--xclues-spacing-lg)" }}>
-          <XText size="lg" weight="semibold">No puzzle available for today</XText>
-          <XText semantic="secondary">Check back soon!</XText>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="homepage-game">
-        <GameBoard genre={genre} onViewStats={() => setShowStats(true)} />
+        <GameBoard
+          genre={genre}
+          isLoading={isPending || (!!puzzle && gameStatus === 'playing' && groups.length === 0)}
+          hasNoPuzzle={!isPending && !puzzle}
+          onViewStats={() => setShowStats(true)}
+        />
       </div>
-      {(gameStatus === "won" || gameStatus === "lost" || showStats) && (
+      {puzzle && (gameStatus === "won" || gameStatus === "lost" || showStats) && (
         <ResultsModal
           isOpen={showResults}
           onClose={() => {

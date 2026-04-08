@@ -58,6 +58,12 @@
   flex-direction: column;
 }
 
+.homepage-game {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 /* On desktop, constrain layout to viewport so game fits without scrolling */
 @media (min-width: 1025px) {
   .app-layout {

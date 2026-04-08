@@ -1,3 +1,20 @@
+.game-board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-md);
+  padding-top: var(--xclues-spacing-md);
+}
+
+.game-board__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-lg);
+  padding: var(--xclues-spacing-xl) 0;
+}
+
 /* Found groups container - responsive width matching the grid */
 .found-groups-container {
   margin: 0 auto;

@@ -18,7 +18,11 @@ vi.mock('../../src/providers/useStats', () => ({
 
 // Mock GameBoard and ResultsModal — we're testing query behavior, not UI
 vi.mock('../../src/components/organisms/GameBoard', () => ({
-  GameBoard: () => <div data-testid="game-board">Game Board</div>,
+  GameBoard: ({ isLoading, hasNoPuzzle }: { isLoading?: boolean; hasNoPuzzle?: boolean }) => {
+    if (isLoading) return <div role="status" aria-label="Loading puzzle">Loading</div>;
+    if (hasNoPuzzle) return <div>No puzzle available for today</div>;
+    return <div data-testid="game-board">Game Board</div>;
+  },
 }));
 vi.mock('../../src/components/organisms/ResultsModal', () => ({
   ResultsModal: () => null,
@@ -56,27 +60,39 @@ vi.mock('../../src/providers/useStorage', () => ({
   }),
 }));
 
+function renderGamePage() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 0,
+        retry: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <GamePage genre="films" puzzleDate="2026-04-08" />
+    </QueryClientProvider>
+  );
+}
+
 describe('GamePage puzzle fetching', () => {
   it('fetches puzzle data from Supabase when no hydrated data exists', async () => {
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          staleTime: 0,
-          retry: false,
-        },
-      },
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <GamePage genre="films" puzzleDate="2026-04-08" />
-      </QueryClientProvider>
-    );
+    renderGamePage();
 
     await waitFor(() => {
       expect(screen.getByTestId('game-board')).toBeInTheDocument();
     }, { timeout: 3000 });
 
+    expect(screen.queryByText('No puzzle available for today')).not.toBeInTheDocument();
+  });
+
+  it('shows skeleton while puzzle is loading', () => {
+    renderGamePage();
+
+    // While the query is pending, a loading skeleton should be visible
+    expect(screen.getByRole('status', { name: 'Loading puzzle' })).toBeInTheDocument();
     expect(screen.queryByText('No puzzle available for today')).not.toBeInTheDocument();
   });
 });

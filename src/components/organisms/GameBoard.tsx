@@ -6,15 +6,19 @@ import { GameControls } from "./GameControls";
 import { MistakesIndicator } from "../molecules/MistakesIndicator";
 import { PostGameActions } from "../molecules/PostGameActions";
 import { WinCelebration } from "../molecules/WinCelebration";
+import { GameSkeleton } from "../molecules/GameSkeleton";
+import { XText } from "../atoms";
 import { useEffect } from "react";
 import "./GameBoard.css";
 
 interface GameBoardProps {
   genre: string;
+  isLoading?: boolean;
+  hasNoPuzzle?: boolean;
   onViewStats?: () => void;
 }
 
-export function GameBoard({ genre, onViewStats }: GameBoardProps) {
+export function GameBoard({ genre, isLoading, hasNoPuzzle, onViewStats }: GameBoardProps) {
   const items = useGameStore(genre, (s) => s.items);
   const foundGroups = useGameStore(genre, (s) => s.foundGroups);
   const selectedItemIds = useGameStore(genre, (s) => s.selectedItemIds);
@@ -41,19 +45,22 @@ export function GameBoard({ genre, onViewStats }: GameBoardProps) {
     }
   }, [notification, showInfo]);
 
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--xclues-spacing-md)",
-          paddingTop: "var(--xclues-spacing-md)",
-        }}
-      >
-        {/* <GameHeader /> */}
+  const renderContent = () => {
+    if (isLoading) {
+      return <GameSkeleton />;
+    }
 
-        {/* Found groups as colored rows */}
+    if (hasNoPuzzle) {
+      return (
+        <div className="game-board__empty">
+          <XText size="lg" weight="semibold">No puzzle available for today</XText>
+          <XText semantic="secondary">Check back soon!</XText>
+        </div>
+      );
+    }
+
+    return (
+      <>
         {foundGroups.length > 0 && (
           <section className="found-groups-container" aria-label="Found groups">
             {foundGroups.map((group) => (
@@ -62,7 +69,6 @@ export function GameBoard({ genre, onViewStats }: GameBoardProps) {
           </section>
         )}
 
-        {/* Remaining item tiles in dynamic grid */}
         {items.length > 0 && gameStatus === "playing" && (
           <ItemGrid
             items={items}
@@ -95,7 +101,13 @@ export function GameBoard({ genre, onViewStats }: GameBoardProps) {
         )}
 
         {gameStatus === "won" && <WinCelebration />}
-      </div>
+      </>
+    );
+  };
+
+  return (
+    <div className="game-board">
+      {renderContent()}
     </div>
   );
 }

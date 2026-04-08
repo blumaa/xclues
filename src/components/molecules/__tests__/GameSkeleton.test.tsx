@@ -8,8 +8,10 @@ describe('GameSkeleton', () => {
     expect(getByRole('status')).toBeTruthy();
   });
 
-  it('renders 16 skeleton tiles', () => {
+  it('renders 16 skeleton tiles in the item-grid layout', () => {
     const { container } = render(<GameSkeleton />);
+    const grid = container.querySelector('.item-grid');
+    expect(grid).toBeTruthy();
     const tiles = container.querySelectorAll('.game-skeleton__tile');
     expect(tiles).toHaveLength(16);
   });
