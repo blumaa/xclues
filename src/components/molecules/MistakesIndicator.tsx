@@ -4,13 +4,11 @@ import "./MistakesIndicator.css";
 interface MistakesIndicatorProps {
   mistakes: number;
   maxMistakes: number;
-  gameStatus: "playing" | "won" | "lost";
 }
 
 export function MistakesIndicator({
   mistakes,
   maxMistakes,
-  gameStatus,
 }: MistakesIndicatorProps) {
   const remainingMistakes = maxMistakes - mistakes;
 

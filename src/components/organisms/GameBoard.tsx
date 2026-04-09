@@ -88,7 +88,6 @@ export function GameBoard({ genre, isLoading, hasNoPuzzle, onViewStats }: GameBo
             <MistakesIndicator
               mistakes={mistakes}
               maxMistakes={MAX_MISTAKES}
-              gameStatus={gameStatus}
             />
           ) : (
             <PostGameActions onViewStats={onViewStats!} />
