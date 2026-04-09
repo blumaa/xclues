@@ -8,9 +8,9 @@ describe('GameSkeleton', () => {
     expect(getByRole('status')).toBeTruthy();
   });
 
-  it('renders 16 skeleton tiles in the item-grid layout', () => {
+  it('renders 16 skeleton tiles in the game-grid layout', () => {
     const { container } = render(<GameSkeleton />);
-    const grid = container.querySelector('.item-grid');
+    const grid = container.querySelector('.game-grid');
     expect(grid).toBeTruthy();
     const tiles = container.querySelectorAll('.game-skeleton__tile');
     expect(tiles).toHaveLength(16);

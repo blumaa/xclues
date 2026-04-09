@@ -1,6 +1,6 @@
 .footer {
   /* margin-top: auto; */
-  border-top: 1px solid var(--xclues-footer-border);
+  /* border-top: 1px solid var(--xclues-footer-border); */
   background: var(--xclues-footer-bg);
   backdrop-filter: blur(var(--xclues-blur-md));
   -webkit-backdrop-filter: blur(var(--xclues-blur-md));
@@ -19,7 +19,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: var(--xclues-spacing-1) var(--xclues-spacing-2);
+  /* padding: var(--xclues-spacing-1) var(--xclues-spacing-2); */
   border-radius: var(--xclues-border-radius-xs);
   transition: all var(--xclues-transition);
   text-decoration: none;

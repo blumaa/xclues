@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 import "./Logo.css";
 import type { Genre } from "../../config/seoConfig";
 
@@ -68,51 +67,58 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
 
   useEffect(() => {
     if (skipAnimation) {
-      // Snap reel to final position (DOM side-effect only)
+      // Snap reel to final position via direct DOM manipulation
       if (reelRef.current) {
         const h = reelRef.current.children[0]?.getBoundingClientRect().height || 0;
-        if (h > 0) gsap.set(reelRef.current, { y: -targetIdx * h });
+        if (h > 0) reelRef.current.style.transform = `translateY(${-targetIdx * h}px)`;
       }
       return;
     }
 
-    // Measure one reel item's height (0 in jsdom / test env)
-    const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
+    let cancelled = false;
+    let tween: { kill: () => void } | null = null;
 
-    // Reset reel position
-    if (reelRef.current && itemH > 0) {
-      gsap.set(reelRef.current, { y: 0 });
-    }
+    import('gsap').then(({ default: gsap }) => {
+      if (cancelled) return;
 
-    // Animate a proxy value from 0 → finalPos.
-    // On each tick, derive the active slot item and slide the reel.
-    const proxy = { pos: 0 };
-    let lastItem: SlotItem = "x";
+      // Measure one reel item's height (0 in jsdom / test env)
+      const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
 
-    const tween = gsap.to(proxy, {
-      pos: finalPos,
-      duration: 1.8,
-      ease: "power4.out",
-      onUpdate() {
-        const p = Math.round(proxy.pos);
-        const item = SEQUENCE[p % SEQUENCE.length];
-        if (item !== lastItem) {
-          lastItem = item;
-          setAnimActive(item);
-        }
-        if (reelRef.current && itemH > 0) {
-          gsap.set(reelRef.current, { y: -proxy.pos * itemH });
-        }
-      },
-      onComplete() {
-        setAnimActive(target);
-        if (reelRef.current && itemH > 0) {
-          gsap.set(reelRef.current, { y: -finalPos * itemH });
-        }
-      },
+      // Reset reel position
+      if (reelRef.current && itemH > 0) {
+        gsap.set(reelRef.current, { y: 0 });
+      }
+
+      // Animate a proxy value from 0 → finalPos.
+      // On each tick, derive the active slot item and slide the reel.
+      const proxy = { pos: 0 };
+      let lastItem: SlotItem = "x";
+
+      tween = gsap.to(proxy, {
+        pos: finalPos,
+        duration: 1.8,
+        ease: "power4.out",
+        onUpdate() {
+          const p = Math.round(proxy.pos);
+          const item = SEQUENCE[p % SEQUENCE.length];
+          if (item !== lastItem) {
+            lastItem = item;
+            setAnimActive(item);
+          }
+          if (reelRef.current && itemH > 0) {
+            gsap.set(reelRef.current, { y: -proxy.pos * itemH });
+          }
+        },
+        onComplete() {
+          setAnimActive(target);
+          if (reelRef.current && itemH > 0) {
+            gsap.set(reelRef.current, { y: -finalPos * itemH });
+          }
+        },
+      });
     });
 
-    return () => { tween.kill(); };
+    return () => { cancelled = true; tween?.kill(); };
   }, [skipAnimation, target, targetIdx, finalPos]);
 
   return (

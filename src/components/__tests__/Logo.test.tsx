@@ -12,6 +12,13 @@ function advanceGSAP(ms: number) {
   gsap.globalTimeline.time(gsapTime);
 }
 
+/** Flush the dynamic import('gsap') promise so the animation tween is created. */
+async function flushGsapImport() {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(0);
+  });
+}
+
 describe("Logo", () => {
   beforeEach(() => {
     gsapTime = 0;
@@ -40,32 +47,35 @@ describe("Logo", () => {
     expect(container.querySelector('[data-slot="x"]')).toBeTruthy();
   });
 
-  it("settles on films icon after animation", () => {
+  it("settles on films icon after animation", async () => {
     const { container } = render(<Logo genre="films" />);
+    await flushGsapImport();
     act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="films"]')).toBeTruthy();
   });
 
-  it("settles on books icon after animation", () => {
+  it("settles on books icon after animation", async () => {
     const { container } = render(<Logo genre="books" />);
+    await flushGsapImport();
     act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="books"]')).toBeTruthy();
   });
 
-  it("settles on music icon after animation", () => {
+  it("settles on music icon after animation", async () => {
     const { container } = render(<Logo genre="music" />);
+    await flushGsapImport();
     act(() => { advanceGSAP(3000); });
     expect(container.querySelector('[data-slot="music"]')).toBeTruthy();
   });
 
-  it("cycles through icons like a slot machine before landing on target", () => {
+  it("cycles through icons like a slot machine before landing on target", async () => {
     const { container } = render(<Logo genre="books" />);
+    await flushGsapImport();
 
-    // Starts at x
-    expect(container.querySelector('[data-slot="x"]')).toBeTruthy();
-
+    // Starts at x (or may have already started cycling after flush)
     // Collect all slots seen during animation by advancing in small increments
-    const seen: string[] = ["x"];
+    const initial = container.querySelector("[data-slot]")?.getAttribute("data-slot") || "x";
+    const seen: string[] = [initial];
     for (let ms = 0; ms < 3000; ms += 50) {
       act(() => { advanceGSAP(50); });
       const slot = container.querySelector("[data-slot]")?.getAttribute("data-slot");
@@ -116,10 +126,11 @@ describe("Logo", () => {
   });
 
   // Requirement 6: "Clues" text is always present
-  it("always shows Clues text", () => {
+  it("always shows Clues text", async () => {
     const { container } = render(<Logo genre="films" />);
     expect(container.textContent).toContain("Clues");
 
+    await flushGsapImport();
     act(() => { advanceGSAP(3000); });
     expect(container.textContent).toContain("Clues");
   });

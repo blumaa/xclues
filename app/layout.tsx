@@ -4,6 +4,8 @@ import { Providers } from "./providers";
 import { Header } from "./header";
 import { Footer } from "../src/components/organisms/Footer";
 import { getServerTheme } from "../src/utils/getServerTheme";
+import { getThemeInitScript } from "../src/utils/themeScript";
+import { getBrandStyleTag } from "../src/utils/getBrandStyleTag";
 import "../src/index.css";
 import "../src/App.css";
 
@@ -34,11 +36,13 @@ export const metadata: Metadata = {
   },
 };
 
-async function getTheme(): Promise<string> {
-  if (process.env.CAPACITOR) return 'light';
+async function getThemeAndBrand() {
+  if (process.env.CAPACITOR) return { theme: 'light' as const, brand: undefined };
   const { cookies } = await import('next/headers');
   const cookieStore = await cookies();
-  return getServerTheme(cookieStore.get("xclues-theme")?.value);
+  const theme = getServerTheme(cookieStore.get("xclues-theme")?.value);
+  const brand = cookieStore.get("xclues-brand-theme")?.value;
+  return { theme, brand };
 }
 
 export default async function RootLayout({
@@ -46,10 +50,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const theme = await getTheme();
+  const { theme, brand } = await getThemeAndBrand();
+  const brandCSS = getBrandStyleTag(brand, theme as 'light' | 'dark');
 
   return (
     <html lang="en" data-theme={theme} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+        {brandCSS && <style dangerouslySetInnerHTML={{ __html: brandCSS }} />}
+      </head>
       <body>
         <Providers>
           <div className="app-layout">

@@ -121,7 +121,7 @@ export interface BrandThemeDefinition {
 /**
  * Maps a ThemeTokens object to CSS custom property declarations.
  */
-const TOKEN_TO_CSS: Record<keyof ThemeTokens, string> = {
+export const TOKEN_TO_CSS: Record<keyof ThemeTokens, string> = {
   // Typography
   fontFamily: '--xclues-font-family',
   headingWeight: '--xclues-heading-weight',

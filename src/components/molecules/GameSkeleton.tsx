@@ -1,10 +1,10 @@
-import '../organisms/ItemGrid.css';
+import '../organisms/GameBoard.css';
 import './GameSkeleton.css';
 
 export function GameSkeleton() {
   return (
     <div className="game-skeleton" role="status" aria-label="Loading puzzle">
-      <div className="item-grid">
+      <div className="game-grid">
         {Array.from({ length: 16 }).map((_, i) => (
           <div key={i} className="game-skeleton__tile" />
         ))}

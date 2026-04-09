@@ -1,11 +1,7 @@
 .group-card.xcard {
-  /* transition: all var(--xclues-transition); */
-  aspect-ratio: 4 / 1;
-  /* animation: groupCardAppear var(--xclues-transition-bounce) both; */
   border-radius: var(--xclues-border-radius);
   min-height: 64px;
   border: none;
-  position: relative;
   overflow: hidden;
 }
 
@@ -23,11 +19,9 @@
   }
 }
 
-/* Compact group cards on desktop so game fits in viewport */
+/* Compact group cards on desktop */
 @media (min-width: 1025px) {
   .group-card.xcard {
-    aspect-ratio: unset;
-    min-height: unset;
     padding: var(--xclues-spacing-2) var(--xclues-spacing-3);
   }
 }

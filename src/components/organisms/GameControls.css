@@ -1,6 +1,6 @@
 /* Game control buttons */
 .game-controls {
-  padding: var(--xclues-spacing-3) 0;
+  padding: var(--xclues-spacing-1) 0;
 }
 
 .game-controls .xbtn {

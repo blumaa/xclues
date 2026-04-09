@@ -1,7 +1,7 @@
 import { useGameStore } from "../../store/gameStore";
 import { useToast } from "../../providers/useToast";
 import { GroupCard } from "../molecules/GroupCard";
-import { ItemGrid } from "./ItemGrid";
+import { ItemTile } from "../molecules/ItemTile";
 import { GameControls } from "./GameControls";
 import { MistakesIndicator } from "../molecules/MistakesIndicator";
 import { PostGameActions } from "../molecules/PostGameActions";
@@ -61,44 +61,49 @@ export function GameBoard({ genre, isLoading, hasNoPuzzle, onViewStats }: GameBo
 
     return (
       <>
-        {foundGroups.length > 0 && (
-          <section className="found-groups-container" aria-label="Found groups">
-            {foundGroups.map((group) => (
+        <div className="game-grid">
+          {foundGroups.length > 0 &&
+            foundGroups.map((group) => (
               <GroupCard key={group.id} group={group} />
-            ))}
-          </section>
-        )}
+            ))
+          }
 
-        {items.length > 0 && gameStatus === "playing" && (
-          <ItemGrid
-            items={items}
-            selectedItemIds={selectedItemIds}
-            isShaking={isShaking}
-            jumpingItemIds={jumpingItemIds}
-            rejectedItemId={rejectedItemId}
-            onSelectItem={selectItem}
-          />
-        )}
+          {items.length > 0 && gameStatus === "playing" &&
+            items.map((item) => (
+              <ItemTile
+                key={item.id}
+                item={item}
+                isSelected={selectedItemIds.includes(item.id)}
+                isShaking={isShaking}
+                isJumping={jumpingItemIds.includes(item.id)}
+                isRejected={item.id === rejectedItemId}
+                onClick={() => selectItem(item.id)}
+              />
+            ))
+          }
+        </div>
 
-        {gameStatus === "playing" ? (
-          <MistakesIndicator
-            mistakes={mistakes}
-            maxMistakes={MAX_MISTAKES}
-            gameStatus={gameStatus}
-          />
-        ) : (
-          <PostGameActions onViewStats={onViewStats!} />
-        )}
+        <div className="game-board__footer">
+          {gameStatus === "playing" ? (
+            <MistakesIndicator
+              mistakes={mistakes}
+              maxMistakes={MAX_MISTAKES}
+              gameStatus={gameStatus}
+            />
+          ) : (
+            <PostGameActions onViewStats={onViewStats!} />
+          )}
 
-        {gameStatus === "playing" && (
-          <GameControls
-            onSubmit={submitGuess}
-            onShuffle={shuffleItems}
-            onDeselect={deselectAll}
-            hasSelection={selectedItemIds.length > 0}
-            canSubmit={selectedItemIds.length === MAX_SELECTIONS}
-          />
-        )}
+          {gameStatus === "playing" && (
+            <GameControls
+              onSubmit={submitGuess}
+              onShuffle={shuffleItems}
+              onDeselect={deselectAll}
+              hasSelection={selectedItemIds.length > 0}
+              canSubmit={selectedItemIds.length === MAX_SELECTIONS}
+            />
+          )}
+        </div>
 
         {gameStatus === "won" && <WinCelebration />}
       </>

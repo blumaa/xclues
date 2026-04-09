@@ -79,6 +79,7 @@ export function useTheme(storagePrefix: string): UseThemeReturn {
     }
 
     localStorage.setItem(BRAND_STORAGE_KEY, brandTheme);
+    document.cookie = `${BRAND_STORAGE_KEY}=${brandTheme}; path=/; max-age=31536000; SameSite=Lax`;
   }, [brandTheme, theme, themeStorageKey]);
 
   const setTheme = useCallback((newTheme: Theme) => {
