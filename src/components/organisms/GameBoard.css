@@ -84,3 +84,8 @@
   transform: translateY(-2px);
   box-shadow: var(--xclues-card-shadow-hover);
 }
+
+.game-board__footer__view-results-btn {
+  display: flex;
+  justify-content: center;
+}

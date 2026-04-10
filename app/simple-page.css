@@ -15,3 +15,20 @@
   gap: 1rem;
   margin-top: 1rem;
 }
+
+.how-to-play-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-sm, 0.5rem);
+  padding: var(--xclues-spacing-4, 1rem) 0;
+}
+
+.how-to-play-colors {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-3);
+  font-size: var(--xclues-font-size-md);
+  color: var(--xclues-text-secondary);
+  padding-bottom: var(--xclues-spacing-4);
+}

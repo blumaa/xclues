@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Logo } from "../src/components/organisms/Logo";
 import { GenreSwitch } from "../src/components/organisms/GenreSwitch";
-import { HowToPlayButton } from "../src/components/organisms/HowToPlayModal";
 import { ThemeToggle } from "../src/components/molecules/ThemeToggle";
 import type { Genre } from "../src/config/seoConfig";
 
@@ -21,7 +20,9 @@ export function Header() {
       </Link>
       <GenreSwitch />
       <div className="app-header-actions">
-        <HowToPlayButton />
+        <Link href="/how-to-play" className="xbtn xbtn--ghost xbtn--md xbtn--icon-only" aria-label="How to play">
+          <span aria-hidden="true">?</span>
+        </Link>
         <ThemeToggle />
       </div>
     </header>

@@ -16,16 +16,13 @@ vi.mock('../../src/providers/useStats', () => ({
   }),
 }));
 
-// Mock GameBoard and ResultsModal — we're testing query behavior, not UI
+// Mock GameBoard — we're testing query behavior, not UI
 vi.mock('../../src/components/organisms/GameBoard', () => ({
   GameBoard: ({ isLoading, hasNoPuzzle }: { isLoading?: boolean; hasNoPuzzle?: boolean }) => {
     if (isLoading) return <div role="status" aria-label="Loading puzzle">Loading</div>;
     if (hasNoPuzzle) return <div>No puzzle available for today</div>;
     return <div data-testid="game-board">Game Board</div>;
   },
-}));
-vi.mock('../../src/components/organisms/ResultsModal', () => ({
-  ResultsModal: () => null,
 }));
 
 const mockPuzzleData = {

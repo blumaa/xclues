@@ -130,7 +130,6 @@ export const WithMistakes: Story = {
 export const Completed: Story = {
   args: {
     genre: STORY_GENRE,
-    onViewStats: () => {},
   },
   decorators: [
     (Story) => (

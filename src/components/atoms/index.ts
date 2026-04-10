@@ -7,7 +7,6 @@ export { XIcon } from "./XIcon";
 export { XSpinner } from "./XSpinner";
 export { Dot } from "./Dot";
 export { IconButton } from "./IconButton";
-export { Portal } from "./Portal";
 
 // Compound atoms
 export { XCard, XCardBody } from "./XCard";

@@ -1,0 +1,64 @@
+.results-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-3);
+  animation: resultsPanelFadeIn var(--xclues-duration-normal, 300ms) ease-out;
+}
+
+@keyframes resultsPanelFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.results-panel__heading {
+  font-size: var(--xclues-font-size-xl);
+  font-weight: var(--xclues-font-weight-extrabold);
+  background: linear-gradient(
+    135deg,
+    var(--xclues-primary) 0%,
+    var(--xclues-accent) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.results-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--xclues-spacing-3);
+}
+
+.results-panel__share-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .results-panel__heading {
+    font-size: var(--xclues-font-size-2xl);
+  }
+}
+
+.results-panel__view-toggle {
+  all: unset;
+  cursor: pointer;
+  color: var(--xclues-text-secondary);
+  font-size: var(--xclues-font-size-sm);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.results-panel__view-toggle:hover {
+  color: var(--xclues-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-panel {
+    animation: none;
+  }
+}

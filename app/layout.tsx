@@ -68,7 +68,6 @@ export default async function RootLayout({
             </main>
             <Footer />
           </div>
-          <div id="portal-root" />
         </Providers>
         <Analytics />
       </body>

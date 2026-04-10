@@ -1,8 +1,7 @@
 export { GameBoard } from "./GameBoard";
 export { GameControls } from "./GameControls";
 export { ItemGrid } from "./ItemGrid";
-export { ResultsModal } from "./ResultsModal";
-export { HowToPlayModal, HowToPlayButton } from "./HowToPlayModal";
+export { ResultsPanel } from "./ResultsPanel";
 export { GenreSwitch } from "./GenreSwitch";
 export { Footer } from "./Footer";
 export { Logo } from "./Logo";

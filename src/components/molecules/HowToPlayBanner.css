@@ -1,0 +1,27 @@
+.how-to-play-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-2);
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-3);
+  font-size: var(--xclues-font-size-sm);
+  color: var(--xclues-text-secondary);
+  text-align: center;
+}
+
+.how-to-play-banner__dismiss {
+  all: unset;
+  cursor: pointer;
+  color: var(--xclues-text-tertiary);
+  font-size: var(--xclues-font-size-sm);
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--xclues-border-radius-xs);
+}
+
+.how-to-play-banner__dismiss:hover {
+  color: var(--xclues-text-primary);
+}

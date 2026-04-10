@@ -1,9 +1,7 @@
 .countdown-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--xclues-spacing-1);
-  padding: var(--xclues-spacing-3) 0;
+  line-height: 1.1;
 }
 
 .countdown-time {

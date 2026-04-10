@@ -9,3 +9,14 @@
   align-items: center;
   gap: 0.25rem;
 }
+
+.no-dec {
+  all: unset;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.email-button {
+  display: flex;
+  justify-content: center;
+}

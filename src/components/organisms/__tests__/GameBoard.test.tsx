@@ -10,6 +10,16 @@ vi.mock('../../../store/gameStore', () => ({
   useGameStore: () => () => undefined,
 }));
 
+vi.mock('../../../providers/useStats', () => ({
+  useStats: () => ({
+    getStats: vi.fn().mockResolvedValue({ gameHistory: [] }),
+  }),
+}));
+
+vi.mock('../../../providers/useSite', () => ({
+  useSite: () => ({ siteName: 'xClues', domain: 'xclues.space' }),
+}));
+
 describe('GameBoard', () => {
   it('renders skeleton when isLoading is true', () => {
     render(<GameBoard genre="films" isLoading />);

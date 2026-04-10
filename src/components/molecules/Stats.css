@@ -6,7 +6,6 @@
   padding-left: var(--xclues-spacing-5);
   padding-right: var(--xclues-spacing-5);
   padding-top: var(--xclues-spacing-2);
-  background: var(--xclues-card-bg);
   backdrop-filter: blur(var(--xclues-blur-md));
   -webkit-backdrop-filter: blur(var(--xclues-blur-md));
 }

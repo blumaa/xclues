@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { GameBoard } from "../src/components/organisms/GameBoard";
-import { ResultsModal } from "../src/components/organisms/ResultsModal";
 import { useGameStore } from "../src/store/gameStore";
 import { useStats } from "../src/providers/useStats";
 import { guessesToColorHistory } from "../src/utils/guessHistory";
@@ -27,9 +26,6 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
   const storage = useStorage();
   const { data: puzzle, isPending } = useDailyPuzzle(puzzleDate, genre, storage);
 
-  const [resultsDismissed, setResultsDismissed] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [showResultsDelayed, setShowResultsDelayed] = useState(false);
   const [recordedDate, setRecordedDate] = useState<string | null>(null);
   const [restoredGuessHistory, setRestoredGuessHistory] = useState<GuessColor[][] | null>(null);
   const stats = useStats();
@@ -86,44 +82,14 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
     }
   }, [gameStatus, recordedDate, puzzleDate, genre, mistakes, currentGuessHistory, stats]);
 
-  // Show results modal after delay
-  useEffect(() => {
-    if (gameStatus === "won" || gameStatus === "lost") {
-      const timer = setTimeout(() => setShowResultsDelayed(true), 2000);
-      return () => clearTimeout(timer);
-    }
-    
-    requestAnimationFrame(() => {
-      setShowResultsDelayed(false);
-      setResultsDismissed(false);
-    });
-  }, [gameStatus]);
-
-  const showResults = (showResultsDelayed && !resultsDismissed) || showStats;
-
   return (
-    <>
-      <div className="homepage-game">
-        <GameBoard
-          genre={genre}
-          isLoading={isPending || (!!puzzle && gameStatus === 'playing' && groups.length === 0)}
-          hasNoPuzzle={!isPending && !puzzle}
-          onViewStats={() => setShowStats(true)}
-        />
-      </div>
-      {puzzle && (gameStatus === "won" || gameStatus === "lost" || showStats) && (
-        <ResultsModal
-          isOpen={showResults}
-          onClose={() => {
-            setResultsDismissed(true);
-            setShowStats(false);
-          }}
-          gameStatus={gameStatus as "won" | "lost"}
-          mistakes={mistakes}
-          genre={genre}
-          guessHistory={currentGuessHistory}
-        />
-      )}
-    </>
+    <div className="homepage-game">
+      <GameBoard
+        genre={genre}
+        isLoading={isPending || (!!puzzle && gameStatus === 'playing' && groups.length === 0)}
+        hasNoPuzzle={!isPending && !puzzle}
+        guessHistory={currentGuessHistory}
+      />
+    </div>
   );
 }

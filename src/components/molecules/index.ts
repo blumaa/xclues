@@ -5,6 +5,6 @@ export { GroupCard } from "./GroupCard";
 export { MistakesIndicator } from "./MistakesIndicator";
 export { Stats } from "./Stats";
 export { GameResultDisplay } from "./GameResultDisplay";
-export { PostGameActions } from "./PostGameActions";
+export { HowToPlayBanner } from "./HowToPlayBanner";
 export { WinCelebration } from "./WinCelebration";
 export { GameSkeleton } from "./GameSkeleton";
