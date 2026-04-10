@@ -49,15 +49,7 @@ export function ItemTile({
       aria-label={`${displayTitle}${isSelected ? ", selected" : ""}`}
     >
       <XCardBody>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
-        >
+        <div className="item-tile-content">
           <XText 
             responsive 
             align="center" 

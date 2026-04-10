@@ -1,0 +1,18 @@
+.about-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--xclues-spacing-xs);
+  padding-bottom: var(--xclues-spacing-4);
+}
+
+.about-links-list {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.about-links-list a {
+  text-decoration: none;
+}

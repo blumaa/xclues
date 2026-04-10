@@ -1,5 +1,6 @@
 import { XCard, XCardBody, XText, XHeading, XButton } from "../atoms";
 import { useSite } from "../../providers/useSite";
+import "./AboutBody.css";
 
 export function AboutBody() {
   const context = useSite();
@@ -10,13 +11,13 @@ export function AboutBody() {
   return (
     <XCard variant="elevated">
       <XCardBody>
-        <div style={{ display: "flex", gap: "var(--xclues-spacing-md)", flexDirection: "column" }}>
+        <div className="about-body-content">
           <XText size="sm">
             {siteName} is a {siteDescription}. Find the hidden connections
             between {itemNamePlural}!
           </XText>
 
-          <div style={{ gap: "0.25rem", display: "flex", alignItems: "center" }}>
+          <div className="about-body-design-link">
             <XText size="sm">Built with the</XText>
             <a
               href="https://github.com/blumaa/mond-design-system"

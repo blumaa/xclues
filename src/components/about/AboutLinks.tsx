@@ -5,6 +5,7 @@ import { PopcornIcon } from "./icons/PopcornIcon";
 import { MusicIcon } from "./icons/MusicIcon";
 import { Capacitor } from "@capacitor/core";
 import type { Genre } from "../../config/seoConfig";
+import "./AboutLinks.css";
 
 interface AboutLinksProps {
   showHeading?: boolean;
@@ -47,27 +48,19 @@ export function AboutLinks({ showHeading = true }: AboutLinksProps) {
   const isNative = Capacitor.isNativePlatform();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--xclues-spacing-xs)", paddingBottom: "var(--xclues-spacing-4)" }} className="about-links">
+    <div className="about-links">
       {showHeading && (
         <XHeading level={4} size="xs" weight="semibold" responsive>
           {siteName} is part of the Puzzle Clues Suite of games:
         </XHeading>
       )}
-      <div
-        style={{
-          display: "flex",
-          gap: "0.25rem",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
+      <div className="about-links-list">
         {GAME_LINKS.map((link) => (
           <a
             key={link.genre}
             href={isNative ? `/${link.genre}` : `https://${link.domain}`}
             target={isNative ? undefined : "_blank"}
             rel={isNative ? undefined : "noopener noreferrer"}
-            style={{ textDecoration: "none" }}
           >
             <XButton
               size="sm"

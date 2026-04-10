@@ -60,6 +60,12 @@
   justify-content: center;
 }
 
+.results-share-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .results-share .xbtn {
   min-height: 28px;
   font-weight: var(--xclues-font-weight-semibold);

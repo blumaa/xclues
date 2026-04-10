@@ -1,0 +1,10 @@
+.xicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--xicon-color, currentColor);
+}
+
+.xicon--sm { width: 16px; height: 16px; }
+.xicon--md { width: 20px; height: 20px; }
+.xicon--lg { width: 24px; height: 24px; }

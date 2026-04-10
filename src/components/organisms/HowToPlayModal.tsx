@@ -29,7 +29,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
           <XHeading level={2} align="center" responsive>
             How to Play
           </XHeading>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--xclues-spacing-sm, 0.5rem)', paddingTop: 'var(--xclues-spacing-4, 1rem)' }}>
+          <div className="how-to-play-section">
             <XText responsive>
               Find the four groups of four items that share a hidden connection.
             </XText>
@@ -43,7 +43,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
               A new puzzle is available every day for each genre.
             </XText>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--xclues-spacing-sm, 0.5rem)', paddingTop: 'var(--xclues-spacing-4, 1rem)' }}>
+          <div className="how-to-play-section">
             <div className="how-to-play-colors">
               <Dot size="sm" variant="color" color="yellow" /> Easy
               <Dot size="sm" variant="color" color="green" /> Medium
@@ -51,7 +51,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
               <Dot size="sm" variant="color" color="purple" /> Expert
             </div>
           </div>
-          <div style={{ paddingTop: 'var(--xclues-spacing-4, 1rem)', display: 'flex', justifyContent: 'center' }}>
+          <div className="how-to-play-action">
             <XButton onClick={onClose} variant="primary" size="md">
               Got it!
             </XButton>

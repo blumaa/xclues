@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "../simple-page.css";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AnalyticsPage() {
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
+    <div className="simple-page">
       <h1>Analytics</h1>
       <p>Coming soon.</p>
     </div>

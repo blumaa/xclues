@@ -17,7 +17,7 @@ export function GameControls({
   canSubmit,
 }: GameControlsProps) {
   return (
-    <div className="game-controls" style={{ display: 'flex', gap: 'var(--xclues-spacing-sm, 0.5rem)', justifyContent: 'center' }}>
+    <div className="game-controls">
       <XButton
         variant="outline"
         onClick={onShuffle}

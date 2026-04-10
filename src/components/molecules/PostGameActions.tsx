@@ -16,7 +16,7 @@ export function PostGameActions({
         onClick={onViewStats}
         aria-label="View statistics"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="game-action-content">
           <XIcon size="lg">
             <StatsIcon />
           </XIcon>

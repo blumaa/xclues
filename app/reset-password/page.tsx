@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { XButton, XInput, XText, XHeading } from "../../src/components/atoms";
 import { useAuth } from "../../src/providers/useAuth";
+import "../simple-page.css";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -35,7 +36,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
+      <div className="simple-page--narrow">
         <XHeading level={1}>Password Updated</XHeading>
         <XText>Your password has been successfully updated.</XText>
       </div>
@@ -43,9 +44,9 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
+    <div className="simple-page--narrow">
       <XHeading level={1}>Reset Password</XHeading>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
+      <form onSubmit={handleSubmit} className="simple-page-form">
         <XInput
           type="password"
           placeholder="New password"

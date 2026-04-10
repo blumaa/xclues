@@ -10,15 +10,12 @@ export function PrivacyPage() {
   const siteName = context?.siteName || "xClues";
 
   return (
-    <div
-      className="privacy-page"
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--xclues-spacing-4, 1rem)', gap: 'var(--xclues-spacing-md, 1rem)' }}
-    >
+    <div className="privacy-page">
       <XHeading level={1} responsive>
         Privacy Policy
       </XHeading>
 
-      <div className="privacy-content" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--xclues-spacing-sm, 0.5rem)' }}>
+      <div className="privacy-content">
         <XText size="md" weight="semibold">
           What We Collect
         </XText>
@@ -33,7 +30,7 @@ export function PrivacyPage() {
           <li><XText size="sm">Anonymous usage patterns</XText></li>
         </ul>
 
-        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+        <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
             What We Don't Collect
           </XText>
@@ -44,7 +41,7 @@ export function PrivacyPage() {
           <li><XText size="sm">Any information you don't voluntarily provide</XText></li>
         </ul>
 
-        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+        <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
             Local Storage
           </XText>
@@ -54,7 +51,7 @@ export function PrivacyPage() {
           This data never leaves your device unless you choose to share it.
         </XText>
 
-        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+        <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
             Third-Party Services
           </XText>
@@ -64,7 +61,7 @@ export function PrivacyPage() {
           analytics. Their privacy policy explains how they handle data.
         </XText>
 
-        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+        <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
             Your Rights
           </XText>
@@ -75,7 +72,7 @@ export function PrivacyPage() {
           <a href="mailto:blumaa@gmail.com">blumaa@gmail.com</a>.
         </XText>
 
-        <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+        <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
             Changes
           </XText>
@@ -85,7 +82,7 @@ export function PrivacyPage() {
         </XText>
       </div>
 
-      <div style={{ paddingTop: 'var(--xclues-spacing-2, 0.5rem)' }}>
+      <div className="privacy-back-link-wrapper">
         <Link href="/" className="privacy-back-link">
           <XText size="sm" semantic="primary">
             Back to Game

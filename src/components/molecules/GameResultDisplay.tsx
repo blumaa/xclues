@@ -19,7 +19,7 @@ export function GameResultDisplay({ guessHistory }: GameResultDisplayProps) {
 
   return (
     <div
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+      className="game-result-display"
       role="img"
       aria-label={`Guess history: ${guessHistory.length} guesses made`}
     >

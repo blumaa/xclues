@@ -34,6 +34,19 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.how-to-play-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-sm, 0.5rem);
+  padding-top: var(--xclues-spacing-4, 1rem);
+}
+
+.how-to-play-action {
+  padding-top: var(--xclues-spacing-4, 1rem);
+  display: flex;
+  justify-content: center;
+}
+
 .how-to-play-colors {
   display: flex;
   align-items: center;

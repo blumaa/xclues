@@ -59,6 +59,14 @@
   z-index: 1;
 }
 
+.item-tile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 /* Prevent long titles from overflowing the square tile */
 .item-tile .xcard__body {
   overflow: hidden;

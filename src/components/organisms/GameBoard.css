@@ -37,11 +37,12 @@
 }
 
 
-/* Tablet+: square tiles, vertically centered in grid */
+/* Tablet+: row height derived from board width (same source as tile width = SSOT) */
 @media (min-width: 640px) {
   .game-grid {
-    grid-template-rows: repeat(4, auto);
-    align-content: center;
+    flex: 0;
+    --grid-row-height: calc((var(--xclues-board-width-tablet) - 2.5rem) / 4);
+    grid-template-rows: repeat(4, var(--grid-row-height));
     max-width: var(--xclues-board-width-tablet);
     margin: 0 auto;
   }
@@ -53,6 +54,7 @@
 
 @media (min-width: 1025px) {
   .game-grid {
+    --grid-row-height: calc((var(--xclues-board-width-desktop) - 2.5rem) / 4);
     max-width: var(--xclues-board-width-desktop);
   }
 }

@@ -1,4 +1,6 @@
 .game-header {
+  display: flex;
+  flex-direction: column;
   text-align: center;
   padding: var(--xclues-spacing-2) 0;
 }

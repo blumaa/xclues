@@ -12,7 +12,7 @@ export function GameHeader({ puzzleDate }: GameHeaderProps) {
   const siteName = context?.siteName || "xClues";
 
   return (
-    <div className="game-header" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="game-header">
       <XHeading level={1} size="md" align="center">
         <span className="game-header-title">
           {puzzleDate ? formatPuzzleHeader(puzzleDate, siteName) : siteName}

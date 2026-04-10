@@ -11,6 +11,10 @@
   animation: xspin 0.8s linear infinite;
 }
 
+.xspinner__circle--sm { width: 16px; height: 16px; }
+.xspinner__circle--md { width: 24px; height: 24px; }
+.xspinner__circle--lg { width: 36px; height: 36px; }
+
 @keyframes xspin {
   to { transform: rotate(360deg); }
 }

@@ -16,17 +16,7 @@ export function GroupCard({ group }: GroupCardProps) {
       role="status"
       aria-label={`Found group: ${group.connection}`}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          paddingRight: "0.5rem",
-          paddingLeft: "0.5rem",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
+      <div className="group-card-content">
         <XHeading
           level={3}
           responsive

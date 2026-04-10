@@ -118,7 +118,7 @@ export function ResultsModal({
               size="md"
               aria-label={copied ? "Results copied to clipboard" : "Share your results"}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+              <div className="results-share-btn-content">
                 {!copied && (
                   <XIcon color="currentColor" size="sm">
                     <ShareIcon />

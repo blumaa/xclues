@@ -1,5 +1,8 @@
 /* Game control buttons */
 .game-controls {
+  display: flex;
+  gap: var(--xclues-spacing-sm, 0.5rem);
+  justify-content: center;
   padding: var(--xclues-spacing-1) 0;
 }
 
