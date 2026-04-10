@@ -8,8 +8,8 @@ const css = readFileSync(
 );
 
 describe('GameBoard CSS - grid row equality', () => {
-  it('uses repeat(4, 1fr) for mobile grid rows', () => {
-    expect(css).toContain('grid-template-rows: repeat(4, 1fr)');
+  it('uses minmax(0, 1fr) for mobile grid rows (prevents content overflow)', () => {
+    expect(css).toContain('grid-template-rows: repeat(4, minmax(0, 1fr))');
   });
 
   it('computes row height from board width on tablet+ (SSOT)', () => {
