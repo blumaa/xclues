@@ -10,7 +10,7 @@
   letter-spacing: var(--xclues-button-letter-spacing, var(--xclues-tracking-normal));
   text-transform: var(--xclues-button-text-transform, none);
   cursor: pointer;
-  transition: all var(--xclues-transition);
+  /* transition: all var(--xclues-transition); */
   min-height: 44px;
   min-width: 44px;
   user-select: none;
@@ -96,8 +96,10 @@
   outline-offset: 2px;
 }
 
+/* DISABLED — pending animation system redesign
 @media (prefers-reduced-motion: reduce) {
   .xbtn:hover {
     transform: none;
   }
 }
+*/

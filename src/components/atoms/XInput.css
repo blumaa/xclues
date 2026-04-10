@@ -5,7 +5,7 @@
   background: var(--xclues-card-bg);
   color: inherit;
   font-family: inherit;
-  transition: border-color var(--xclues-transition);
+  /* transition: border-color var(--xclues-transition); */
 }
 
 .xinput:focus {

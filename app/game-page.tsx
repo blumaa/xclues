@@ -1,58 +1,74 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GameBoard } from "../src/components/organisms/GameBoard";
-import { useGameStore } from "../src/store/gameStore";
-import { useStats } from "../src/providers/useStats";
+import { GameControls } from "../src/components/organisms/GameControls";
+import { MistakesIndicator } from "../src/components/molecules/MistakesIndicator";
+import { XButton } from "../src/components/atoms";
+import { useGameStore, getGameStore } from "../src/store/gameStore";
+import { useAppStore, getAppStore } from "../src/store/appStore";
+import { getStatsStore, useStatsStore } from "../src/store/statsStore";
+import { useToast } from "../src/providers/useToast";
 import { guessesToColorHistory } from "../src/utils/guessHistory";
-import { useDailyPuzzle } from "../src/lib/supabase/storage/usePuzzleStorage";
-import { useStorage } from "../src/providers/useStorage";
-import type { Genre } from "../src/config/seoConfig";
-import type { GuessColor } from "../src/types/stats";
+import { VALID_GENRES, type Genre } from "../src/config/seoConfig";
+import type { SavedPuzzle } from "../src/types";
+
+const STATS_STORAGE_KEY = "xclues-stats";
+const MAX_MISTAKES = 4;
+const MAX_SELECTIONS = 4;
 
 interface GamePageProps {
-  genre: Genre;
+  initialGenre: Genre;
   puzzleDate: string;
+  puzzles: Record<Genre, SavedPuzzle | null>;
 }
 
-export function GamePage({ genre, puzzleDate }: GamePageProps) {
+function initGenre(genre: Genre, puzzle: SavedPuzzle, puzzleDate: string) {
+  const appStore = getAppStore();
+  if (appStore.getState().puzzlesReady[genre]) return;
+
+  const statsStore = getStatsStore();
+  const completed = statsStore.getState().getCompletedGame(genre, puzzleDate);
+  const gameStore = getGameStore(genre);
+
+  if (completed) {
+    gameStore.getState().restoreCompletedGame(puzzle.groups, completed.won, completed.mistakes);
+  } else {
+    gameStore.getState().initializeGame(puzzle.items, puzzle.groups, puzzleDate, genre);
+  }
+
+  appStore.getState().markPuzzleReady(genre);
+}
+
+/**
+ * One genre's board + results logic. Self-contained so each carousel
+ * panel manages its own showResults/viewingPuzzle state independently.
+ */
+function GenrePanel({ genre, puzzle, puzzleDate }: {
+  genre: Genre;
+  puzzle: SavedPuzzle | null;
+  puzzleDate: string;
+}) {
   const gameStatus = useGameStore(genre, (s) => s.gameStatus);
   const groups = useGameStore(genre, (s) => s.groups);
-  const mistakes = useGameStore(genre, (s) => s.mistakes);
   const previousGuesses = useGameStore(genre, (s) => s.previousGuesses);
-  const initializeGame = useGameStore(genre, (s) => s.initializeGame);
-  const restoreCompletedGame = useGameStore(genre, (s) => s.restoreCompletedGame);
+  const mistakes = useGameStore(genre, (s) => s.mistakes);
 
-  const storage = useStorage();
-  const { data: puzzle, isPending } = useDailyPuzzle(puzzleDate, genre, storage);
+  const storePopulated = groups.length > 0;
+  const isGameOver = gameStatus === "won" || gameStatus === "lost";
 
-  const [recordedDate, setRecordedDate] = useState<string | null>(null);
-  const [restoredGuessHistory, setRestoredGuessHistory] = useState<GuessColor[][] | null>(null);
-  const stats = useStats();
-  const initializedRef = useRef<string | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [viewingPuzzle, setViewingPuzzle] = useState(false);
 
-  // Initialize store when puzzle or genre changes — restore completed games from stats
   useEffect(() => {
-    if (!puzzle) return;
-    const key = `${genre}-${puzzleDate}`;
-    if (initializedRef.current === key) return;
-    initializedRef.current = key;
-
-    stats.getStats().then((userStats) => {
-      const completed = userStats.gameHistory.find((r) => r.date === puzzleDate && r.genre === genre);
-      if (completed) {
-        restoreCompletedGame(puzzle.groups, completed.won, completed.mistakes);
-        setRestoredGuessHistory(completed.guessHistory || null);
-        setRecordedDate(puzzleDate);
-      } else {
-        setRestoredGuessHistory(null);
-        initializeGame(puzzle.items, puzzle.groups, puzzleDate, genre);
-      }
-    }).catch(() => {
-      setRestoredGuessHistory(null);
-      initializeGame(puzzle.items, puzzle.groups, puzzleDate, genre);
-    });
-  }, [puzzle, genre, puzzleDate, initializeGame, restoreCompletedGame, stats]);
+    if (!isGameOver) {
+      setShowResults(false);
+      setViewingPuzzle(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowResults(true), 2000);
+    return () => clearTimeout(timer);
+  }, [isGameOver]);
 
   const liveGuessHistory = useMemo(() => {
     if (previousGuesses.length > 0 && groups.length > 0) {
@@ -61,35 +77,121 @@ export function GamePage({ genre, puzzleDate }: GamePageProps) {
     return null;
   }, [previousGuesses, groups]);
 
-  // Use live history (from current game) or restored history (from stats)
-  const currentGuessHistory = liveGuessHistory || restoredGuessHistory;
+  const storedGuessHistory = useStatsStore((s) => {
+    const completed = s.getCompletedGame(genre, puzzleDate);
+    return completed?.guessHistory || null;
+  });
 
-  // Record game completion
+  const currentGuessHistory = liveGuessHistory || storedGuessHistory;
+  const isShowingResults = showResults && !viewingPuzzle;
+
+  // Record completion
   useEffect(() => {
-    const isGameOver = gameStatus === "won" || gameStatus === "lost";
-    if (isGameOver && recordedDate !== puzzleDate) {
-      stats
-        .recordCompletion({
-          date: puzzleDate,
-          genre,
-          won: gameStatus === "won",
-          mistakes,
-          guessHistory: currentGuessHistory || [],
-          completedAt: Date.now(),
-        })
-        .then(() => setRecordedDate(puzzleDate))
-        .catch(() => {});
+    if (!isGameOver) return;
+    const statsStore = getStatsStore();
+    if (statsStore.getState().getCompletedGame(genre, puzzleDate)) return;
+
+    const guessHistory = previousGuesses.length > 0 && groups.length > 0
+      ? guessesToColorHistory(previousGuesses, groups)
+      : [];
+
+    statsStore.getState().recordCompletion({
+      date: puzzleDate,
+      genre,
+      won: gameStatus === "won",
+      mistakes,
+      guessHistory,
+      completedAt: Date.now(),
+    });
+  }, [gameStatus, genre, puzzleDate, mistakes, previousGuesses, groups, isGameOver]);
+
+  return (
+    <>
+      <GameBoard
+        genre={genre}
+        isLoading={!storePopulated && !!puzzle}
+        hasNoPuzzle={!puzzle}
+        guessHistory={currentGuessHistory}
+        showResults={isShowingResults}
+        onViewPuzzle={() => setViewingPuzzle(true)}
+      />
+      {/* View Results button when viewing puzzle post-game */}
+      {isGameOver && viewingPuzzle && (
+        <div className="game-footer__view-results">
+          <XButton variant="ghost" size="sm" onClick={() => setViewingPuzzle(false)}>
+            View Results
+          </XButton>
+        </div>
+      )}
+    </>
+  );
+}
+
+export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
+  const activeGenre = useAppStore((s) => s.activeGenre);
+  const { showInfo } = useToast();
+
+  // Initialize stores once
+  useEffect(() => {
+    getStatsStore().getState().hydrate(STATS_STORAGE_KEY);
+    getAppStore().getState().initialize(initialGenre, puzzleDate);
+
+    for (const g of VALID_GENRES) {
+      const puzzle = puzzles[g];
+      if (puzzle) {
+        initGenre(g, puzzle, puzzleDate);
+      }
     }
-  }, [gameStatus, recordedDate, puzzleDate, genre, mistakes, currentGuessHistory, stats]);
+  }, [initialGenre, puzzleDate, puzzles]);
+
+  // Active genre state for footer controls
+  const gameStatus = useGameStore(activeGenre, (s) => s.gameStatus);
+  const mistakes = useGameStore(activeGenre, (s) => s.mistakes);
+  const selectedItemIds = useGameStore(activeGenre, (s) => s.selectedItemIds);
+  const notification = useGameStore(activeGenre, (s) => s.notification);
+  const submitGuess = useGameStore(activeGenre, (s) => s.submitGuess);
+  const shuffleItems = useGameStore(activeGenre, (s) => s.shuffleItems);
+  const deselectAll = useGameStore(activeGenre, (s) => s.deselectAll);
+
+  useEffect(() => {
+    if (notification) showInfo(notification);
+  }, [notification, showInfo]);
+
+  // Carousel: slide to the active genre's panel
+  const activeIndex = VALID_GENRES.indexOf(activeGenre);
 
   return (
     <div className="homepage-game">
-      <GameBoard
-        genre={genre}
-        isLoading={isPending || (!!puzzle && gameStatus === 'playing' && groups.length === 0)}
-        hasNoPuzzle={!isPending && !puzzle}
-        guessHistory={currentGuessHistory}
-      />
+      {/* Carousel viewport — clips off-screen boards */}
+      <div className="carousel-viewport">
+        {/* Track — holds all 3 boards side by side, shifts via translateX */}
+        <div
+          className="carousel-track"
+          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+        >
+          {VALID_GENRES.map((genre) => (
+            <div key={genre} className="carousel-panel">
+              <GenrePanel genre={genre} puzzle={puzzles[genre]} puzzleDate={puzzleDate} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer — outside carousel, shows controls for active genre */}
+      <div className="game-footer">
+        {gameStatus === "playing" && (
+          <>
+            <MistakesIndicator mistakes={mistakes} maxMistakes={MAX_MISTAKES} />
+            <GameControls
+              onSubmit={submitGuess}
+              onShuffle={shuffleItems}
+              onDeselect={deselectAll}
+              hasSelection={selectedItemIds.length > 0}
+              canSubmit={selectedItemIds.length === MAX_SELECTIONS}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

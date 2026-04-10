@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Logo } from "../src/components/organisms/Logo";
 import { GenreSwitch } from "../src/components/organisms/GenreSwitch";
 import { ThemeToggle } from "../src/components/molecules/ThemeToggle";
+import { useAppStore } from "../src/store/appStore";
 import type { Genre } from "../src/config/seoConfig";
 
 export function Header() {
-  const params = useParams();
-  const genre = (params?.genre as Genre) || "films";
+  const genre = useAppStore((s) => s.activeGenre) as Genre;
 
   return (
     <header className="app-header">

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { XText, XButton, XIcon } from "../atoms";
-import { useStats } from "../../providers/useStats";
 import { useSite } from "../../providers/useSite";
 import { Stats } from "../molecules/Stats";
 import { GameResultDisplay } from "../molecules/GameResultDisplay";
@@ -9,8 +8,7 @@ import { trackEvent, EVENTS } from "../../services/analytics";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
 import { getTodayDate } from "../../utils/index";
-import { getGenreStats } from "../../services/LocalStatsStorage";
-import type { GenreStats } from "../../services/LocalStatsStorage";
+import { getStatsStore } from "../../store/statsStore";
 import type { GuessColor } from "../../types/stats";
 
 import "./ResultsPanel.css";
@@ -30,27 +28,21 @@ export function ResultsPanel({
   guessHistory,
   onViewPuzzle,
 }: ResultsPanelProps) {
-  const stats = useStats();
   const context = useSite();
   const siteName = context?.siteName || "xClues";
   const domain = context?.domain || "xclues.space";
-  const [genreStats, setGenreStats] = useState<GenreStats | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Read stats synchronously from the stats store (SSOT)
+  const genreStats = getStatsStore().getState().getGenreStats(genre);
+
   useEffect(() => {
-    stats
-      .getStats()
-      .then((loadedStats) => {
-        const derived = getGenreStats(loadedStats.gameHistory, genre);
-        setGenreStats(derived);
-        trackEvent(EVENTS.STATS_VIEWED, {
-          gamesPlayed: derived.gamesPlayed,
-          currentStreak: derived.currentStreak,
-          maxStreak: derived.maxStreak,
-        });
-      })
-      .catch(() => {});
-  }, [stats, genre]);
+    trackEvent(EVENTS.STATS_VIEWED, {
+      gamesPlayed: genreStats.gamesPlayed,
+      currentStreak: genreStats.currentStreak,
+      maxStreak: genreStats.maxStreak,
+    });
+  }, [genreStats.gamesPlayed, genreStats.currentStreak, genreStats.maxStreak]);
 
   const handleShare = async () => {
     if (!guessHistory) return;
@@ -80,7 +72,7 @@ export function ResultsPanel({
           : "Better luck next time!"}
       </XText>
 
-      {genreStats && <Stats stats={genreStats} />}
+      <Stats stats={genreStats} />
 
       {guessHistory && guessHistory.length > 0 && (
         <GameResultDisplay guessHistory={guessHistory} />

@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { VALID_GENRES } from "../src/config/seoConfig";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://filmclues.space";
 

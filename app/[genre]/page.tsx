@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { GamePage } from "../game-page";
 import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/config/seoConfig";
-import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { puzzleKeys } from "../../src/lib/supabase/storage/usePuzzleStorage";
 import { createServerSupabaseClient } from "../../src/lib/supabase/server";
+import type { SavedPuzzle, Group, Item } from "../../src/types";
 
 function getTodayDate(): string {
   const now = new Date();
@@ -13,7 +12,36 @@ function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-async function fetchDailyPuzzle(genre: string, date: string) {
+const CACHE_TTL = 60 * 60 * 1000;
+const puzzleCache = new Map<string, { data: SavedPuzzle; timestamp: number }>();
+
+function parsePuzzleRow(data: Record<string, unknown>): SavedPuzzle {
+  const groups = (data.groups as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map((g) => ({
+    id: g.id,
+    items: g.items as Item[],
+    connection: g.connection,
+    difficulty: g.difficulty,
+    color: g.color,
+  })) as Group[];
+
+  const items = groups.flatMap((g) => g.items);
+
+  return {
+    id: data.id as string,
+    groups,
+    items,
+    createdAt: new Date(data.created_at as string).getTime(),
+    metadata: data.metadata as Record<string, unknown> | undefined,
+  };
+}
+
+async function fetchDailyPuzzle(genre: string, date: string): Promise<SavedPuzzle | null> {
+  const cacheKey = `${genre}-${date}`;
+  const cached = puzzleCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
   const supabase = createServerSupabaseClient();
   if (!supabase) return null;
 
@@ -27,25 +55,9 @@ async function fetchDailyPuzzle(genre: string, date: string) {
 
   if (error || !data) return null;
 
-  const row = data as Record<string, unknown>;
-  const groups = (row.groups as Array<{ id: string; items: Array<Record<string, unknown>>; connection: string; difficulty: string; color: string }>).map((g) => ({
-    id: g.id,
-    items: g.items,
-    connection: g.connection,
-    difficulty: g.difficulty,
-    color: g.color,
-  }));
-
-  const items = groups.flatMap((g) => g.items);
-
-  return {
-    id: row.id as string,
-    groups,
-    items,
-    createdAt: new Date(row.created_at as string).getTime(),
-    metadata: row.metadata as Record<string, unknown> | undefined,
-    puzzleDate: row.puzzle_date as string,
-  };
+  const parsed = parsePuzzleRow(data as Record<string, unknown>);
+  puzzleCache.set(cacheKey, { data: parsed, timestamp: Date.now() });
+  return parsed;
 }
 
 export async function generateStaticParams() {
@@ -87,11 +99,10 @@ export default async function Page({
   const { genre } = await params;
   const today = getTodayDate();
 
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: puzzleKeys.daily(today, genre),
-    queryFn: () => fetchDailyPuzzle(genre, today),
-  });
+  // Fetch all 3 puzzles in parallel — passed as props, no React Query needed
+  const [films, books, music] = await Promise.all(
+    VALID_GENRES.map((g) => fetchDailyPuzzle(g, today))
+  );
 
   const config = getSeoConfig(genre as Genre);
   const jsonLd = {
@@ -116,9 +127,11 @@ export default async function Page({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <GamePage genre={genre as Genre} puzzleDate={today} />
-      </HydrationBoundary>
+      <GamePage
+        initialGenre={genre as Genre}
+        puzzleDate={today}
+        puzzles={{ films, books, music }}
+      />
     </>
   );
 }

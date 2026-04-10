@@ -1,10 +1,21 @@
 .genre-switch {
   display: inline-flex;
+  position: relative;
   border-radius: var(--xclues-radius-pill, 999px);
   border: 1px solid var(--xclues-header-border);
   background: var(--xclues-card-bg);
   padding: 2px;
   gap: 2px;
+}
+
+.genre-switch__pill {
+  position: absolute;
+  display: block;
+  height: calc(100% - 4px);
+  top: 2px;
+  border-radius: var(--xclues-radius-pill, 999px);
+  background: var(--xclues-primary);
+  pointer-events: none;
 }
 
 .genre-switch__button {
@@ -17,9 +28,10 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background var(--xclues-transition), color var(--xclues-transition);
+  /* transition: color var(--xclues-transition); */
   color: var(--xclues-text-secondary);
   text-align: center;
+  z-index: 1;
 }
 
 .genre-switch__button:hover:not(.genre-switch__button--active) {
@@ -27,9 +39,9 @@
 }
 
 .genre-switch__button--active {
-  background: var(--xclues-primary);
   color: var(--xclues-card-selected-text);
   cursor: default;
+  background: transparent;
 }
 
 @media (max-width: 480px) {

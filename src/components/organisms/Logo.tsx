@@ -49,16 +49,13 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
   const [animActive, setAnimActive] = useState<SlotItem>("x");
   const [prevTarget, setPrevTarget] = useState(target);
 
-  // Reset animation state when target changes (render-time adjustment per React docs)
   if (target !== prevTarget) {
     setPrevTarget(target);
     if (!skipAnimation) setAnimActive("x");
   }
 
-  // When static, active is always target; otherwise use animation state
   const active = skipAnimation ? target : animActive;
 
-  // Build reel: enough copies of SEQUENCE to cover max position
   const copies = Math.ceil((finalPos + 1) / SEQUENCE.length);
   const reelItems: SlotItem[] = [];
   for (let c = 0; c < copies; c++) {
@@ -67,7 +64,6 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
 
   useEffect(() => {
     if (skipAnimation) {
-      // Snap reel to final position via direct DOM manipulation
       if (reelRef.current) {
         const h = reelRef.current.children[0]?.getBoundingClientRect().height || 0;
         if (h > 0) reelRef.current.style.transform = `translateY(${-targetIdx * h}px)`;
@@ -80,20 +76,12 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
 
     import('gsap').then(({ default: gsap }) => {
       if (cancelled) return;
-
-      // Measure one reel item's height (0 in jsdom / test env)
       const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
-
-      // Reset reel position
       if (reelRef.current && itemH > 0) {
         gsap.set(reelRef.current, { y: 0 });
       }
-
-      // Animate a proxy value from 0 → finalPos.
-      // On each tick, derive the active slot item and slide the reel.
       const proxy = { pos: 0 };
       let lastItem: SlotItem = "x";
-
       tween = gsap.to(proxy, {
         pos: finalPos,
         duration: 1.8,
@@ -125,9 +113,7 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
     <span className="logo" role="img" aria-label="xClues" data-slot={active}>
       <span className="logo-word">
         <span className="logo-slot">
-          {/* Hidden x always in flow — defines slot width */}
           <span className="logo-x" aria-hidden="true">x</span>
-          {/* Vertical reel — GSAP controls y transform */}
           <span className="logo-reel" ref={reelRef}>
             {reelItems.map((item, i) => (
               <span key={i} className="logo-reel-item">

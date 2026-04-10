@@ -14,7 +14,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--xclues-border-radius-xs);
-  transition: transform var(--xclues-transition);
+  /* transition: transform var(--xclues-transition); */
   box-shadow: var(--xclues-shadow-sm);
   animation: squareAppear 0.3s ease-out both;
 }
@@ -29,14 +29,8 @@
 .guess-row:nth-child(8) .guess-square { animation-delay: 0.75s; }
 
 @keyframes squareAppear {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.5); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* Color-blind safe patterns */

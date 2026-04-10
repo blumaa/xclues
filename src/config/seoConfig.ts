@@ -59,7 +59,7 @@ export const SEO_CONFIGS: Record<Genre, SeoConfig> = {
   },
 };
 
-export const VALID_GENRES: Genre[] = ['films', 'music', 'books'];
+export const VALID_GENRES: Genre[] = ['films', 'books', 'music'];
 export const DEFAULT_GENRE: Genre = 'films';
 
 export function isValidGenre(value: string | undefined): value is Genre {

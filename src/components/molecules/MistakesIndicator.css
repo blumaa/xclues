@@ -18,10 +18,7 @@
 }
 
 .mistake-dot {
-  transition:
-    background-color var(--xclues-duration-normal) ease,
-    transform var(--xclues-duration-normal) ease,
-    box-shadow var(--xclues-duration-normal) ease;
+  /* transition: disabled */
 }
 
 .mistake-dot--filled {
@@ -33,23 +30,13 @@
 }
 
 @keyframes dotPulse {
-  0%, 100% {
-    box-shadow: var(--xclues-dot-glow);
-  }
-  50% {
-    box-shadow: var(--xclues-dot-glow);
-  }
+  0%, 100% { box-shadow: var(--xclues-dot-glow); }
+  50% { box-shadow: var(--xclues-dot-glow); }
 }
 
 @keyframes dotLost {
-  0% {
-    transform: scale(1.3);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
+  0% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.6; }
 }
 
 /* Tighter spacing on desktop */
@@ -61,7 +48,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mistake-dot {
-    transition: none;
     animation: none;
   }
 }

@@ -21,7 +21,7 @@
   min-height: 44px;
   /* padding: var(--xclues-spacing-1) var(--xclues-spacing-2); */
   border-radius: var(--xclues-border-radius-xs);
-  transition: all var(--xclues-transition);
+  /* transition: all var(--xclues-transition); */
   text-decoration: none;
   color: inherit;
 }

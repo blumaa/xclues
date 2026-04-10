@@ -6,17 +6,9 @@
 }
 
 @keyframes groupCardAppear {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.3) translateY(-20px);
-  }
-  60% {
-    transform: scaleY(1.05) translateY(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scaleY(1) translateY(0);
-  }
+  0% { opacity: 0; transform: scaleY(0.3) translateY(-20px); }
+  60% { transform: scaleY(1.05) translateY(0); }
+  100% { opacity: 1; transform: scaleY(1) translateY(0); }
 }
 
 /* Compact group cards on desktop */

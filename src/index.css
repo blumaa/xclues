@@ -162,6 +162,7 @@
   --xclues-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+
 /* ---- Dark theme defaults (claude dark) ----
    Matches the default brand so first paint is correct when data-theme="dark".
    applyThemeTokens() will override with the user's chosen brand after hydration.
@@ -315,7 +316,7 @@ textarea {
   font-weight: var(--xclues-font-weight-semibold);
   letter-spacing: var(--xclues-tracking-tight);
   border-color: var(--xclues-primary-light);
-  transition: all var(--xclues-transition);
+  /* transition: all var(--xclues-transition); */
 }
 
 .about-links .xbtn:hover {

@@ -5,37 +5,22 @@
  */
 
 import { createElement, type ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SiteProvider } from '../providers/SiteProvider';
 import { ThemeContextProvider } from '../providers/ThemeContext';
 import { ToastProvider } from '../providers/ToastProvider';
-import { StatsProvider } from '../providers/StatsProvider';
 import { StorageProvider } from '../providers/StorageProvider';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: Infinity,
-    },
-  },
-});
 
 /**
  * Basic providers for components that need site context and theme
  */
 export function withNavProviders(Story: () => ReactNode) {
   return createElement(
-    QueryClientProvider,
-    { client: queryClient },
+    SiteProvider,
+    null,
     createElement(
-      SiteProvider,
+      ThemeContextProvider,
       null,
-      createElement(
-        ThemeContextProvider,
-        null,
-        createElement(ToastProvider, null, createElement(Story))
-      )
+      createElement(ToastProvider, null, createElement(Story))
     )
   );
 }
@@ -45,23 +30,15 @@ export function withNavProviders(Story: () => ReactNode) {
  */
 export function withProviders(Story: () => ReactNode) {
   return createElement(
-    QueryClientProvider,
-    { client: queryClient },
+    SiteProvider,
+    null,
     createElement(
-      SiteProvider,
+      StorageProvider,
       null,
       createElement(
-        StorageProvider,
+        ThemeContextProvider,
         null,
-        createElement(
-          StatsProvider,
-          null,
-          createElement(
-            ThemeContextProvider,
-            null,
-            createElement(ToastProvider, null, createElement(Story))
-          )
-        )
+        createElement(ToastProvider, null, createElement(Story))
       )
     )
   );

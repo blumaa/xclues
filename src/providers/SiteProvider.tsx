@@ -7,12 +7,12 @@
  */
 
 import { ReactNode, useEffect, useMemo } from 'react';
-import { getSiteConfig, type Genre } from '../config';
+import { getSiteConfig } from '../config';
 import { SiteContext, type SiteContextValue } from './useSiteContext';
+import { useAppStore } from '../store/appStore';
 
 interface SiteProviderProps {
   children: ReactNode;
-  initialGenre?: Genre;
 }
 
 /**
@@ -89,8 +89,9 @@ function updateMetaTags(config: SiteContextValue): void {
  * Detects genre from domain and provides config.
  * Supports reactive genre switching via setGenre.
  */
-export function SiteProvider({ children, initialGenre }: SiteProviderProps) {
-  const config = useMemo(() => getSiteConfig(initialGenre || 'films'), [initialGenre]);
+export function SiteProvider({ children }: SiteProviderProps) {
+  const activeGenre = useAppStore((s) => s.activeGenre);
+  const config = useMemo(() => getSiteConfig(activeGenre), [activeGenre]);
 
   const contextValue: SiteContextValue = config;
 

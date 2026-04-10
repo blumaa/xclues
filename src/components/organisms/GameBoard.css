@@ -2,7 +2,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding-top: var(--xclues-spacing-md);
 }
 
@@ -59,33 +58,4 @@
   }
 }
 
-/* Footer: mistakes/controls pinned to bottom */
-.game-board__footer {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Post-game action buttons */
-.game-actions {
-  display: flex;
-  justify-content: center;
-  gap: var(--xclues-spacing-md);
-  padding: var(--xclues-spacing-3) 0;
-}
-
-.game-actions .xbtn {
-  min-height: 48px;
-  min-width: 48px;
-  border-radius: var(--xclues-border-radius-sm);
-  transition: all var(--xclues-transition);
-}
-
-.game-actions button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--xclues-card-shadow-hover);
-}
-
-.game-board__footer__view-results-btn {
-  display: flex;
-  justify-content: center;
-}
+/* Post-game action buttons (kept for reference, moved to App.css as game-footer) */

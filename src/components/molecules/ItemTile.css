@@ -14,11 +14,13 @@
   backdrop-filter: blur(var(--xclues-blur-md));
   -webkit-backdrop-filter: blur(var(--xclues-blur-md));
   border: 1px solid var(--xclues-primary-6);
+  /* DISABLED — pending animation system redesign
   transition:
     transform var(--xclues-transition),
     box-shadow var(--xclues-transition),
     background var(--xclues-transition),
     border-color var(--xclues-transition);
+  */
 }
 
 /* Hover state - lift and glow */
@@ -93,9 +95,10 @@
 /* Active/pressed state for touch feedback — skip during animations */
 .item-tile.xcard:active:not(.xcard--shake):not(.xcard--jump) {
   transform: scale(0.96);
-  transition: transform var(--xclues-duration-fast) ease;
+  /* transition: transform var(--xclues-duration-fast) ease; */
 }
 
+/* DISABLED — pending animation system redesign
 @media (prefers-reduced-motion: reduce) {
   .item-tile.xcard:hover,
   .item-tile.xcard:active,
@@ -103,3 +106,4 @@
     transform: none;
   }
 }
+*/

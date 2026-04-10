@@ -44,7 +44,7 @@
   cursor: pointer;
   padding: var(--xclues-spacing-2);
   border-radius: var(--xclues-border-radius-xs);
-  transition: background var(--xclues-transition);
+  /* transition: background var(--xclues-transition); */
   min-height: 44px;
   min-width: 44px;
   display: flex;

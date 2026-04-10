@@ -11,7 +11,7 @@
   background: transparent;
   cursor: pointer;
   color: var(--xclues-text-primary);
-  transition: background var(--xclues-transition);
+  /* transition: background var(--xclues-transition); */
 }
 
 .brand-theme-switcher:hover {

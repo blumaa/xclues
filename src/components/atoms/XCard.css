@@ -20,7 +20,7 @@
 
 .xcard--hoverable {
   cursor: pointer;
-  transition: transform var(--xclues-transition), box-shadow var(--xclues-transition);
+  /* transition: transform var(--xclues-transition), box-shadow var(--xclues-transition); */
 }
 
 .xcard--hoverable:hover {
@@ -29,7 +29,6 @@
   box-shadow: var(--xclues-card-shadow-hover);
 }
 
-/* Shake animation */
 .xcard--shake {
   animation: xcard-shake var(--xclues-duration-slow) ease-in-out;
 }
@@ -40,7 +39,6 @@
   20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
 
-/* Jump animation */
 .xcard--jump {
   animation: xcard-jump var(--xclues-duration-slow) ease-out;
 }
@@ -62,8 +60,5 @@
   .xcard--shake,
   .xcard--jump {
     animation: none;
-  }
-  .xcard--hoverable:hover {
-    transform: none;
   }
 }

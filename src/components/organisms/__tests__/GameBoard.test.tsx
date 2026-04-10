@@ -2,22 +2,21 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { GameBoard } from '../GameBoard';
 
-vi.mock('../../../providers/useToast', () => ({
-  useToast: () => ({ showInfo: vi.fn() }),
-}));
+const defaultStoreState: Record<string, unknown> = {
+  items: [],
+  foundGroups: [],
+  selectedItemIds: [],
+  gameStatus: 'playing',
+  isShaking: false,
+  jumpingItemIds: [],
+  rejectedItemId: null,
+  selectItem: vi.fn(),
+  mistakes: 0,
+};
 
 vi.mock('../../../store/gameStore', () => ({
-  useGameStore: () => () => undefined,
-}));
-
-vi.mock('../../../providers/useStats', () => ({
-  useStats: () => ({
-    getStats: vi.fn().mockResolvedValue({ gameHistory: [] }),
-  }),
-}));
-
-vi.mock('../../../providers/useSite', () => ({
-  useSite: () => ({ siteName: 'xClues', domain: 'xclues.space' }),
+  useGameStore: (_genre: string, selector: (s: Record<string, unknown>) => unknown) =>
+    selector(defaultStoreState),
 }));
 
 describe('GameBoard', () => {
