@@ -57,18 +57,16 @@ function GenrePanel({ genre, puzzle, puzzleDate }: {
   const storePopulated = groups.length > 0;
   const isGameOver = gameStatus === "won" || gameStatus === "lost";
 
-  const [showResults, setShowResults] = useState(false);
+  const [resultsReady, setResultsReady] = useState(false);
   const [viewingPuzzle, setViewingPuzzle] = useState(false);
 
   useEffect(() => {
-    if (!isGameOver) {
-      setShowResults(false);
-      setViewingPuzzle(false);
-      return;
-    }
-    const timer = setTimeout(() => setShowResults(true), 2000);
+    if (!isGameOver) return;
+    const timer = setTimeout(() => setResultsReady(true), 2000);
     return () => clearTimeout(timer);
   }, [isGameOver]);
+
+  const showResults = isGameOver && resultsReady;
 
   const liveGuessHistory = useMemo(() => {
     if (previousGuesses.length > 0 && groups.length > 0) {
