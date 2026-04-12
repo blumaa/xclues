@@ -1,13 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Header } from "./header";
 import { Footer } from "../src/components/organisms/Footer";
+import { NativeSetup } from "../src/components/NativeSetup";
+import { AppSplash } from "../src/components/AppSplash";
 import { getServerTheme } from "../src/utils/getServerTheme";
 import { getThemeInitScript } from "../src/utils/themeScript";
 import { getBrandStyleTag } from "../src/utils/getBrandStyleTag";
 import "../src/index.css";
 import "../src/App.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://filmclues.space"),
@@ -60,6 +68,8 @@ export default async function RootLayout({
         {brandCSS && <style dangerouslySetInnerHTML={{ __html: brandCSS }} />}
       </head>
       <body>
+        <NativeSetup />
+        <AppSplash />
         <Providers>
           <div className="app-layout">
             <Header />

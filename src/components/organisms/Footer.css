@@ -4,6 +4,7 @@
   background: var(--xclues-footer-bg);
   backdrop-filter: blur(var(--xclues-blur-md));
   -webkit-backdrop-filter: blur(var(--xclues-blur-md));
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .footer-content {

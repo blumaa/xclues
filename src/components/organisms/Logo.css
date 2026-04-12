@@ -38,7 +38,7 @@
 .logo-slot {
   display: inline-grid;
   vertical-align: baseline;
-  width: 20px;
+  width: 1em;
   overflow: hidden;
 }
 
