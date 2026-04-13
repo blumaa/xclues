@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ToastContext, ToastContextValue } from './useToast';
 import './ToastProvider.css';
 
@@ -9,6 +9,7 @@ interface ToastData {
   message?: string;
   duration: number;
   dismissible: boolean;
+  exiting: boolean;
 }
 
 interface ToastProviderProps {
@@ -40,8 +41,18 @@ function createToastData(
     message,
     duration: durationMap[type],
     dismissible: true,
+    exiting: false,
   };
 }
+
+const TOAST_ICONS: Record<ToastData['type'], string> = {
+  success: '\u2713',
+  error: '\u2715',
+  warning: '!',
+  info: 'i',
+};
+
+const EXIT_DURATION = 300; // matches --xclues-duration-normal (0.3s)
 
 function Toast({ toast, onDismiss }: { toast: ToastData; onDismiss: (id: string) => void }) {
   useEffect(() => {
@@ -51,8 +62,17 @@ function Toast({ toast, onDismiss }: { toast: ToastData; onDismiss: (id: string)
     }
   }, [toast.id, toast.duration, onDismiss]);
 
+  const className = [
+    'xtoast',
+    `xtoast--${toast.type}`,
+    toast.exiting ? 'xtoast--exiting' : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`xtoast xtoast--${toast.type}`} role="alert">
+    <div className={className} role="alert">
+      <div className="xtoast__icon" aria-hidden="true">
+        {TOAST_ICONS[toast.type]}
+      </div>
       <div className="xtoast__content">
         <span className="xtoast__title">{toast.title}</span>
         {toast.message && <span className="xtoast__message">{toast.message}</span>}
@@ -68,6 +88,15 @@ function Toast({ toast, onDismiss }: { toast: ToastData; onDismiss: (id: string)
 
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
+  const exitTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  // Clean up exit timers on unmount
+  useEffect(() => {
+    const timers = exitTimers.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+    };
+  }, []);
 
   const showSuccess = useCallback((title: string, message?: string) => {
     const newToast = createToastData('success', title, message);
@@ -90,11 +119,29 @@ export function ToastProvider({ children }: ToastProviderProps) {
   }, []);
 
   const dismissToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    // Phase 1: mark as exiting (triggers slide-out animation)
+    setToasts((prev) =>
+      prev.map((toast) =>
+        toast.id === id ? { ...toast, exiting: true } : toast
+      )
+    );
+
+    // Phase 2: remove from DOM after animation completes
+    const timer = setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      exitTimers.current.delete(id);
+    }, EXIT_DURATION);
+
+    exitTimers.current.set(id, timer);
   }, []);
 
   const clearAllToasts = useCallback(() => {
-    setToasts([]);
+    // Mark all as exiting, then remove after animation
+    setToasts((prev) => prev.map((toast) => ({ ...toast, exiting: true })));
+    const timer = setTimeout(() => {
+      setToasts([]);
+    }, EXIT_DURATION);
+    exitTimers.current.set('clear-all', timer);
   }, []);
 
   const value: ToastContextValue = {
