@@ -147,8 +147,8 @@
   --xclues-purple-bg: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
 
   /* Layout */
-  --xclues-board-width-desktop: 600px;
-  --xclues-board-width-tablet: 620px;
+  --xclues-board-width-desktop: 760px;
+  --xclues-board-width-tablet: 680px;
 
   /* Dot sizes (static) */
   --xclues-dot-size: 12px;

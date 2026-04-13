@@ -60,3 +60,20 @@ export const LongConnectionTitle: Story = {
     group: makeGroup("purple", "this is a very long Hidden word and it keeps going: CAT", ["Caterpillar", "Scatter", "Education", "Vacation"]),
   },
 };
+
+export const LongItemTitles: Story = {
+  args: {
+    group: makeGroup("blue", "Mind-bending narratives", [
+      "Eternal Sunshine of the Spotless Mind",
+      "Everything Everywhere All at Once",
+      "The Curious Incident of the Dog",
+      "Birdman or The Unexpected Virtue",
+    ]),
+  },
+};
+
+export const ShortItemTitles: Story = {
+  args: {
+    group: makeGroup("green", "Short films", ["Up", "Her", "X", "It"]),
+  },
+};

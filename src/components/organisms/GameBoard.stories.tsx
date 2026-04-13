@@ -147,6 +147,61 @@ export const Completed: Story = {
   ],
 };
 
+// Story with mixed text lengths to test tile sizing at all viewports
+const mixedLengthItems: Item[] = [
+  { id: 1, title: "Up" },
+  { id: 2, title: "The Shawshank Redemption" },
+  { id: 3, title: "Eternal Sunshine of the Spotless Mind" },
+  { id: 4, title: "Jaws" },
+  { id: 5, title: "Supercalifragilisticexpialidocious" },
+  { id: 6, title: "Her" },
+  { id: 7, title: "No Country for Old Men" },
+  { id: 8, title: "X" },
+  { id: 9, title: "Everything Everywhere All at Once" },
+  { id: 10, title: "Dune" },
+  { id: 11, title: "The Curious Incident of the Dog in the Night-Time" },
+  { id: 12, title: "Fargo" },
+  { id: 13, title: "Schwarzenegger" },
+  { id: 14, title: "2001: A Space Odyssey" },
+  { id: 15, title: "It" },
+  { id: 16, title: "Dr. Strangelove or: How I Learned to Stop Worrying" },
+];
+
+const mixedLengthGroups: Group[] = [
+  { id: "1", items: mixedLengthItems.slice(0, 4), connection: "Short + long mix", difficulty: "easy", color: "yellow" },
+  { id: "2", items: mixedLengthItems.slice(4, 8), connection: "Extreme lengths", difficulty: "medium", color: "green" },
+  { id: "3", items: mixedLengthItems.slice(8, 12), connection: "Very long titles", difficulty: "hard", color: "blue" },
+  { id: "4", items: mixedLengthItems.slice(12, 16), connection: "More mixed lengths", difficulty: "hardest", color: "purple" },
+];
+
+export const MixedTextLengths: Story = {
+  args: { genre: STORY_GENRE },
+  decorators: [
+    (Story) => (
+      <>
+        <StoreInitializer items={mixedLengthItems} groups={mixedLengthGroups} />
+        <Story />
+      </>
+    ),
+  ],
+};
+
+export const MixedWithFoundGroup: Story = {
+  args: { genre: STORY_GENRE },
+  decorators: [
+    (Story) => (
+      <>
+        <StoreInitializer
+          items={mixedLengthItems.slice(4)}
+          groups={mixedLengthGroups}
+          foundGroups={[mixedLengthGroups[0]]}
+        />
+        <Story />
+      </>
+    ),
+  ],
+};
+
 // Story showing the animation in action
 function AnimatingStoreInitializer() {
   useEffect(() => {
@@ -175,4 +230,30 @@ export const AnimatingGroup: Story = {
       </>
     ),
   ],
+};
+
+// Viewport-locked stories for mixed text lengths
+const mixedDecorator = (Story: () => React.ReactNode) => (
+  <>
+    <StoreInitializer items={mixedLengthItems} groups={mixedLengthGroups} />
+    <Story />
+  </>
+);
+
+export const MixedMobile: Story = {
+  args: { genre: STORY_GENRE },
+  decorators: [mixedDecorator],
+  parameters: { viewport: { defaultViewport: 'mobile' } },
+};
+
+export const MixedTablet: Story = {
+  args: { genre: STORY_GENRE },
+  decorators: [mixedDecorator],
+  parameters: { viewport: { defaultViewport: 'tablet' } },
+};
+
+export const MixedDesktop: Story = {
+  args: { genre: STORY_GENRE },
+  decorators: [mixedDecorator],
+  parameters: { viewport: { defaultViewport: 'desktop' } },
 };

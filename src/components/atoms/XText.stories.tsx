@@ -47,10 +47,14 @@ export const Secondary: Story = {
   args: { children: "Secondary text with reduced opacity", semantic: "secondary" },
 };
 
-export const LongText: Story = {
-  args: { children: "This is a really long title that should trigger the long text scaling when responsive is enabled", responsive: true, isLongText: true },
+export const ResponsiveStandard: Story = {
+  args: { children: "Pulp Fiction", responsive: true, weight: "semibold" },
 };
 
-export const VeryLongText: Story = {
-  args: { children: "The Curious Incident of the Dog in the Night-Time by Mark Haddon", responsive: true, isLongText: true },
+export const ResponsiveLong: Story = {
+  args: { children: "The Shawshank Redemption", responsive: true, isLongText: true, weight: "semibold" },
+};
+
+export const ResponsiveVeryLong: Story = {
+  args: { children: "Eternal Sunshine of the Spotless Mind", responsive: true, isVeryLongText: true, weight: "semibold" },
 };

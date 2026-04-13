@@ -11,14 +11,16 @@
 /* Tablet: constrain to board width */
 @media (min-width: 640px) and (max-width: 1024px) {
   .item-grid {
+    gap: 0.625rem;
     max-width: var(--xclues-board-width-tablet);
     margin: 0 auto;
   }
 }
 
-/* Desktop: tighter constraint */
+/* Desktop: larger board */
 @media (min-width: 1025px) {
   .item-grid {
+    gap: 0.75rem;
     max-width: var(--xclues-board-width-desktop);
     margin: 0 auto;
   }

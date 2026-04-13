@@ -21,7 +21,7 @@ export function GameControls({
       <XButton
         variant="outline"
         onClick={onShuffle}
-        size="md"
+        size="sm"
         aria-label="Shuffle tiles"
       >
         Shuffle
@@ -29,7 +29,7 @@ export function GameControls({
       <XButton
         variant="outline"
         onClick={onDeselect}
-        size="md"
+        size="sm"
         disabled={!hasSelection}
         aria-label="Deselect all tiles"
       >
@@ -38,7 +38,7 @@ export function GameControls({
       <XButton
         variant="primary"
         onClick={onSubmit}
-        size="md"
+        size="sm"
         disabled={!canSubmit}
         aria-label="Submit guess"
       >

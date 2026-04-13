@@ -25,6 +25,12 @@ export function ItemTile({
   const displayTitle = addSoftHyphens(getDisplayTitle(item));
   const textLengthProps = getTextLengthProps(displayTitle);
 
+  const tileClasses = [
+    "item-tile",
+    textLengthProps.isLongText && "item-tile--long",
+    textLengthProps.isVeryLongText && "item-tile--very-long",
+  ].filter(Boolean).join(" ");
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -34,7 +40,7 @@ export function ItemTile({
 
   return (
     <XCard
-      className="item-tile"
+      className={tileClasses}
       aspectRatio="square"
       isSelected={isSelected}
       shake={(isShaking && isSelected) || isRejected}

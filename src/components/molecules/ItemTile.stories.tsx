@@ -46,9 +46,23 @@ export const VeryLongTitle: Story = {
   },
 };
 
+export const VeryLongTitleSelected: Story = {
+  args: {
+    item: { id: 1, title: "Eternal Sunshine of the Spotless Mind" },
+    isSelected: true,
+  },
+};
+
 export const LongSingleWord: Story = {
   args: {
-    item: { id: 1, title: "Dreamcatcher" },
+    item: { id: 1, title: "Supercalifragilisticexpialidocious" },
+    isSelected: false,
+  },
+};
+
+export const ShortTitle: Story = {
+  args: {
+    item: { id: 1, title: "Up" },
     isSelected: false,
   },
 };
