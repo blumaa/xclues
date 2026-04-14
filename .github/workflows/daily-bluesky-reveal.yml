@@ -1,0 +1,22 @@
+name: Daily Bluesky Reveal
+
+on:
+  schedule:
+    # Runs at 09:00 UTC daily (~20 hrs after the 13:00 UTC daily post)
+    - cron: "0 9 * * *"
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  reveal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Reply to yesterday's post with answers
+        env:
+          BLUESKY_IDENTIFIER: ${{ secrets.BLUESKY_IDENTIFIER }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: bun run scripts/post-reveal-bluesky.ts

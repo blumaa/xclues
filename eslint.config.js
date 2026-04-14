@@ -29,6 +29,8 @@ export default [js.configs.recommended, {
       localStorage: 'readonly',
       sessionStorage: 'readonly',
       fetch: 'readonly',
+      Request: 'readonly',
+      Response: 'readonly',
       URL: 'readonly',
       URLSearchParams: 'readonly',
       setTimeout: 'readonly',
