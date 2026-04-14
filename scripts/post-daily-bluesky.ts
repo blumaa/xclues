@@ -1,14 +1,15 @@
 /**
- * Posts today's puzzle to Bluesky with rotating copy templates.
+ * Posts today's puzzle to Bluesky as a real teaser.
  *
  * - Rotates through films/music/books based on day-of-year.
- * - Rotates through 4 copy templates based on day-of-year.
- * - Attaches a teaser image showing 4 real items from today's puzzle.
+ * - Rotates through 4 teaser templates. Each creates a real puzzle the
+ *   reader can attempt, with a genuine information gap that drives clicks.
+ * - Teaser image renders the exact items the post text references.
  * - Skips posting if today's puzzle hasn't been published yet.
  *
  * Required env vars:
- *   BLUESKY_IDENTIFIER        — handle (e.g. "xclues.bsky.social")
- *   BLUESKY_APP_PASSWORD      — app password from bsky.app/settings/app-passwords
+ *   BLUESKY_IDENTIFIER
+ *   BLUESKY_APP_PASSWORD
  *   NEXT_PUBLIC_SUPABASE_URL
  *   SUPABASE_SERVICE_ROLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY)
  */
@@ -26,13 +27,7 @@ interface GenrePostConfig {
   itemLabel: string;
 }
 
-interface Item {
-  id: number;
-  title: string;
-  year?: number;
-  artist?: string;
-}
-
+interface Item { id: number; title: string; artist?: string }
 interface PuzzleGroup {
   id: string;
   items: Item[];
@@ -40,11 +35,7 @@ interface PuzzleGroup {
   difficulty: string;
   color: string;
 }
-
-interface Puzzle {
-  id: string;
-  groups: PuzzleGroup[];
-}
+interface Puzzle { id: string; groups: PuzzleGroup[] }
 
 const GENRE_CONFIGS: Record<Genre, GenrePostConfig> = {
   films: { genre: "films", siteName: "Filmclues", emoji: "🎬", domain: "filmclues.space", itemLabel: "films" },
@@ -73,7 +64,6 @@ function pickGenre(): Genre {
 }
 
 function pickTemplate(): number {
-  // 4 templates, rotated daily
   return getDayOfYear() % 4;
 }
 
@@ -88,6 +78,16 @@ function getDisplayTitle(item: Item): string {
     return before;
   }
   return before;
+}
+
+// Deterministic shuffle so same day = same output (for caching + idempotency)
+function shuffleDeterministic<T>(array: T[], seed: number): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = (seed * (i + 1) * 2654435761) % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 async function fetchPuzzle(genre: Genre, date: string): Promise<Puzzle | null> {
@@ -108,91 +108,147 @@ async function fetchPuzzle(genre: Genre, date: string): Promise<Puzzle | null> {
   return { id: data.id, groups: data.groups as PuzzleGroup[] };
 }
 
-/* ─────────────── Copy templates ─────────────── */
+/* ─────────────── Teaser templates ─────────────── */
 
-function tmplTeaser(config: GenrePostConfig, puzzle: Puzzle): string {
-  // 4 items from a random category — no theme reveal
-  const idx = getDayOfYear() % puzzle.groups.length;
-  const group = puzzle.groups[idx];
-  const items = group.items.slice(0, 4).map(getDisplayTitle);
-  return `Which of these belong together?
-
-${items.join(" · ")}
-
-One of today's 4 categories in ${config.siteName}. 12 more ${config.itemLabel} waiting.
-
-${config.emoji} https://${config.domain}`;
+interface TemplateResult {
+  text: string;
+  titles: string[]; // items to render in the teaser image
+  headline: string; // headline shown in the image
 }
 
-function tmplRedHerring(config: GenrePostConfig, puzzle: Puzzle): string {
-  // 3 items from one category + 1 from another — "which is the odd one out?"
-  const groups = [...puzzle.groups];
-  const idx = getDayOfYear() % groups.length;
-  const mainGroup = groups[idx];
-  const otherIdx = (idx + 1) % groups.length;
-  const otherGroup = groups[otherIdx];
+/**
+ * Template 1: Mini-game. 6 items — 4 from one group, 2 decoys from another.
+ * Reader has to identify which 4 share a connection.
+ */
+function tmplMiniGame(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+  const seed = getDayOfYear();
+  // Prefer a non-purple main group for a more approachable category
+  const mainCandidates = puzzle.groups.filter((g) => g.color !== "purple");
+  const mainGroup = mainCandidates[seed % mainCandidates.length] ?? puzzle.groups[0];
+  const otherGroups = puzzle.groups.filter((g) => g.id !== mainGroup.id);
+  const decoyGroup = otherGroups[seed % otherGroups.length];
 
-  const three = mainGroup.items.slice(0, 3).map(getDisplayTitle);
-  const decoy = getDisplayTitle(otherGroup.items[0]);
+  const realItems = mainGroup.items.slice(0, 4).map(getDisplayTitle);
+  const decoys = decoyGroup.items.slice(0, 2).map(getDisplayTitle);
+  const titles = shuffleDeterministic([...realItems, ...decoys], seed);
 
-  // Shuffle deterministically based on day
-  const all = [...three, decoy];
-  const shuffleSeed = getDayOfYear();
-  all.sort((a, b) => {
-    const ha = (a.charCodeAt(0) + shuffleSeed) % 7;
-    const hb = (b.charCodeAt(0) + shuffleSeed) % 7;
-    return ha - hb;
-  });
+  const text = `4 of these 6 ${config.itemLabel} share a hidden connection. Which 4?
 
-  return `Three of these ${config.itemLabel} share a hidden connection. One doesn't.
+${titles.join(" · ")}
 
-${all.join(" · ")}
-
-Spot the odd one out — then find all 4 categories in today's ${config.siteName}.
+Full puzzle (16 ${config.itemLabel}, 4 categories) 👇
 
 ${config.emoji} https://${config.domain}`;
+
+  return {
+    text,
+    titles,
+    headline: `Mini ${config.siteName}`,
+  };
 }
 
-function tmplDifficultyBrag(config: GenrePostConfig, puzzle: Puzzle): string {
-  // Tease the purple (hardest) category
+/**
+ * Template 2: Missing 4th. Show 3 of the 4 purple (trickiest) items and
+ * ask the reader to name the 4th. Requires clicking to verify — even
+ * if the theme is obvious, the specific 4th item isn't guessable.
+ */
+function tmplPurpleChallenge(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+  const seed = getDayOfYear();
   const purple = puzzle.groups.find((g) => g.color === "purple") ?? puzzle.groups[puzzle.groups.length - 1];
-  const items = purple.items.slice(0, 4).map(getDisplayTitle);
-  return `Today's 🟪 trickiest category in ${config.siteName}:
+  // Deterministically pick 3 of 4 to show (hold one back)
+  const shuffled = shuffleDeterministic(purple.items.slice(0, 4), seed);
+  const shownItems = shuffled.slice(0, 3).map(getDisplayTitle);
+  const titles = [...shownItems, "?"];
 
-${items.join(" · ")}
+  const text = `Three of the four ${config.itemLabel} in today's 🟪 trickiest category:
 
-What's the connection? (Plus 12 more ${config.itemLabel} across 3 easier categories.)
+${shownItems.join(" · ")}
+
+Can you name the 4th?
 
 ${config.emoji} https://${config.domain}`;
+
+  return {
+    text,
+    titles,
+    headline: `Name the 4th`,
+  };
 }
 
-function tmplPlainCTA(config: GenrePostConfig): string {
-  return `${config.emoji} Today's ${config.siteName} is live.
+/**
+ * Template 3: Odd one out. 5 items — 4 from one group + 1 decoy.
+ * Reader finds the outlier AND the connecting theme.
+ */
+function tmplOddOneOut(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+  const seed = getDayOfYear();
+  const mainGroup = puzzle.groups[seed % puzzle.groups.length];
+  const otherGroups = puzzle.groups.filter((g) => g.id !== mainGroup.id);
+  const decoyGroup = otherGroups[seed % otherGroups.length];
 
-16 ${config.itemLabel} → 4 hidden categories
-🟨 easy  🟩 medium  🟦 hard  🟪 trickiest
+  const realItems = mainGroup.items.slice(0, 4).map(getDisplayTitle);
+  const decoy = getDisplayTitle(decoyGroup.items[0]);
+  const titles = shuffleDeterministic([...realItems, decoy], seed);
 
-https://${config.domain}`;
+  const text = `One of these ${config.itemLabel} doesn't belong. The other 4 share a hidden connection.
+
+${titles.join(" · ")}
+
+Which is the outlier? (Solve the full puzzle to find out.)
+
+${config.emoji} https://${config.domain}`;
+
+  return {
+    text,
+    titles,
+    headline: `Spot the outlier`,
+  };
 }
 
-function buildPostText(config: GenrePostConfig, puzzle: Puzzle): string {
-  const template = pickTemplate();
-  switch (template) {
+/**
+ * Template 4: Trivia pair. 2 items from the same group.
+ * Short, punchy, low-info hook — "what connects X and Y?"
+ */
+function tmplTriviaPair(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+  const seed = getDayOfYear();
+  const group = puzzle.groups[seed % puzzle.groups.length];
+  const titles = group.items.slice(0, 2).map(getDisplayTitle);
+
+  const text = `What do ${titles[0]} and ${titles[1]} have in common?
+
+(They're both in today's ${config.siteName}. Find 14 more ${config.itemLabel} + 3 other hidden categories.)
+
+${config.emoji} https://${config.domain}`;
+
+  return {
+    text,
+    titles,
+    headline: `What's the link?`,
+  };
+}
+
+function buildTemplate(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+  switch (pickTemplate()) {
     case 0:
-      return tmplTeaser(config, puzzle);
+      return tmplMiniGame(config, puzzle);
     case 1:
-      return tmplRedHerring(config, puzzle);
+      return tmplPurpleChallenge(config, puzzle);
     case 2:
-      return tmplDifficultyBrag(config, puzzle);
+      return tmplOddOneOut(config, puzzle);
     default:
-      return tmplPlainCTA(config);
+      return tmplTriviaPair(config, puzzle);
   }
 }
 
 /* ─────────────── Image fetch ─────────────── */
 
-async function fetchTeaserImage(genre: Genre): Promise<Uint8Array | null> {
-  const url = `https://${GENRE_CONFIGS[genre].domain}/api/teaser/${genre}`;
+async function fetchTeaserImage(
+  genre: Genre,
+  titles: string[],
+  headline: string
+): Promise<Uint8Array | null> {
+  const titlesParam = encodeURIComponent(titles.join(","));
+  const headlineParam = encodeURIComponent(headline);
+  const url = `https://${GENRE_CONFIGS[genre].domain}/api/teaser/${genre}?titles=${titlesParam}&headline=${headlineParam}`;
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -209,7 +265,10 @@ async function fetchTeaserImage(genre: Genre): Promise<Uint8Array | null> {
 
 /* ─────────────── Post ─────────────── */
 
-async function post(config: GenrePostConfig, puzzle: Puzzle): Promise<void> {
+async function post(
+  config: GenrePostConfig,
+  result: TemplateResult
+): Promise<void> {
   const identifier = process.env.BLUESKY_IDENTIFIER;
   const password = process.env.BLUESKY_APP_PASSWORD;
   if (!identifier || !password) throw new Error("Missing Bluesky env vars");
@@ -217,11 +276,10 @@ async function post(config: GenrePostConfig, puzzle: Puzzle): Promise<void> {
   const agent = new AtpAgent({ service: "https://bsky.social" });
   await agent.login({ identifier, password });
 
-  const text = buildPostText(config, puzzle);
-  const rt = new RichText({ text });
+  const rt = new RichText({ text: result.text });
   await rt.detectFacets(agent);
 
-  const imageBytes = await fetchTeaserImage(config.genre);
+  const imageBytes = await fetchTeaserImage(config.genre, result.titles, result.headline);
 
   const record: Record<string, unknown> = {
     text: rt.text,
@@ -235,17 +293,17 @@ async function post(config: GenrePostConfig, puzzle: Puzzle): Promise<void> {
       $type: "app.bsky.embed.images",
       images: [
         {
-          alt: `Teaser: four ${config.itemLabel} from today's ${config.siteName} puzzle`,
+          alt: `${result.headline}: ${result.titles.join(", ")}`,
           image: uploaded.data.blob,
         },
       ],
     };
   }
 
-  const result = await agent.post(record);
+  const posted = await agent.post(record);
   console.log(`Posted for ${config.siteName}:`);
-  console.log(text);
-  console.log(`URI: ${result.uri}`);
+  console.log(result.text);
+  console.log(`URI: ${posted.uri}`);
 }
 
 /* ─────────────── Main ─────────────── */
@@ -262,7 +320,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  await post(config, puzzle);
+  const result = buildTemplate(config, puzzle);
+  await post(config, result);
 }
 
 main().catch((err) => {

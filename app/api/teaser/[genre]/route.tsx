@@ -19,14 +19,14 @@ function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-function pickCategoryIndex(date: string): number {
-  // Deterministic per-day category pick (same all day for caching)
-  const hash = [...date].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return hash % 4;
+function getDayOfYear(): number {
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
+  return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
 }
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ genre: string }> }
 ) {
   const { genre } = await params;
@@ -34,16 +34,42 @@ export async function GET(
     return new Response("Invalid genre", { status: 400 });
   }
 
-  const date = getTodayDate();
-  const puzzle = await fetchPuzzleByDate(genre, date);
-  if (!puzzle || puzzle.groups.length === 0) {
-    return new Response("No puzzle available", { status: 404 });
-  }
-
   const config = getSeoConfig(genre);
   const theme = GENRE_THEMES[genre];
-  const group = puzzle.groups[pickCategoryIndex(date) % puzzle.groups.length];
-  const items = group.items.slice(0, 4).map((i) => getDisplayTitle(i));
+
+  // Parse titles from ?titles= (comma-separated, URL-encoded).
+  // Fallback: fetch today's puzzle and show first group's items.
+  const url = new URL(req.url);
+  const titlesParam = url.searchParams.get("titles");
+  let titles: string[];
+  let headline: string;
+
+  if (titlesParam) {
+    titles = titlesParam
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0)
+      .slice(0, 8);
+    headline = url.searchParams.get("headline") || "Today's puzzle";
+  } else {
+    const puzzle = await fetchPuzzleByDate(genre, getTodayDate());
+    if (!puzzle || puzzle.groups.length === 0) {
+      return new Response("No puzzle available", { status: 404 });
+    }
+    const group = puzzle.groups[getDayOfYear() % puzzle.groups.length];
+    titles = group.items.slice(0, 4).map((i) => getDisplayTitle(i));
+    headline = `Today's ${config.siteName}`;
+  }
+
+  if (titles.length === 0) {
+    return new Response("No titles to render", { status: 400 });
+  }
+
+  // Pick font size based on count and longest title
+  const longest = Math.max(...titles.map((t) => t.length));
+  const fontSize = longest > 30 ? 22 : longest > 20 ? 26 : 30;
+  // Tile basis: more items = narrower tiles
+  const basisPct = titles.length <= 2 ? 45 : titles.length <= 4 ? 45 : 30;
 
   return new ImageResponse(
     (
@@ -57,67 +83,53 @@ export async function GET(
           justifyContent: "center",
           background: theme.bg,
           fontFamily: "system-ui, sans-serif",
-          padding: "60px",
+          padding: "50px",
         }}
       >
         <div
           style={{
             display: "flex",
-            fontSize: "42px",
+            fontSize: "40px",
             fontWeight: 700,
             color: "#ffffff",
             letterSpacing: "-0.02em",
-            marginBottom: "8px",
+            marginBottom: "36px",
           }}
         >
-          {`${theme.emoji} Today's ${config.siteName}`}
-        </div>
-
-        <div
-          style={{
-            fontSize: "22px",
-            color: "rgba(255,255,255,0.6)",
-            marginBottom: "40px",
-          }}
-        >
-          What connects these four?
+          {`${theme.emoji} ${headline}`}
         </div>
 
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-            width: "900px",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "14px",
+            maxWidth: "1000px",
           }}
         >
-          {[0, 2].map((rowStart) => (
+          {titles.map((title, i) => (
             <div
-              key={rowStart}
-              style={{ display: "flex", gap: "16px", width: "100%" }}
+              key={i}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(255,255,255,0.1)",
+                border: "2px solid rgba(255,255,255,0.2)",
+                borderRadius: "14px",
+                padding: "24px 18px",
+                fontSize: `${fontSize}px`,
+                fontWeight: 600,
+                color: "#ffffff",
+                textAlign: "center",
+                minHeight: "100px",
+                flexBasis: `calc(${basisPct}% - 14px)`,
+                flexGrow: 0,
+                flexShrink: 0,
+              }}
             >
-              {items.slice(rowStart, rowStart + 2).map((title, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "rgba(255,255,255,0.1)",
-                    border: "2px solid rgba(255,255,255,0.2)",
-                    borderRadius: "16px",
-                    padding: "28px 20px",
-                    fontSize: "30px",
-                    fontWeight: 600,
-                    color: "#ffffff",
-                    textAlign: "center",
-                    minHeight: "120px",
-                    flex: 1,
-                  }}
-                >
-                  {title}
-                </div>
-              ))}
+              {title}
             </div>
           ))}
         </div>
@@ -127,11 +139,11 @@ export async function GET(
             display: "flex",
             fontSize: "22px",
             color: theme.accent,
-            marginTop: "40px",
+            marginTop: "36px",
             fontWeight: 600,
           }}
         >
-          {`Plus 12 more. ${config.domain}`}
+          {config.domain}
         </div>
       </div>
     ),
