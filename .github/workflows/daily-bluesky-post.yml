@@ -1,0 +1,23 @@
+name: Daily Bluesky Post
+
+on:
+  schedule:
+    # Runs at 13:00 UTC daily (9am ET / 6am PT)
+    # Adjust cron if you want a different time
+    - cron: "0 13 * * *"
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Post today's puzzle to Bluesky
+        env:
+          BLUESKY_IDENTIFIER: ${{ secrets.BLUESKY_IDENTIFIER }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: bun run scripts/post-daily-bluesky.ts

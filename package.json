@@ -37,6 +37,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@atproto/api": "^0.19.8",
     "@capacitor/cli": "^8.2.0",
     "@chromatic-com/storybook": "^4.1.3",
     "@storybook/addon-a11y": "^10.3.4",
