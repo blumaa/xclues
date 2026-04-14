@@ -17,8 +17,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://filmclues.space";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://filmclues.space"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "xClues - Daily Connection Puzzles",
     template: "%s | xClues",
@@ -31,7 +33,7 @@ export const metadata: Metadata = {
     title: "xClues - Daily Connection Puzzles",
     description:
       "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
-    url: "https://filmclues.space",
+    url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
@@ -40,7 +42,7 @@ export const metadata: Metadata = {
       "Daily connection puzzle games for films, books, and music.",
   },
   alternates: {
-    canonical: "https://filmclues.space",
+    canonical: siteUrl,
   },
 };
 
