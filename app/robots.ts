@@ -1,13 +1,17 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 
-export const dynamic = "force-static";
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  const siteUrl = host ? `${protocol}://${host}` : "https://filmclues.space";
 
-export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || "https://filmclues.space"}/sitemap.xml`,
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

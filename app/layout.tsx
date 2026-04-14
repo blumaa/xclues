@@ -17,34 +17,46 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://filmclues.space";
+async function getSiteUrl(): Promise<string> {
+  const { headers } = await import("next/headers");
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  if (host) {
+    const protocol = host.includes("localhost") ? "http" : "https";
+    return `${protocol}://${host}`;
+  }
+  return "https://filmclues.space";
+}
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "xClues - Daily Connection Puzzles",
-    template: "%s | xClues",
-  },
-  description:
-    "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
-  openGraph: {
-    type: "website",
-    siteName: "xClues",
-    title: "xClues - Daily Connection Puzzles",
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = await getSiteUrl();
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: "xClues - Daily Connection Puzzles",
+      template: "%s | xClues",
+    },
     description:
       "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
-    url: siteUrl,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "xClues - Daily Connection Puzzles",
-    description:
-      "Daily connection puzzle games for films, books, and music.",
-  },
-  alternates: {
-    canonical: siteUrl,
-  },
-};
+    openGraph: {
+      type: "website",
+      siteName: "xClues",
+      title: "xClues - Daily Connection Puzzles",
+      description:
+        "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
+      url: siteUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "xClues - Daily Connection Puzzles",
+      description:
+        "Daily connection puzzle games for films, books, and music.",
+    },
+    alternates: {
+      canonical: siteUrl,
+    },
+  };
+}
 
 async function getThemeAndBrand() {
   if (process.env.CAPACITOR) return { theme: 'light' as const, brand: undefined };

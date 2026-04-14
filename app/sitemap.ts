@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 import { VALID_GENRES } from "../src/config/seoConfig";
 import { fetchAllPublishedDates } from "../src/lib/supabase/puzzleQueries";
 
-export const revalidate = 3600;
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://filmclues.space";
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  const baseUrl = host ? `${protocol}://${host}` : "https://filmclues.space";
 
   const genrePages = VALID_GENRES.map((genre) => ({
     url: `${baseUrl}/${genre}`,
