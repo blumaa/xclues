@@ -84,31 +84,39 @@ export async function GET(
 
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            display: "flex",
+            flexDirection: "column",
             gap: "16px",
             width: "900px",
           }}
         >
-          {items.map((title, i) => (
+          {[0, 2].map((rowStart) => (
             <div
-              key={i}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(255,255,255,0.1)",
-                border: "2px solid rgba(255,255,255,0.2)",
-                borderRadius: "16px",
-                padding: "28px 20px",
-                fontSize: "30px",
-                fontWeight: 600,
-                color: "#ffffff",
-                textAlign: "center",
-                minHeight: "120px",
-              }}
+              key={rowStart}
+              style={{ display: "flex", gap: "16px", width: "100%" }}
             >
-              {title}
+              {items.slice(rowStart, rowStart + 2).map((title, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "rgba(255,255,255,0.1)",
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    borderRadius: "16px",
+                    padding: "28px 20px",
+                    fontSize: "30px",
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    textAlign: "center",
+                    minHeight: "120px",
+                    flex: 1,
+                  }}
+                >
+                  {title}
+                </div>
+              ))}
             </div>
           ))}
         </div>
