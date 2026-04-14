@@ -39,6 +39,12 @@ const SITE_NAMES: Record<Genre, string> = {
   books: "Litclues",
 };
 
+const HASHTAGS: Record<Genre, string> = {
+  films: "#FilmSky #dailygame",
+  music: "#MusicSky #dailygame",
+  books: "#BookSky #dailygame",
+};
+
 const COLOR_EMOJI: Record<string, string> = {
   yellow: "🟨",
   green: "🟩",
@@ -94,7 +100,9 @@ function buildRevealText(
 
 ${reveals.join("\n")}
 
-Today's puzzle → https://${DOMAINS[genre]}`;
+Today's puzzle → https://${DOMAINS[genre]}
+
+${HASHTAGS[genre]}`;
 }
 
 function findGenreFromPost(postText: string): Genre | null {

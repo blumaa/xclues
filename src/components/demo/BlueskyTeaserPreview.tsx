@@ -13,10 +13,10 @@ import type { Group, Item, SavedPuzzle } from "../../types";
 import { getDisplayTitle } from "../../utils/displayTitle";
 
 /* Mirror bot's theme palette */
-const GENRE_THEMES: Record<Genre, { bg: string; accent: string; emoji: string; itemLabel: string }> = {
-  films: { bg: "#1a1028", accent: "#e84393", emoji: "🎬", itemLabel: "films" },
-  music: { bg: "#0d1520", accent: "#a78bfa", emoji: "🎵", itemLabel: "songs" },
-  books: { bg: "#1a0a0a", accent: "#c96442", emoji: "📚", itemLabel: "books" },
+const GENRE_THEMES: Record<Genre, { bg: string; accent: string; emoji: string; itemLabel: string; hashtags: string }> = {
+  films: { bg: "#1a1028", accent: "#e84393", emoji: "🎬", itemLabel: "films", hashtags: "#FilmSky #dailygame" },
+  music: { bg: "#0d1520", accent: "#a78bfa", emoji: "🎵", itemLabel: "songs", hashtags: "#MusicSky #dailygame" },
+  books: { bg: "#1a0a0a", accent: "#c96442", emoji: "📚", itemLabel: "books", hashtags: "#BookSky #dailygame" },
 };
 
 function shuffleDeterministic<T>(array: T[], seed: number): T[] {
@@ -51,7 +51,9 @@ ${titles.join(" · ")}
 
 Full puzzle (16 ${cfg.itemNamePlural}, 4 categories) 👇
 
-${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}`;
+${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}
+
+${GENRE_THEMES[cfg.genre].hashtags}`;
 
   return { name: "Template 1 — Mini-game", text, titles, headline: `Mini ${cfg.siteName}` };
 }
@@ -67,7 +69,9 @@ ${shownItems.join(" · ")}
 
 Can you name the 4th?
 
-${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}`;
+${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}
+
+${GENRE_THEMES[cfg.genre].hashtags}`;
   return { name: "Template 2 — Name the 4th (purple)", text, titles, headline: `Name the 4th` };
 }
 
@@ -86,7 +90,9 @@ ${titles.join(" · ")}
 
 Which is the outlier? (Solve the full puzzle to find out.)
 
-${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}`;
+${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}
+
+${GENRE_THEMES[cfg.genre].hashtags}`;
   return { name: "Template 3 — Odd one out", text, titles, headline: `Spot the outlier` };
 }
 
@@ -98,7 +104,9 @@ function tmplTriviaPair(cfg: SeoConfig, puzzle: SavedPuzzle, seed: number): Temp
 
 (They're both in today's ${cfg.siteName}. Find 14 more ${cfg.itemNamePlural} + 3 other hidden categories.)
 
-${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}`;
+${GENRE_THEMES[cfg.genre].emoji} https://${cfg.domain}
+
+${GENRE_THEMES[cfg.genre].hashtags}`;
   return { name: "Template 4 — Trivia pair", text, titles, headline: `What's the link?` };
 }
 

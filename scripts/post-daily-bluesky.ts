@@ -25,6 +25,7 @@ interface GenrePostConfig {
   emoji: string;
   domain: string;
   itemLabel: string;
+  hashtags: string;
 }
 
 interface Item { id: number; title: string; artist?: string }
@@ -38,9 +39,30 @@ interface PuzzleGroup {
 interface Puzzle { id: string; groups: PuzzleGroup[] }
 
 const GENRE_CONFIGS: Record<Genre, GenrePostConfig> = {
-  films: { genre: "films", siteName: "Filmclues", emoji: "🎬", domain: "filmclues.space", itemLabel: "films" },
-  music: { genre: "music", siteName: "Musiclues", emoji: "🎵", domain: "musiclues.space", itemLabel: "songs" },
-  books: { genre: "books", siteName: "Litclues", emoji: "📚", domain: "litclues.space", itemLabel: "books" },
+  films: {
+    genre: "films",
+    siteName: "Filmclues",
+    emoji: "🎬",
+    domain: "filmclues.space",
+    itemLabel: "films",
+    hashtags: "#FilmSky #dailygame",
+  },
+  music: {
+    genre: "music",
+    siteName: "Musiclues",
+    emoji: "🎵",
+    domain: "musiclues.space",
+    itemLabel: "songs",
+    hashtags: "#MusicSky #dailygame",
+  },
+  books: {
+    genre: "books",
+    siteName: "Litclues",
+    emoji: "📚",
+    domain: "litclues.space",
+    itemLabel: "books",
+    hashtags: "#BookSky #dailygame",
+  },
 };
 
 const GENRE_ORDER: Genre[] = ["films", "music", "books"];
@@ -138,7 +160,9 @@ ${titles.join(" · ")}
 
 Full puzzle (16 ${config.itemLabel}, 4 categories) 👇
 
-${config.emoji} https://${config.domain}`;
+${config.emoji} https://${config.domain}
+
+${config.hashtags}`;
 
   return {
     text,
@@ -166,7 +190,9 @@ ${shownItems.join(" · ")}
 
 Can you name the 4th?
 
-${config.emoji} https://${config.domain}`;
+${config.emoji} https://${config.domain}
+
+${config.hashtags}`;
 
   return {
     text,
@@ -195,7 +221,9 @@ ${titles.join(" · ")}
 
 Which is the outlier? (Solve the full puzzle to find out.)
 
-${config.emoji} https://${config.domain}`;
+${config.emoji} https://${config.domain}
+
+${config.hashtags}`;
 
   return {
     text,
@@ -217,7 +245,9 @@ function tmplTriviaPair(config: GenrePostConfig, puzzle: Puzzle): TemplateResult
 
 (They're both in today's ${config.siteName}. Find 14 more ${config.itemLabel} + 3 other hidden categories.)
 
-${config.emoji} https://${config.domain}`;
+${config.emoji} https://${config.domain}
+
+${config.hashtags}`;
 
   return {
     text,
