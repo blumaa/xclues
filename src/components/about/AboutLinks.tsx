@@ -1,4 +1,4 @@
-import { XButton, XHeading, XIcon } from "../atoms";
+import { XButton, XIcon } from "../atoms";
 import { useSite } from "../../providers/useSite";
 import { BookIcon } from "./icons/BookIcon";
 import { PopcornIcon } from "./icons/PopcornIcon";
@@ -7,9 +7,6 @@ import { Capacitor } from "@capacitor/core";
 import type { Genre } from "../../config/seoConfig";
 import "./AboutLinks.css";
 
-interface AboutLinksProps {
-  showHeading?: boolean;
-}
 
 interface GameLink {
   genre: Genre;
@@ -40,7 +37,7 @@ const GAME_LINKS: GameLink[] = [
 ];
 
 
-export function AboutLinks({ showHeading = true }: AboutLinksProps) {
+export function AboutLinks() {
   const context = useSite();
   const activeGenre = context?.genre || "films";
 

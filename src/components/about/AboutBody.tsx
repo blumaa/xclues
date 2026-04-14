@@ -1,4 +1,4 @@
-import { XCard, XCardBody, XText, XHeading, XButton } from "../atoms";
+import { XCard, XCardBody, XText } from "../atoms";
 import Link from "next/link";
 import { useSite } from "../../providers/useSite";
 import "./AboutBody.css";
@@ -30,7 +30,7 @@ export function AboutBody() {
           </div>
 
           <div>
-            <XText level={4} size="md" weight="semibold" responsive>
+            <XText size="md" weight="semibold" responsive>
               Questions, feedback, or just want to say hi?
             </XText>
           </div>
