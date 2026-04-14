@@ -12,7 +12,7 @@ export function AboutPage() {
 
   return (
     <div className="about-page">
-      <XHeading level={1} size="xl" responsive>
+      <XHeading level={1} size="lg" responsive>
         About {siteName}
       </XHeading>
       <AboutBody />

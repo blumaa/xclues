@@ -20,22 +20,22 @@ export function AboutBody() {
 
           <div className="about-body-design-link">
             <XText size="sm">Built with the</XText>
-            <Link href="https://github.com/blumaa/mond-design-system" className="no-dec" target="_blank">
+            <Link
+              href="https://github.com/blumaa/mond-design-system"
+              className="no-dec"
+              target="_blank"
+            >
               Mond Design System
             </Link>
           </div>
 
           <div>
-            <XHeading level={4} size="md" weight="semibold" responsive>
+            <XText level={4} size="md" weight="semibold" responsive>
               Questions, feedback, or just want to say hi?
-            </XHeading>
+            </XText>
           </div>
           <div className="email-button">
-            <a href="mailto:blumaa@gmail.com">
-              <XButton variant="outline" size="sm">
-                blumaa@gmail.com
-              </XButton>
-            </a>
+            <a href="mailto:blumaa@gmail.com">blumaa@gmail.com</a>
           </div>
         </div>
       </XCardBody>

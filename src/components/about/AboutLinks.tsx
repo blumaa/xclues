@@ -42,18 +42,12 @@ const GAME_LINKS: GameLink[] = [
 
 export function AboutLinks({ showHeading = true }: AboutLinksProps) {
   const context = useSite();
-  const siteName = context?.siteName || "xClues";
   const activeGenre = context?.genre || "films";
 
   const isNative = Capacitor.isNativePlatform();
 
   return (
     <div className="about-links">
-      {showHeading && (
-        <XHeading level={4} size="xs" weight="semibold" responsive>
-          {siteName} is part of the Puzzle Clues Suite of games:
-        </XHeading>
-      )}
       <div className="about-links-list">
         {GAME_LINKS.map((link) => (
           <a
