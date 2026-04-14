@@ -68,6 +68,7 @@ export default async function OGImage({
         {/* Site name */}
         <div
           style={{
+            display: "flex",
             fontSize: "64px",
             fontWeight: 700,
             color: "#ffffff",
@@ -75,18 +76,19 @@ export default async function OGImage({
             marginBottom: "12px",
           }}
         >
-          {colors.emoji} {config.siteName}
+          {`${colors.emoji} ${config.siteName}`}
         </div>
 
         {/* Date */}
         <div
           style={{
+            display: "flex",
             fontSize: "30px",
             color: "rgba(255, 255, 255, 0.7)",
             marginBottom: "20px",
           }}
         >
-          Puzzle Archive — {displayDate}
+          {`Puzzle Archive — ${displayDate}`}
         </div>
 
         {/* CTA */}

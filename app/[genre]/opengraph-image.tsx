@@ -55,13 +55,14 @@ export default async function OGImage({ params }: { params: Promise<{ genre: str
         <div
           style={{
             fontSize: "72px",
+            display: "flex",
             fontWeight: 700,
             color: "#ffffff",
             letterSpacing: "-0.02em",
             marginBottom: "16px",
           }}
         >
-          {colors.emoji} {config.siteName}
+          {`${colors.emoji} ${config.siteName}`}
         </div>
 
         {/* Tagline */}

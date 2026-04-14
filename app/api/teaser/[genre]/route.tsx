@@ -62,6 +62,7 @@ export async function GET(
       >
         <div
           style={{
+            display: "flex",
             fontSize: "42px",
             fontWeight: 700,
             color: "#ffffff",
@@ -69,7 +70,7 @@ export async function GET(
             marginBottom: "8px",
           }}
         >
-          {theme.emoji} Today&apos;s {config.siteName}
+          {`${theme.emoji} Today's ${config.siteName}`}
         </div>
 
         <div
@@ -123,13 +124,14 @@ export async function GET(
 
         <div
           style={{
+            display: "flex",
             fontSize: "22px",
             color: theme.accent,
             marginTop: "40px",
             fontWeight: 600,
           }}
         >
-          Plus 12 more. {config.domain}
+          {`Plus 12 more. ${config.domain}`}
         </div>
       </div>
     ),
