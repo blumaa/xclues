@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { GamePage } from "../game-page";
 import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/config/seoConfig";
 import { fetchPuzzleByDate } from "../../src/lib/supabase/puzzleQueries";
@@ -48,6 +49,8 @@ export default async function Page({
   params: Promise<{ genre: string }>;
 }) {
   const { genre } = await params;
+  if (!isValidGenre(genre)) notFound();
+
   const today = getTodayDate();
 
   // Fetch all 3 puzzles in parallel — passed as props, no React Query needed
@@ -55,7 +58,7 @@ export default async function Page({
     VALID_GENRES.map((g) => fetchPuzzleByDate(g, today))
   );
 
-  const config = getSeoConfig(genre as Genre);
+  const config = getSeoConfig(genre);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
