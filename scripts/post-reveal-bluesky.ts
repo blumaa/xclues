@@ -39,12 +39,6 @@ const SITE_NAMES: Record<Genre, string> = {
   books: "Litclues",
 };
 
-const HASHTAGS: Record<Genre, string> = {
-  films: "#FilmSky #dailygame",
-  music: "#MusicSky #dailygame",
-  books: "#BookSky #dailygame",
-};
-
 const COLOR_EMOJI: Record<string, string> = {
   yellow: "🟨",
   green: "🟩",
@@ -96,13 +90,27 @@ function buildRevealText(
     return `${emoji} ${g.connection}`;
   });
 
-  return `Yesterday's ${SITE_NAMES[genre]} (${date}) 🔓
+  let text = `Yesterday's ${SITE_NAMES[genre]} (${date}) 🔓
 
 ${reveals.join("\n")}
 
-Today's puzzle → https://${DOMAINS[genre]}
+Today's puzzle → https://${DOMAINS[genre]}`;
 
-${HASHTAGS[genre]}`;
+  // Bluesky enforces 300 grapheme limit. Truncate connections if needed.
+  if ([...text].length > 300) {
+    const shortReveals = sorted.map((g) => {
+      const emoji = COLOR_EMOJI[g.color] || "⬜";
+      const conn = g.connection.length > 30 ? g.connection.slice(0, 28) + "…" : g.connection;
+      return `${emoji} ${conn}`;
+    });
+    text = `Yesterday's ${SITE_NAMES[genre]} (${date}) 🔓
+
+${shortReveals.join("\n")}
+
+Today's puzzle → https://${DOMAINS[genre]}`;
+  }
+
+  return text;
 }
 
 function findGenreFromPost(postText: string): Genre | null {
