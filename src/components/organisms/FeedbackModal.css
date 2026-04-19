@@ -1,0 +1,58 @@
+.feedback-modal {
+  padding: var(--xclues-spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-4);
+}
+
+.feedback-modal__stars {
+  display: flex;
+  justify-content: center;
+  gap: var(--xclues-spacing-2);
+}
+
+.feedback-modal__star {
+  font-size: 2rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--xclues-text-tertiary);
+  padding: var(--xclues-spacing-1);
+  min-width: 44px;
+  min-height: 44px;
+  transition: color var(--xclues-duration-fast) ease,
+    transform var(--xclues-duration-fast) ease;
+}
+
+.feedback-modal__star:hover {
+  transform: scale(1.1);
+}
+
+.feedback-modal__star--selected {
+  color: var(--xclues-yellow);
+}
+
+.feedback-modal__comment {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--xclues-font-size-base);
+  padding: var(--xclues-spacing-3);
+  border-radius: var(--xclues-border-radius-sm);
+  border: 1px solid var(--xclues-header-border);
+  background: var(--xclues-card-bg);
+  color: var(--xclues-text-primary);
+  resize: vertical;
+  min-height: 80px;
+}
+
+.feedback-modal__comment:focus {
+  outline: var(--xclues-focus-ring-style) var(--xclues-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.feedback-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--xclues-spacing-2);
+}

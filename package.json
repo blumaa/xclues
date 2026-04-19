@@ -17,7 +17,6 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@amplitude/analytics-browser": "^2.31.3",
     "@capacitor/core": "^8.2.0",
     "@capacitor/ios": "^8.2.0",
     "@capacitor/screen-orientation": "^8.0.1",

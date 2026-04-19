@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { XText, XButton, XIcon } from "../atoms";
 import { useSite } from "../../providers/useSite";
 import { Stats } from "../molecules/Stats";
 import { GameResultDisplay } from "../molecules/GameResultDisplay";
 import { CountdownTimer } from "../molecules/CountdownTimer";
-import { trackEvent, EVENTS } from "../../services/analytics";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
 import { getTodayDate } from "../../utils/index";
@@ -35,14 +34,6 @@ export function ResultsPanel({
 
   // Read stats synchronously from the stats store (SSOT)
   const genreStats = getStatsStore().getState().getGenreStats(genre);
-
-  useEffect(() => {
-    trackEvent(EVENTS.STATS_VIEWED, {
-      gamesPlayed: genreStats.gamesPlayed,
-      currentStreak: genreStats.currentStreak,
-      maxStreak: genreStats.maxStreak,
-    });
-  }, [genreStats.gamesPlayed, genreStats.currentStreak, genreStats.maxStreak]);
 
   const handleShare = async () => {
     if (!guessHistory) return;

@@ -9,7 +9,6 @@ import { ReactNode, useEffect, useState, useCallback, useMemo } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase/client';
 import { AuthContext } from './useAuthContext';
-import { trackEvent, EVENTS } from '../services/analytics';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -39,37 +38,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signUp = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({ email, password });
-    if (!error) trackEvent(EVENTS.AUTH_SIGNUP, { method: 'email' });
     return { error };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) trackEvent(EVENTS.AUTH_LOGIN, { method: 'email' });
     return { error };
   }, []);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    trackEvent(EVENTS.AUTH_LOGOUT, {});
   }, []);
 
   const updateEmail = useCallback(async (email: string) => {
     const { error } = await supabase.auth.updateUser({ email });
-    if (!error) trackEvent(EVENTS.AUTH_EMAIL_UPDATED, {});
     return { error };
   }, []);
 
   const updatePassword = useCallback(async (password: string) => {
     const { error } = await supabase.auth.updateUser({ password });
-    if (!error) trackEvent(EVENTS.AUTH_PASSWORD_UPDATED, {});
     return { error };
   }, []);
 
   const deleteAccount = useCallback(async () => {
     const { error } = await supabase.functions.invoke('delete-account');
     if (!error) {
-      trackEvent(EVENTS.AUTH_ACCOUNT_DELETED, {});
       await supabase.auth.signOut();
     }
     return { error };

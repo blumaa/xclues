@@ -260,6 +260,55 @@ export interface Database {
           generation_filters?: Json | null;
         };
       };
+      game_events: {
+        Row: {
+          id: number;
+          event_type: 'started' | 'won' | 'lost';
+          genre: string;
+          puzzle_date: string;
+          user_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          event_type: 'started' | 'won' | 'lost';
+          genre: string;
+          puzzle_date: string;
+          user_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          event_type?: 'started' | 'won' | 'lost';
+          genre?: string;
+          puzzle_date?: string;
+          user_id?: string | null;
+          created_at?: string;
+        };
+      };
+      feedback: {
+        Row: {
+          id: number;
+          rating: number;
+          comment: string | null;
+          user_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          rating: number;
+          comment?: string | null;
+          user_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          rating?: number;
+          comment?: string | null;
+          user_id?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

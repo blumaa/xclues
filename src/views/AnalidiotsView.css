@@ -1,0 +1,170 @@
+.analidiots {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--xclues-spacing-6) var(--xclues-spacing-4);
+  color: var(--xclues-text-primary);
+}
+
+.analidiots__header {
+  margin-bottom: var(--xclues-spacing-8);
+}
+
+.analidiots__title {
+  font-size: var(--xclues-font-size-3xl);
+  font-weight: var(--xclues-font-weight-bold);
+  letter-spacing: var(--xclues-tracking-tight);
+  margin-bottom: var(--xclues-spacing-2);
+}
+
+.analidiots__subtitle {
+  color: var(--xclues-text-secondary);
+  font-size: var(--xclues-font-size-sm);
+}
+
+.analidiots__section {
+  margin-bottom: var(--xclues-spacing-8);
+}
+
+.analidiots__section-title {
+  font-size: var(--xclues-font-size-lg);
+  font-weight: var(--xclues-font-weight-semibold);
+  margin-bottom: var(--xclues-spacing-3);
+  color: var(--xclues-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--xclues-tracking-wider);
+}
+
+.analidiots__totals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--xclues-spacing-3);
+}
+
+.analidiots__total {
+  background: var(--xclues-card-bg);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius);
+  padding: var(--xclues-spacing-4);
+  text-align: center;
+}
+
+.analidiots__total-num {
+  font-size: var(--xclues-font-size-2xl);
+  font-weight: var(--xclues-font-weight-bold);
+  color: var(--xclues-primary);
+  line-height: 1.2;
+}
+
+.analidiots__total-label {
+  font-size: var(--xclues-font-size-xs);
+  color: var(--xclues-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--xclues-tracking-wider);
+  margin-top: var(--xclues-spacing-1);
+}
+
+.analidiots__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--xclues-card-bg);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius);
+  overflow: hidden;
+  font-size: var(--xclues-font-size-sm);
+}
+
+.analidiots__table thead tr {
+  background: var(--xclues-card-bg-hover);
+}
+
+.analidiots__cell {
+  padding: var(--xclues-spacing-3) var(--xclues-spacing-4);
+  text-align: left;
+  border-bottom: 1px solid var(--xclues-header-border);
+}
+
+.analidiots__cell--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.analidiots__cell--label {
+  font-weight: var(--xclues-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.analidiots__table tbody tr:last-child .analidiots__cell {
+  border-bottom: none;
+}
+
+.analidiots__row--empty .analidiots__cell {
+  color: var(--xclues-text-tertiary);
+}
+
+.analidiots__section-meta {
+  margin-left: var(--xclues-spacing-3);
+  color: var(--xclues-text-tertiary);
+  font-size: var(--xclues-font-size-xs);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: var(--xclues-font-weight-normal);
+}
+
+.analidiots__empty {
+  color: var(--xclues-text-tertiary);
+  font-size: var(--xclues-font-size-sm);
+  font-style: italic;
+}
+
+.analidiots__rating {
+  color: var(--xclues-yellow);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.analidiots__comment {
+  color: var(--xclues-text-secondary);
+  max-width: 320px;
+  word-break: break-word;
+}
+
+.analidiots__muted {
+  color: var(--xclues-text-tertiary);
+}
+
+.analidiots__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xclues-spacing-3);
+  margin-top: var(--xclues-spacing-3);
+}
+
+.analidiots__page-btn {
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-4);
+  background: var(--xclues-card-bg);
+  color: var(--xclues-text-primary);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius-sm);
+  font-family: inherit;
+  font-size: var(--xclues-font-size-sm);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background var(--xclues-duration-fast) ease, border-color var(--xclues-duration-fast) ease;
+}
+
+.analidiots__page-btn:hover:not(:disabled) {
+  background: var(--xclues-card-bg-hover);
+  border-color: var(--xclues-primary);
+}
+
+.analidiots__page-btn:disabled {
+  opacity: var(--xclues-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.analidiots__page-indicator {
+  color: var(--xclues-text-secondary);
+  font-size: var(--xclues-font-size-sm);
+  font-variant-numeric: tabular-nums;
+}

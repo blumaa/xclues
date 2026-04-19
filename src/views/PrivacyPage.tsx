@@ -20,14 +20,13 @@ export function PrivacyPage() {
           What We Collect
         </XText>
         <XText size="sm">
-          We use Amplitude, a third-party analytics service, to understand how people use {siteName}.
-          This helps us improve the game. Amplitude automatically collects:
+          To understand how people use {siteName} and improve the game, we record a minimal anonymous event each time a game is started, won, or lost:
         </XText>
         <ul className="privacy-list">
-          <li><XText size="sm">Device type and browser information</XText></li>
-          <li><XText size="sm">General location (country/region, not precise location)</XText></li>
-          <li><XText size="sm">Game interactions (games played, wins, streaks)</XText></li>
-          <li><XText size="sm">Anonymous usage patterns</XText></li>
+          <li><XText size="sm">Event type (started, won, or lost)</XText></li>
+          <li><XText size="sm">Genre of the puzzle (films, music, books)</XText></li>
+          <li><XText size="sm">Date of the puzzle</XText></li>
+          <li><XText size="sm">Timestamp</XText></li>
         </ul>
 
         <div className="privacy-section-heading">
@@ -36,8 +35,9 @@ export function PrivacyPage() {
           </XText>
         </div>
         <ul className="privacy-list">
-          <li><XText size="sm">Your name or email (unless you contact us)</XText></li>
-          <li><XText size="sm">Precise location data</XText></li>
+          <li><XText size="sm">Your name or email (unless you contact us or sign up)</XText></li>
+          <li><XText size="sm">Your location</XText></li>
+          <li><XText size="sm">Device fingerprints or tracking identifiers</XText></li>
           <li><XText size="sm">Any information you don't voluntarily provide</XText></li>
         </ul>
 
@@ -53,12 +53,11 @@ export function PrivacyPage() {
 
         <div className="privacy-section-heading">
           <XText size="md" weight="semibold">
-            Third-Party Services
+            Where Events Are Stored
           </XText>
         </div>
         <XText size="sm">
-          We use <a href="https://amplitude.com/privacy" target="_blank" rel="noopener noreferrer">Amplitude</a> for
-          analytics. Their privacy policy explains how they handle data.
+          Events are stored in our own Supabase database. We do not share this data with third-party analytics services.
         </XText>
 
         <div className="privacy-section-heading">
