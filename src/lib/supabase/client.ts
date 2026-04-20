@@ -11,14 +11,16 @@ import type { Database } from './types';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-// Allow missing variables only in unit tests (which mock the client entirely).
-// Throw loudly everywhere else — including production builds — so missing
-// deploy env vars fail the build instead of silently falling back to mock
-// URLs and losing analytics/feedback inserts in production.
+// Fail loudly on the server (SSR + SSG prerender during `next build`) when
+// env vars are missing so broken deploys surface in Vercel build/logs.
+// In the browser, fall back silently to a mock URL — `NEXT_PUBLIC_*` vars are
+// inlined at build time, so throwing here would take down every user's page
+// instead of only failing the build.
 const isTest = process.env.NODE_ENV === 'test';
+const isServer = typeof window === 'undefined';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  if (!isTest) {
+  if (isServer && !isTest) {
     throw new Error(
       'Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) in .env.local'
     );
