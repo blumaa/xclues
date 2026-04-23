@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
 
