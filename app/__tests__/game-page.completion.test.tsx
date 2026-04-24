@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, render, waitFor } from '@testing-library/react';
 import { GamePage } from '../game-page';
-import { resetAppStore } from '../../src/store/appStore';
+import { resetAppStore, getAppStore } from '../../src/store/appStore';
 import { resetStatsStore } from '../../src/store/statsStore';
 import { resetAllStores, getGameStore } from '../../src/store/gameStore';
 import type { SavedPuzzle } from '../../src/types';
@@ -66,11 +66,12 @@ describe('GamePage completion → trackGameEvent', () => {
     resetAllStores();
   });
 
-  it('fires trackGameEvent("started") per genre on mount', async () => {
+  it('fires trackGameEvent("started") only for the initial genre on mount', async () => {
     renderFresh();
     await waitFor(() => {
       const starts = trackGameEventMock.mock.calls.filter((c) => c[0] === 'started');
-      expect(starts.length).toBe(3);
+      expect(starts.length).toBe(1);
+      expect(starts[0][1]).toMatchObject({ genre: 'films' });
     });
   });
 
@@ -91,6 +92,54 @@ describe('GamePage completion → trackGameEvent', () => {
       expect(lost).toBeDefined();
       expect(lost?.[1]).toMatchObject({ genre: 'films', puzzleDate: DATE });
     });
+  });
+
+  it('fires trackGameEvent("started") for a new genre when user switches tabs', async () => {
+    renderFresh();
+    await waitFor(() => {
+      expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
+    });
+
+    trackGameEventMock.mockClear();
+
+    await act(async () => {
+      getAppStore().getState().setActiveGenre('music');
+    });
+
+    await waitFor(() => {
+      const starts = trackGameEventMock.mock.calls.filter((c) => c[0] === 'started');
+      expect(starts.length).toBe(1);
+      expect(starts[0][1]).toMatchObject({ genre: 'music' });
+    });
+  });
+
+  it('does not fire duplicate started events when switching back to a visited genre', async () => {
+    renderFresh();
+    await waitFor(() => {
+      expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
+    });
+
+    await act(async () => {
+      getAppStore().getState().setActiveGenre('music');
+    });
+
+    await waitFor(() => {
+      expect(trackGameEventMock.mock.calls.filter((c) => c[0] === 'started').length).toBe(2);
+    });
+
+    trackGameEventMock.mockClear();
+
+    await act(async () => {
+      getAppStore().getState().setActiveGenre('films');
+    });
+
+    // Wait a tick and verify no new started events
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+
+    const starts = trackGameEventMock.mock.calls.filter((c) => c[0] === 'started');
+    expect(starts.length).toBe(0);
   });
 
   it('fires trackGameEvent("won") when a genre game transitions to won', async () => {

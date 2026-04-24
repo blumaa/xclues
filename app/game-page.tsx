@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GameBoard } from "../src/components/organisms/GameBoard";
 import { GameControls } from "../src/components/organisms/GameControls";
 import { MistakesIndicator } from "../src/components/molecules/MistakesIndicator";
@@ -38,7 +38,6 @@ function initGenre(genre: Genre, puzzle: SavedPuzzle, puzzleDate: string) {
     gameStore.getState().restoreCompletedGame(puzzle.groups, completed.won, completed.mistakes);
   } else {
     gameStore.getState().initializeGame(puzzle.items, puzzle.groups, puzzleDate, genre);
-    void trackGameEvent('started', { genre, puzzleDate });
   }
 
   appStore.getState().markPuzzleReady(genre);
@@ -142,6 +141,8 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
     "",
   );
 
+  const startedGenres = useRef(new Set<string>());
+
   // Initialize stores once
   useEffect(() => {
     getStatsStore().getState().hydrate(STATS_STORAGE_KEY);
@@ -153,7 +154,25 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
         initGenre(g, puzzle, puzzleDate);
       }
     }
+
+    // Fire started only for the initial genre
+    const statsStore = getStatsStore();
+    if (!statsStore.getState().getCompletedGame(initialGenre, puzzleDate)) {
+      if (!startedGenres.current.has(initialGenre)) {
+        startedGenres.current.add(initialGenre);
+        void trackGameEvent('started', { genre: initialGenre, puzzleDate });
+      }
+    }
   }, [initialGenre, puzzleDate, puzzles]);
+
+  // Fire started when user swipes to a new genre
+  useEffect(() => {
+    if (startedGenres.current.has(activeGenre)) return;
+    const statsStore = getStatsStore();
+    if (statsStore.getState().getCompletedGame(activeGenre, puzzleDate)) return;
+    startedGenres.current.add(activeGenre);
+    void trackGameEvent('started', { genre: activeGenre, puzzleDate });
+  }, [activeGenre, puzzleDate]);
 
   const feedbackOpen = gameCount >= FEEDBACK_THRESHOLD && feedbackDismissed !== "1";
 
