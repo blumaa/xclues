@@ -50,7 +50,7 @@ function parseFetchBody(call: unknown[]): Record<string, unknown> {
   return JSON.parse((call[1] as { body: string }).body);
 }
 
-describe('GamePage → submitGuess wrong 4x → fetch insert lost', () => {
+describe('GamePage → submitGuess correct 4x → fetch insert won', () => {
   beforeEach(() => {
     fetchMock.mockReset();
     fetchMock.mockResolvedValue({ ok: true, status: 201 });
@@ -59,13 +59,15 @@ describe('GamePage → submitGuess wrong 4x → fetch insert lost', () => {
     resetAppStore();
     resetStatsStore();
     resetAllStores();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
-  it('inserts a "lost" event after 4 wrong guesses via submitGuess', async () => {
+  it('inserts a "won" event after 4 correct guesses via submitGuess', async () => {
     const puzzle = makePuzzle();
     render(
       <GamePage
@@ -83,30 +85,30 @@ describe('GamePage → submitGuess wrong 4x → fetch insert lost', () => {
 
     const store = getGameStore('films');
 
-    const wrongGuesses = [
-      [1, 5, 9, 13],
-      [2, 6, 10, 14],
-      [3, 7, 11, 15],
-      [4, 8, 12, 16],
+    const correctGuesses = [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+      [9, 10, 11, 12],
+      [13, 14, 15, 16],
     ];
 
-    for (const ids of wrongGuesses) {
+    for (const ids of correctGuesses) {
       await act(async () => {
         store.setState({ selectedItemIds: ids });
         store.getState().submitGuess();
+        await vi.advanceTimersByTimeAsync(1000);
       });
     }
 
-    expect(store.getState().gameStatus).toBe('lost');
-    expect(store.getState().mistakes).toBe(4);
+    expect(store.getState().gameStatus).toBe('won');
 
     await waitFor(() => {
-      const lostCall = fetchMock.mock.calls.find(
-        (c) => parseFetchBody(c).event_type === 'lost',
+      const wonCall = fetchMock.mock.calls.find(
+        (c) => parseFetchBody(c).event_type === 'won',
       );
-      expect(lostCall).toBeDefined();
-      expect(parseFetchBody(lostCall!)).toMatchObject({
-        event_type: 'lost',
+      expect(wonCall).toBeDefined();
+      expect(parseFetchBody(wonCall!)).toMatchObject({
+        event_type: 'won',
         genre: 'films',
         puzzle_date: DATE,
       });

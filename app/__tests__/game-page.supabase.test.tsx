@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, render, waitFor } from '@testing-library/react';
 import { GamePage } from '../game-page';
 import { resetAppStore } from '../../src/store/appStore';
@@ -6,13 +6,7 @@ import { resetStatsStore } from '../../src/store/statsStore';
 import { resetAllStores, getGameStore } from '../../src/store/gameStore';
 import type { SavedPuzzle } from '../../src/types';
 
-const insertMock = vi.fn();
-
-vi.mock('../../src/lib/supabase/client', () => ({
-  supabase: {
-    from: vi.fn(() => ({ insert: insertMock })),
-  },
-}));
+const fetchMock = vi.fn();
 
 vi.mock('../../src/components/organisms/GameBoard', () => ({
   GameBoard: () => <div data-testid="game-board">Board</div>,
@@ -49,17 +43,26 @@ const puzzle: SavedPuzzle = {
 
 const DATE = '2026-04-23';
 
-describe('GamePage → supabase insert', () => {
+function parseFetchBody(call: unknown[]): Record<string, unknown> {
+  return JSON.parse((call[1] as { body: string }).body);
+}
+
+describe('GamePage → fetch insert', () => {
   beforeEach(() => {
-    insertMock.mockReset();
-    insertMock.mockResolvedValue({ error: null });
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue({ ok: true, status: 201 });
+    vi.stubGlobal('fetch', fetchMock);
     localStorage.clear();
     resetAppStore();
     resetStatsStore();
     resetAllStores();
   });
 
-  it('calls supabase insert with event_type="lost" on loss', async () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('calls fetch with event_type="lost" on loss', async () => {
     render(
       <GamePage
         initialGenre="films"
@@ -69,21 +72,21 @@ describe('GamePage → supabase insert', () => {
     );
 
     await waitFor(() => {
-      expect(insertMock).toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalled();
     });
 
-    insertMock.mockClear();
+    fetchMock.mockClear();
 
     await act(async () => {
       getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
     });
 
     await waitFor(() => {
-      const lostCall = insertMock.mock.calls.find(
-        (c) => (c[0] as { event_type: string }).event_type === 'lost',
+      const lostCall = fetchMock.mock.calls.find(
+        (c) => parseFetchBody(c).event_type === 'lost',
       );
       expect(lostCall).toBeDefined();
-      expect(lostCall?.[0]).toMatchObject({
+      expect(parseFetchBody(lostCall!)).toMatchObject({
         event_type: 'lost',
         genre: 'films',
         puzzle_date: DATE,
