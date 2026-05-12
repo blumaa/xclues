@@ -142,6 +142,7 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
   );
 
   const startedGenres = useRef(new Set<string>());
+  const initialized = useAppStore((s) => s.initialized);
 
   // Initialize stores once
   useEffect(() => {
@@ -154,25 +155,18 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
         initGenre(g, puzzle, puzzleDate);
       }
     }
-
-    // Fire started only for the initial genre
-    const statsStore = getStatsStore();
-    if (!statsStore.getState().getCompletedGame(initialGenre, puzzleDate)) {
-      if (!startedGenres.current.has(initialGenre)) {
-        startedGenres.current.add(initialGenre);
-        void trackGameEvent('started', { genre: initialGenre, puzzleDate });
-      }
-    }
   }, [initialGenre, puzzleDate, puzzles]);
 
-  // Fire started when user swipes to a new genre
+  // Fire started for activeGenre — gated on initialized to prevent
+  // the store's default 'films' from leaking a spurious event
   useEffect(() => {
+    if (!initialized) return;
     if (startedGenres.current.has(activeGenre)) return;
     const statsStore = getStatsStore();
     if (statsStore.getState().getCompletedGame(activeGenre, puzzleDate)) return;
     startedGenres.current.add(activeGenre);
     void trackGameEvent('started', { genre: activeGenre, puzzleDate });
-  }, [activeGenre, puzzleDate]);
+  }, [initialized, activeGenre, puzzleDate]);
 
   const feedbackOpen = gameCount >= FEEDBACK_THRESHOLD && feedbackDismissed !== "1";
 

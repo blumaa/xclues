@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createServerSupabaseClient } from "../../src/lib/supabase/server";
 import {
-  aggregateEvents,
+  aggregateEventsByGenre,
   type GameEventRow,
 } from "../../src/services/analytics/aggregateEvents";
 import {
@@ -32,7 +32,7 @@ export default async function AnalidiotsPage() {
     const [eventsResult, feedbackResult] = await Promise.all([
       supabase
         .from("game_events")
-        .select("event_type, created_at")
+        .select("event_type, created_at, genre")
         .gte("created_at", since),
       supabase
         .from("feedback")
@@ -49,7 +49,7 @@ export default async function AnalidiotsPage() {
     }
   }
 
-  const data = aggregateEvents(events);
+  const data = aggregateEventsByGenre(events);
 
   return <AnalidiotsView data={data} feedback={feedback} />;
 }

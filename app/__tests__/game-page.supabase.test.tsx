@@ -93,4 +93,38 @@ describe('GamePage → fetch insert', () => {
       });
     });
   });
+
+  it('fires started event only for initialGenre, never a spurious films event', async () => {
+    render(
+      <GamePage
+        initialGenre="books"
+        puzzleDate={DATE}
+        puzzles={{ films: puzzle, books: puzzle, music: puzzle }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled();
+    });
+
+    // Wait for all effects to settle
+    await act(async () => {});
+
+    const startedCalls = fetchMock.mock.calls.filter(
+      (c) => parseFetchBody(c).event_type === 'started',
+    );
+
+    // Exactly one started event, for 'books' (the initialGenre)
+    expect(startedCalls).toHaveLength(1);
+    expect(parseFetchBody(startedCalls[0])).toMatchObject({
+      event_type: 'started',
+      genre: 'books',
+    });
+
+    // No started event for 'films' (the store default) should leak through
+    const filmsStarted = startedCalls.filter(
+      (c) => parseFetchBody(c).genre === 'films',
+    );
+    expect(filmsStarted).toHaveLength(0);
+  });
 });

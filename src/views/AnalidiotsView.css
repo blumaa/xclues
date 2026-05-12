@@ -21,6 +21,35 @@
   font-size: var(--xclues-font-size-sm);
 }
 
+.analidiots__tabs {
+  display: flex;
+  gap: var(--xclues-spacing-2);
+  margin-bottom: var(--xclues-spacing-6);
+}
+
+.analidiots__tab {
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-4);
+  background: var(--xclues-card-bg);
+  color: var(--xclues-text-secondary);
+  border: 1px solid var(--xclues-header-border);
+  border-radius: var(--xclues-border-radius-sm);
+  font-family: inherit;
+  font-size: var(--xclues-font-size-sm);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background var(--xclues-duration-fast) ease, border-color var(--xclues-duration-fast) ease;
+}
+
+.analidiots__tab:hover {
+  background: var(--xclues-card-bg-hover);
+}
+
+.analidiots__tab--active {
+  background: var(--xclues-primary);
+  color: var(--xclues-text-on-primary, #fff);
+  border-color: var(--xclues-primary);
+}
+
 .analidiots__section {
   margin-bottom: var(--xclues-spacing-8);
 }

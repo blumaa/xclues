@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalidiotsView, type FeedbackRow } from "./AnalidiotsView";
-import { aggregateEvents, type GameEventRow } from "../services/analytics/aggregateEvents";
+import { aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
 
 const meta: Meta<typeof AnalidiotsView> = {
   title: "Views/AnalidiotsView",
@@ -14,6 +14,7 @@ export default meta;
 type Story = StoryObj<typeof AnalidiotsView>;
 
 const NOW = new Date("2026-04-19T12:00:00Z");
+const GENRES = ['films', 'books', 'music'] as const;
 
 function seedRows(): GameEventRow[] {
   const rows: GameEventRow[] = [];
@@ -22,13 +23,15 @@ function seedRows(): GameEventRow[] {
     d.setUTCDate(d.getUTCDate() - daysAgo);
     const iso = d.toISOString();
 
-    const started = Math.floor(8 + Math.random() * 20);
-    const won = Math.floor(started * (0.55 + Math.random() * 0.25));
-    const lost = started - won - Math.floor(Math.random() * 3);
+    for (const genre of GENRES) {
+      const started = Math.floor(8 + Math.random() * 20);
+      const won = Math.floor(started * (0.55 + Math.random() * 0.25));
+      const lost = started - won - Math.floor(Math.random() * 3);
 
-    for (let i = 0; i < started; i++) rows.push({ event_type: "started", created_at: iso });
-    for (let i = 0; i < won; i++) rows.push({ event_type: "won", created_at: iso });
-    for (let i = 0; i < Math.max(lost, 0); i++) rows.push({ event_type: "lost", created_at: iso });
+      for (let i = 0; i < started; i++) rows.push({ event_type: "started", created_at: iso, genre });
+      for (let i = 0; i < won; i++) rows.push({ event_type: "won", created_at: iso, genre });
+      for (let i = 0; i < Math.max(lost, 0); i++) rows.push({ event_type: "lost", created_at: iso, genre });
+    }
   }
   return rows;
 }
@@ -59,27 +62,27 @@ const FEEDBACK_SAMPLE: FeedbackRow[] = [
 
 export const Realistic: Story = {
   args: {
-    data: aggregateEvents(seedRows(), NOW),
+    data: aggregateEventsByGenre(seedRows(), NOW),
     feedback: FEEDBACK_SAMPLE,
   },
 };
 
 export const Empty: Story = {
   args: {
-    data: aggregateEvents([], NOW),
+    data: aggregateEventsByGenre([], NOW),
     feedback: [],
   },
 };
 
 export const SparseEarlyDays: Story = {
   args: {
-    data: aggregateEvents(
+    data: aggregateEventsByGenre(
       [
-        { event_type: "started", created_at: "2026-04-19T10:00:00Z" },
-        { event_type: "won", created_at: "2026-04-19T10:05:00Z" },
-        { event_type: "started", created_at: "2026-04-18T14:00:00Z" },
-        { event_type: "lost", created_at: "2026-04-18T14:10:00Z" },
-        { event_type: "started", created_at: "2026-04-17T09:00:00Z" },
+        { event_type: "started", created_at: "2026-04-19T10:00:00Z", genre: "films" },
+        { event_type: "won", created_at: "2026-04-19T10:05:00Z", genre: "films" },
+        { event_type: "started", created_at: "2026-04-18T14:00:00Z", genre: "books" },
+        { event_type: "lost", created_at: "2026-04-18T14:10:00Z", genre: "books" },
+        { event_type: "started", created_at: "2026-04-17T09:00:00Z", genre: "music" },
       ],
       NOW,
     ),

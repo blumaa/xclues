@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { aggregateEvents, type GameEventRow } from '../aggregateEvents';
+import { aggregateEvents, aggregateEventsByGenre, type GameEventRow } from '../aggregateEvents';
 
-function row(event_type: 'started' | 'won' | 'lost', created_at: string): GameEventRow {
-  return { event_type, created_at };
+function row(event_type: 'started' | 'won' | 'lost', created_at: string, genre = 'films'): GameEventRow {
+  return { event_type, created_at, genre };
 }
 
 describe('aggregateEvents', () => {
@@ -90,5 +90,45 @@ describe('aggregateEvents', () => {
     const w01 = result.weekly.find((w) => w.isoWeek === '2027-W01');
     expect(w53?.started).toBe(1);
     expect(w01?.started).toBe(1);
+  });
+});
+
+describe('aggregateEventsByGenre', () => {
+  const now = new Date('2026-04-19T12:00:00Z');
+
+  it('returns separate aggregations keyed by genre', () => {
+    const rows: GameEventRow[] = [
+      row('started', '2026-04-19T10:00:00Z', 'films'),
+      row('won', '2026-04-19T11:00:00Z', 'films'),
+      row('started', '2026-04-19T10:00:00Z', 'books'),
+      row('lost', '2026-04-19T11:00:00Z', 'books'),
+      row('started', '2026-04-19T10:00:00Z', 'music'),
+    ];
+    const result = aggregateEventsByGenre(rows, now);
+
+    expect(result.films.daily[0]).toMatchObject({ date: '2026-04-19', started: 1, won: 1, lost: 0 });
+    expect(result.books.daily[0]).toMatchObject({ date: '2026-04-19', started: 1, won: 0, lost: 1 });
+    expect(result.music.daily[0]).toMatchObject({ date: '2026-04-19', started: 1, won: 0, lost: 0 });
+  });
+
+  it('returns zero-filled buckets for genres with no events', () => {
+    const rows: GameEventRow[] = [
+      row('started', '2026-04-19T10:00:00Z', 'films'),
+    ];
+    const result = aggregateEventsByGenre(rows, now);
+
+    expect(result.books.daily[0]).toMatchObject({ date: '2026-04-19', started: 0, won: 0, lost: 0 });
+    expect(result.music.daily[0]).toMatchObject({ date: '2026-04-19', started: 0, won: 0, lost: 0 });
+  });
+
+  it('includes an "all" key with combined totals', () => {
+    const rows: GameEventRow[] = [
+      row('started', '2026-04-19T10:00:00Z', 'films'),
+      row('started', '2026-04-19T10:00:00Z', 'books'),
+      row('won', '2026-04-19T11:00:00Z', 'music'),
+    ];
+    const result = aggregateEventsByGenre(rows, now);
+
+    expect(result.all.daily[0]).toMatchObject({ date: '2026-04-19', started: 2, won: 1, lost: 0 });
   });
 });

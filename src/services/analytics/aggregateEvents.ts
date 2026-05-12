@@ -3,6 +3,7 @@ export type EventType = 'started' | 'won' | 'lost';
 export interface GameEventRow {
   event_type: EventType;
   created_at: string;
+  genre?: string;
 }
 
 export interface DailyBucket {
@@ -78,4 +79,25 @@ export function aggregateEvents(rows: GameEventRow[], now: Date = new Date()): A
   }
 
   return { daily, weekly };
+}
+
+export type GenreAggregations = Record<'films' | 'books' | 'music' | 'all', AggregatedEvents>;
+
+export function aggregateEventsByGenre(rows: GameEventRow[], now: Date = new Date()): GenreAggregations {
+  const grouped: Record<string, GameEventRow[]> = { films: [], books: [], music: [], all: [] };
+
+  for (const row of rows) {
+    const genre = row.genre ?? 'films';
+    if (genre in grouped) {
+      grouped[genre].push(row);
+    }
+    grouped.all.push(row);
+  }
+
+  return {
+    films: aggregateEvents(grouped.films, now),
+    books: aggregateEvents(grouped.books, now),
+    music: aggregateEvents(grouped.music, now),
+    all: aggregateEvents(grouped.all, now),
+  };
 }

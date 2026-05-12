@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { AggregatedEvents, DailyBucket, WeeklyBucket } from "../services/analytics/aggregateEvents";
+import type { AggregatedEvents, DailyBucket, GenreAggregations, WeeklyBucket } from "../services/analytics/aggregateEvents";
 import { paginate } from "../utils/paginate";
 import "./AnalidiotsView.css";
 
@@ -13,11 +13,20 @@ export interface FeedbackRow {
 }
 
 interface AnalidiotsViewProps {
-  data: AggregatedEvents;
+  data: GenreAggregations;
   feedback: FeedbackRow[];
 }
 
 const PAGE_SIZE = 10;
+
+const GENRE_TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'films', label: 'Films' },
+  { key: 'books', label: 'Books' },
+  { key: 'music', label: 'Music' },
+] as const;
+
+type GenreTabKey = (typeof GENRE_TABS)[number]['key'];
 
 function ratingStars(n: number): string {
   return "★".repeat(n) + "☆".repeat(5 - n);
@@ -55,7 +64,7 @@ function Pagination({
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
       >
-        ← Prev
+        &larr; Prev
       </button>
       <span className="analidiots__page-indicator">
         Page {page} of {totalPages}
@@ -66,7 +75,7 @@ function Pagination({
         onClick={() => onChange(page + 1)}
         disabled={page >= totalPages}
       >
-        Next →
+        Next &rarr;
       </button>
     </nav>
   );
@@ -89,10 +98,9 @@ function BucketRow({ label, bucket }: { label: string; bucket: DailyBucket | Wee
   );
 }
 
-export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
+function GenreSection({ data }: { data: AggregatedEvents }) {
   const [dailyPage, setDailyPage] = useState(1);
   const [weeklyPage, setWeeklyPage] = useState(1);
-  const [feedbackPage, setFeedbackPage] = useState(1);
 
   const dailyTotals = {
     started: sum(data.daily, "started"),
@@ -100,24 +108,11 @@ export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
     lost: sum(data.daily, "lost"),
   };
 
-  const avgRating =
-    feedback.length > 0
-      ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(2)
-      : "—";
-
   const dailyPaginated = paginate(data.daily, dailyPage, PAGE_SIZE);
   const weeklyPaginated = paginate(data.weekly, weeklyPage, PAGE_SIZE);
-  const feedbackPaginated = paginate(feedback, feedbackPage, PAGE_SIZE);
 
   return (
-    <div className="analidiots">
-      <header className="analidiots__header">
-        <h1 className="analidiots__title">analidiots</h1>
-        <p className="analidiots__subtitle">
-          Games started / won / lost. Times in UTC.
-        </p>
-      </header>
-
+    <>
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">30-day totals</h2>
         <div className="analidiots__totals">
@@ -185,12 +180,51 @@ export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
           onChange={setWeeklyPage}
         />
       </section>
+    </>
+  );
+}
+
+export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
+  const [activeTab, setActiveTab] = useState<GenreTabKey>('all');
+  const [feedbackPage, setFeedbackPage] = useState(1);
+
+  const avgRating =
+    feedback.length > 0
+      ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(2)
+      : "—";
+
+  const feedbackPaginated = paginate(feedback, feedbackPage, PAGE_SIZE);
+
+  return (
+    <div className="analidiots">
+      <header className="analidiots__header">
+        <h1 className="analidiots__title">analidiots</h1>
+        <p className="analidiots__subtitle">
+          Games started / won / lost. Times in UTC.
+        </p>
+      </header>
+
+      <nav className="analidiots__tabs" aria-label="Genre filter">
+        {GENRE_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            className={`analidiots__tab${activeTab === tab.key ? ' analidiots__tab--active' : ''}`}
+            onClick={() => setActiveTab(tab.key)}
+            aria-pressed={activeTab === tab.key}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      <GenreSection data={data[activeTab]} />
 
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">
           Feedback
           <span className="analidiots__section-meta">
-            {feedback.length} submission{feedback.length === 1 ? "" : "s"} · avg {avgRating}
+            {feedback.length} submission{feedback.length === 1 ? "" : "s"} &middot; avg {avgRating}
           </span>
         </h2>
         {feedback.length === 0 ? (
@@ -215,7 +249,7 @@ export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
                       <span aria-label={`${f.rating} out of 5`}>{ratingStars(f.rating)}</span>
                     </td>
                     <td className="analidiots__cell analidiots__comment">
-                      {f.comment ?? <span className="analidiots__muted">—</span>}
+                      {f.comment ?? <span className="analidiots__muted">&mdash;</span>}
                     </td>
                   </tr>
                 ))}
