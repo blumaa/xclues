@@ -10,6 +10,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types';
 import type { SavedPuzzle, Group, Item } from '../../../types';
+import { ensureUniqueItemIds } from '../../puzzle/uniqueItemIds';
 import type {
   IPuzzleStorage,
   StoredPuzzle,
@@ -127,7 +128,7 @@ export class SupabaseStorage implements IPuzzleStorage {
     const puzzle = this.rowToStoredPuzzle(data);
 
     // Fetch and populate groups
-    puzzle.groups = await this.fetchGroupsByIds(puzzle.groupIds);
+    puzzle.groups = ensureUniqueItemIds(await this.fetchGroupsByIds(puzzle.groupIds));
 
     return puzzle;
   }
@@ -156,15 +157,17 @@ export class SupabaseStorage implements IPuzzleStorage {
 
     // Use snapshot if available (published puzzles), otherwise fetch from connection_groups
     // The snapshot makes the puzzle self-contained for anonymous users
-    const groups: Group[] = row.groups
-      ? (row.groups as unknown as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map(g => ({
-          id: g.id,
-          items: g.items,
-          connection: g.connection,
-          difficulty: (g.difficulty || 'medium') as DifficultyLevel,
-          color: (g.color || 'green') as DifficultyColor,
-        }))
-      : await this.fetchGroupsByIds(row.group_ids);
+    const groups: Group[] = ensureUniqueItemIds(
+      row.groups
+        ? (row.groups as unknown as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map(g => ({
+            id: g.id,
+            items: g.items,
+            connection: g.connection,
+            difficulty: (g.difficulty || 'medium') as DifficultyLevel,
+            color: (g.color || 'green') as DifficultyColor,
+          }))
+        : await this.fetchGroupsByIds(row.group_ids),
+    );
 
     // Extract all items from groups
     const items = groups.flatMap((group) => group.items);
@@ -279,7 +282,7 @@ export class SupabaseStorage implements IPuzzleStorage {
     const puzzle = this.rowToStoredPuzzle(data as DbPuzzleRow);
 
     // Fetch and populate groups
-    puzzle.groups = await this.fetchGroupsByIds(puzzle.groupIds);
+    puzzle.groups = ensureUniqueItemIds(await this.fetchGroupsByIds(puzzle.groupIds));
 
     return puzzle;
   }

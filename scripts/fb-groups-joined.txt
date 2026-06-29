@@ -1,0 +1,27 @@
+# Facebook groups — membership + posting status for the daily program.
+# Before posting in ANY of these: read the group's pinned rules / self-promo thread.
+# Most puzzle groups only allow self-promo in a specific weekly thread, if at all.
+# status: joined = member | pending = request submitted, awaiting mod approval
+#
+# TARGET = NYT Connections groups + themed trivia (film/book/music) audiences ONLY.
+# xClues is a grouping game (sort 16 into 4 categories) — the EXACT mechanic match is
+# Connections. Themed games (Filmclues/Litclues/Musiclues) match film/book/music fans.
+#
+# DO NOT TARGET WORDLE GROUPS. xClues is NOT a guess-a-word game. Owner's call
+# (2026-06-27): wrong mechanic, low relevance — the "broad adjacent net" idea is dropped.
+# The Wordle groups below are left only as a record of memberships, NOT posting targets.
+
+# --- PRIMARY: NYT Connections groups (best fit) ---
+# 2026-06-26:
+Clever Connections NYT game        | ~2.3K | status: joined | rules READ 2026-06-27: NO admin rules set, no self-promo thread, no composer rules-gate. Public score-sharing group, ~22 posts/day. SELF-PROMO OK (best candidate) — one genuine on-topic post, spaced out, don't repeat links.
+GBV Connections (NYT Game)         | ~1.1K | status: joined | rules READ 2026-06-27: NO admin rules set. BUT it's a LOCAL community group (Greenbrier Valley, WV) — generic promo is a poor fit / reads as spam. Low priority; skip generic blasts.
+
+# --- NOT TARGETING: Wordle groups (wrong mechanic — membership record only) ---
+# 2026-06-26:
+Wordle Daily Game        | ~109K | status: joined | rules READ 2026-06-27: no formal admin-rules section; desc "share results not the answer". No explicit self-promo ban, but huge anonymous group + spam-flag risk + low convert. MARGINAL — at most one rare genuine post, not routine.
+WORDLE for Fun           | ~48K  | status: joined | rules READ 2026-06-27: rule #4 "No promotions or spam — self-promotion/irrelevant links aren't allowed." ❌ BLOCKED — do NOT post links here.
+Wordle Daily Challenge   | ~87K  | status: joined | rules READ 2026-06-27: rule #2 "No promotions or spam — self-promotion not allowed." ❌ BLOCKED — do NOT post links here. (now joined; rules visible)
+
+# TODO: also search "Connections puzzle", "Connections fans", "daily NYT games" for
+# more Connections-specific groups. The dedicated-Connections pool on FB is small but
+# is the highest-converting audience for xClues.

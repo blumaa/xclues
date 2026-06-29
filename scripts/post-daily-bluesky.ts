@@ -1,7 +1,7 @@
 /**
  * Posts today's puzzle to Bluesky as a real teaser.
  *
- * - Rotates through films/music/books based on day-of-year.
+ * - Posts all three games (films/music/books) every day, each to its own niche hashtags.
  * - Rotates through 4 teaser templates. Each creates a real puzzle the
  *   reader can attempt, with a genuine information gap that drives clicks.
  * - Teaser image renders the exact items the post text references.
@@ -17,9 +17,9 @@
 import { AtpAgent, RichText } from "@atproto/api";
 import { createClient } from "@supabase/supabase-js";
 
-type Genre = "films" | "music" | "books";
+export type Genre = "films" | "music" | "books";
 
-interface GenrePostConfig {
+export interface GenrePostConfig {
   genre: Genre;
   siteName: string;
   emoji: string;
@@ -36,9 +36,9 @@ interface PuzzleGroup {
   difficulty: string;
   color: string;
 }
-interface Puzzle { id: string; groups: PuzzleGroup[] }
+export interface Puzzle { id: string; groups: PuzzleGroup[] }
 
-const GENRE_CONFIGS: Record<Genre, GenrePostConfig> = {
+export const GENRE_CONFIGS: Record<Genre, GenrePostConfig> = {
   films: {
     genre: "films",
     siteName: "Filmclues",
@@ -65,9 +65,9 @@ const GENRE_CONFIGS: Record<Genre, GenrePostConfig> = {
   },
 };
 
-const GENRE_ORDER: Genre[] = ["films", "music", "books"];
+export const GENRE_ORDER: Genre[] = ["films", "music", "books"];
 
-function getTodayDate(): string {
+export function getTodayDate(): string {
   const now = new Date();
   const year = now.getUTCFullYear();
   const month = String(now.getUTCMonth() + 1).padStart(2, "0");
@@ -75,14 +75,10 @@ function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-function getDayOfYear(): number {
+export function getDayOfYear(): number {
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
   return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
-}
-
-function pickGenre(): Genre {
-  return GENRE_ORDER[getDayOfYear() % GENRE_ORDER.length];
 }
 
 function pickTemplate(): number {
@@ -112,7 +108,7 @@ function shuffleDeterministic<T>(array: T[], seed: number): T[] {
   return result;
 }
 
-async function fetchPuzzle(genre: Genre, date: string): Promise<Puzzle | null> {
+export async function fetchPuzzle(genre: Genre, date: string): Promise<Puzzle | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("Missing Supabase env vars");
@@ -132,7 +128,7 @@ async function fetchPuzzle(genre: Genre, date: string): Promise<Puzzle | null> {
 
 /* ─────────────── Teaser templates ─────────────── */
 
-interface TemplateResult {
+export interface TemplateResult {
   text: string;
   titles: string[]; // items to render in the teaser image
   headline: string; // headline shown in the image
@@ -256,7 +252,7 @@ ${config.hashtags}`;
   };
 }
 
-function buildTemplate(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
+export function buildTemplate(config: GenrePostConfig, puzzle: Puzzle): TemplateResult {
   switch (pickTemplate()) {
     case 0:
       return tmplMiniGame(config, puzzle);
@@ -271,14 +267,17 @@ function buildTemplate(config: GenrePostConfig, puzzle: Puzzle): TemplateResult 
 
 /* ─────────────── Image fetch ─────────────── */
 
-async function fetchTeaserImage(
+export async function fetchTeaserImage(
   genre: Genre,
   titles: string[],
   headline: string
 ): Promise<Uint8Array | null> {
-  const titlesParam = encodeURIComponent(titles.join(","));
+  const titlesParam = encodeURIComponent(titles.join("\n"));
   const headlineParam = encodeURIComponent(headline);
-  const url = `https://${GENRE_CONFIGS[genre].domain}/api/teaser/${genre}?titles=${titlesParam}&headline=${headlineParam}`;
+  // TEASER_BASE_URL lets you render against a local dev server (e.g. to preview
+  // a fix before deploy); defaults to the live per-genre domain.
+  const base = process.env.TEASER_BASE_URL || `https://${GENRE_CONFIGS[genre].domain}`;
+  const url = `${base}/api/teaser/${genre}?titles=${titlesParam}&headline=${headlineParam}`;
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -340,21 +339,27 @@ async function post(
 
 async function main(): Promise<void> {
   const today = getTodayDate();
-  const genre = pickGenre();
-  const config = GENRE_CONFIGS[genre];
 
-  console.log(`Checking if ${config.siteName} puzzle exists for ${today}...`);
-  const puzzle = await fetchPuzzle(genre, today);
-  if (!puzzle) {
-    console.log(`No published puzzle for ${genre} on ${today}. Skipping.`);
-    return;
+  for (const genre of GENRE_ORDER) {
+    const config = GENRE_CONFIGS[genre];
+
+    console.log(`Checking if ${config.siteName} puzzle exists for ${today}...`);
+    const puzzle = await fetchPuzzle(genre, today);
+    if (!puzzle) {
+      console.log(`No published puzzle for ${genre} on ${today}. Skipping.`);
+      continue;
+    }
+
+    const result = buildTemplate(config, puzzle);
+    await post(config, result);
   }
-
-  const result = buildTemplate(config, puzzle);
-  await post(config, result);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only auto-run when executed directly (e.g. the cron), NOT when imported
+// for its exported builders (e.g. by post-daily-x.ts) — importing must not post.
+if ((import.meta as { main?: boolean }).main) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

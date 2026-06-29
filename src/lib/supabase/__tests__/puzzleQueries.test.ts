@@ -76,6 +76,44 @@ describe("parsePuzzleRow", () => {
 
     expect(result.metadata).toEqual({ theme: "crime" });
   });
+
+  it("reindexes colliding item ids so every item is unique within the puzzle", () => {
+    // Real-world bad data: two groups each numbered their items 0..3 locally,
+    // so ids collide across the puzzle. Selecting one tile must not light two.
+    const collidingRow = {
+      id: "puzzle-dup",
+      groups: [
+        {
+          id: "g1",
+          items: [{ id: 0, title: "Mating" }, { id: 1, title: "All the Pretty Horses" }],
+          connection: "A",
+          difficulty: "easy",
+          color: "yellow",
+        },
+        {
+          id: "g2",
+          items: [{ id: 0, title: "Offshore" }, { id: 1, title: "Human Voices" }],
+          connection: "B",
+          difficulty: "medium",
+          color: "green",
+        },
+      ],
+      created_at: "2026-06-17T00:00:00Z",
+    };
+
+    const result = parsePuzzleRow(collidingRow);
+
+    const allIds = result.groups.flatMap((g) => g.items.map((i) => i.id));
+    expect(new Set(allIds).size).toBe(allIds.length);
+    // flat items list must use the same reindexed ids as the groups
+    expect(result.items.map((i) => i.id)).toEqual(allIds);
+  });
+
+  it("preserves already-unique item ids unchanged", () => {
+    const result = parsePuzzleRow(rawPuzzleRow);
+
+    expect(result.groups.flatMap((g) => g.items.map((i) => i.id))).toEqual([1, 2, 3, 4]);
+  });
 });
 
 describe("fetchPuzzleByDate", () => {

@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "./server";
+import { ensureUniqueItemIds } from "../puzzle/uniqueItemIds";
 import type { SavedPuzzle, Group, Item } from "../../types";
 
 const CACHE_TTL = 60 * 60 * 1000;
@@ -9,13 +10,15 @@ export function clearPuzzleCache(): void {
 }
 
 export function parsePuzzleRow(data: Record<string, unknown>): SavedPuzzle {
-  const groups = (data.groups as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map((g) => ({
-    id: g.id,
-    items: g.items as Item[],
-    connection: g.connection,
-    difficulty: g.difficulty,
-    color: g.color,
-  })) as Group[];
+  const groups = ensureUniqueItemIds(
+    (data.groups as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map((g) => ({
+      id: g.id,
+      items: g.items as Item[],
+      connection: g.connection,
+      difficulty: g.difficulty,
+      color: g.color,
+    })) as Group[],
+  );
 
   const items = groups.flatMap((g) => g.items);
 

@@ -37,7 +37,9 @@ export async function GET(
   const config = getSeoConfig(genre);
   const theme = GENRE_THEMES[genre];
 
-  // Parse titles from ?titles= (comma-separated, URL-encoded).
+  // Parse titles from ?titles= (newline-separated, URL-encoded). Newline is the
+  // delimiter because titles themselves can contain commas (e.g. a film named
+  // "Three Billboards Outside Ebbing, Missouri") — splitting on "," broke those.
   // Fallback: fetch today's puzzle and show first group's items.
   const url = new URL(req.url);
   const titlesParam = url.searchParams.get("titles");
@@ -46,7 +48,7 @@ export async function GET(
 
   if (titlesParam) {
     titles = titlesParam
-      .split(",")
+      .split("\n")
       .map((t) => t.trim())
       .filter((t) => t.length > 0)
       .slice(0, 8);

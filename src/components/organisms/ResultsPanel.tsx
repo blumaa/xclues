@@ -7,6 +7,7 @@ import { CountdownTimer } from "../molecules/CountdownTimer";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
 import { getTodayDate } from "../../utils/index";
+import { isValidGenre } from "../../config/seoConfig";
 import { getStatsStore } from "../../store/statsStore";
 import type { GuessColor } from "../../types/stats";
 
@@ -43,9 +44,10 @@ export function ResultsPanel({
       puzzleDate: getTodayDate(),
       guessHistory,
       domain,
+      genre: isValidGenre(genre) ? genre : undefined,
     });
 
-    const success = await shareResults(shareText);
+    const success = await shareResults(shareText, `https://${domain}`);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

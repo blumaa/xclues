@@ -1,0 +1,62 @@
+# Accounts already contacted via the daily engagement program — never re-contact.
+# One handle per line. Appended to on each run.
+# 2026-06-26 (Bluesky):
+alterkitten.bsky.social
+thepsyoflife.bsky.social
+collinsworth.dev
+# 2026-06-26 (Mastodon):
+bewitchedmind
+talvayas
+rporrini
+kd8bxp
+flyingsquirrel
+# 2026-06-26 (Bluesky, batch 2):
+wentrogue.bsky.social
+gohexyourself.bsky.social
+jemineale.bsky.social
+idowa.bsky.social
+welshcats.bsky.social
+# 2026-06-27 (Bluesky):
+marcelineleiman.bsky.social
+ericdharvey.com
+gailsimone.bsky.social
+jerewoo.bsky.social
+xarophti.bsky.social
+2ndaryprotocol.bsky.social
+joannemerriam.bsky.social
+chrissteller.bsky.social
+# 2026-06-27 (Mastodon):
+Lefthandbass59
+Kaye
+# 2026-06-28 (Bluesky):
+idontreadwell.bsky.social
+therealmrsweary.bsky.social
+ravinder70.bsky.social
+temoku.bsky.social
+bookmeister.bsky.social
+sydspages.bsky.social
+jjellybeano.bsky.social
+cici6923.bsky.social
+# 2026-06-28 (Mastodon):
+VedaDalsette
+dhsholly
+WiccaCoolMom
+degroof
+grizzlyfrog
+drsbello
+# 2026-06-29 (Bluesky):
+jeffdomingues.bsky.social
+hectorthehog.bsky.social
+mads.bsky.social
+bill-bo.bsky.social
+screwedjoan.bsky.social
+alcnolien.bsky.social
+bethmorgan.bsky.social
+# 2026-06-29 (Mastodon):
+Fpccraig
+Log3overLog2@mathstodon.xyz
+distinctdipole@tech.lgbt
+# 2026-06-29 (X):
+ronfezgunner
+CousinOzzie
+cinnienem

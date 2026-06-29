@@ -82,10 +82,6 @@ function getDayOfYear(): number {
   return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
 }
 
-function pickGenre(): Genre {
-  return GENRE_ORDER[getDayOfYear() % GENRE_ORDER.length];
-}
-
 function pickTemplate(): number {
   return getDayOfYear() % 4;
 }
@@ -237,7 +233,7 @@ async function fetchTeaserImage(
   titles: string[],
   headline: string
 ): Promise<Uint8Array | null> {
-  const titlesParam = encodeURIComponent(titles.join(","));
+  const titlesParam = encodeURIComponent(titles.join("\n"));
   const headlineParam = encodeURIComponent(headline);
   const url = `https://${GENRE_CONFIGS[genre].domain}/api/teaser/${genre}?titles=${titlesParam}&headline=${headlineParam}`;
   try {
@@ -315,30 +311,32 @@ async function main(): Promise<void> {
   if (!instanceUrl || !token) throw new Error("Missing Mastodon env vars");
 
   const today = getTodayDate();
-  const genre = pickGenre();
-  const config = GENRE_CONFIGS[genre];
 
-  console.log(`Checking if ${config.siteName} puzzle exists for ${today}...`);
-  const puzzle = await fetchPuzzle(genre, today);
-  if (!puzzle) {
-    console.log(`No published puzzle for ${genre} on ${today}. Skipping.`);
-    return;
+  for (const genre of GENRE_ORDER) {
+    const config = GENRE_CONFIGS[genre];
+
+    console.log(`Checking if ${config.siteName} puzzle exists for ${today}...`);
+    const puzzle = await fetchPuzzle(genre, today);
+    if (!puzzle) {
+      console.log(`No published puzzle for ${genre} on ${today}. Skipping.`);
+      continue;
+    }
+
+    const result = buildTemplate(config, puzzle);
+    const imageBytes = await fetchTeaserImage(config.genre, result.titles, result.headline);
+
+    let mediaId: string | null = null;
+    if (imageBytes) {
+      const altText = `${result.headline}: ${result.titles.join(", ")}`;
+      mediaId = await uploadMedia(instanceUrl, token, imageBytes, altText);
+    }
+
+    const posted = await postStatus(instanceUrl, token, result.text, mediaId);
+
+    console.log(`Posted for ${config.siteName}:`);
+    console.log(result.text);
+    console.log(`URL: ${posted.url}`);
   }
-
-  const result = buildTemplate(config, puzzle);
-  const imageBytes = await fetchTeaserImage(config.genre, result.titles, result.headline);
-
-  let mediaId: string | null = null;
-  if (imageBytes) {
-    const altText = `${result.headline}: ${result.titles.join(", ")}`;
-    mediaId = await uploadMedia(instanceUrl, token, imageBytes, altText);
-  }
-
-  const posted = await postStatus(instanceUrl, token, result.text, mediaId);
-
-  console.log(`Posted for ${config.siteName}:`);
-  console.log(result.text);
-  console.log(`URL: ${posted.url}`);
 }
 
 main().catch((err) => {
