@@ -26,6 +26,7 @@ type DbPuzzleRow = Database['public']['Tables']['puzzles']['Row'] & {
   groups?: unknown; // JSONB column for group snapshot
 };
 type DbPuzzleInsert = Database['public']['Tables']['puzzles']['Insert'];
+type DbPuzzleUpdate = Database['public']['Tables']['puzzles']['Update'];
 type DbGroupRow = Database['public']['Tables']['connection_groups']['Row'];
 
 /**
@@ -241,7 +242,7 @@ export class SupabaseStorage implements IPuzzleStorage {
   }
 
   async updatePuzzle(id: string, updates: PuzzleUpdate): Promise<StoredPuzzle> {
-    const dbUpdate: Record<string, unknown> = {};
+    const dbUpdate: DbPuzzleUpdate = {};
 
     if (updates.status !== undefined) {
       dbUpdate.status = updates.status;
@@ -252,7 +253,8 @@ export class SupabaseStorage implements IPuzzleStorage {
     }
 
     if (updates.metadata !== undefined) {
-      dbUpdate.metadata = updates.metadata;
+      // JSONB column: domain metadata serialises to the row's Json type.
+      dbUpdate.metadata = updates.metadata as DbPuzzleUpdate['metadata'];
     }
 
     // If publishing, snapshot the group data for self-contained gameplay
@@ -267,15 +269,15 @@ export class SupabaseStorage implements IPuzzleStorage {
       if (currentPuzzle) {
         const puzzleRow = currentPuzzle as DbPuzzleRow;
         const groups = await this.fetchGroupsByIds(puzzleRow.group_ids);
-        dbUpdate.groups = groups;
+        // JSONB column: the Group[] snapshot is valid JSON at runtime, but the
+        // domain type lacks Json's index signature, so cross the boundary via unknown.
+        dbUpdate.groups = groups as unknown as DbPuzzleUpdate['groups'];
       }
     }
 
     const { data, error } = await this.supabase
       .from('puzzles')
-      // dbUpdate is assembled dynamically; assert the exact Update row type so
-      // it satisfies postgrest's strict no-excess-properties update signature.
-      .update(dbUpdate as Database['public']['Tables']['puzzles']['Update'])
+      .update(dbUpdate)
       .eq('id', id)
       .select()
       .single();
