@@ -38,6 +38,9 @@ jobs:
           fetch-depth: 0
       - name: Scan for committed secrets
         uses: gitleaks/gitleaks-action@v2
+        env:
+          # Required by gitleaks-action@v2 to scan pull requests.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   db-types-drift:
     # Fails if the committed Supabase types are out of sync with the live
