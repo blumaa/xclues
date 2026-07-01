@@ -82,7 +82,7 @@ export function GameBoard({
               isShaking={isShaking}
               isJumping={jumpingItemIds.includes(item.id)}
               isRejected={item.id === rejectedItemId}
-              onClick={() => selectItem(item.id)}
+              onSelect={selectItem}
             />
           ))}
       </div>

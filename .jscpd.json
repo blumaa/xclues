@@ -1,0 +1,14 @@
+{
+  "threshold": 5,
+  "path": ["src", "app"],
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.tsx",
+    "**/__tests__/**",
+    "**/*.css"
+  ],
+  "reporters": ["console"],
+  "absolute": true,
+  "gitignore": true
+}

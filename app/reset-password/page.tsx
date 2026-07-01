@@ -27,7 +27,13 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      await updatePassword(password);
+      const { error: updateError } = await updatePassword(password);
+      if (updateError) {
+        setError(
+          updateError.message ?? "Failed to update password. Please try again.",
+        );
+        return;
+      }
       setSuccess(true);
     } catch {
       setError("Failed to update password. Please try again.");

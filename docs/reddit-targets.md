@@ -51,6 +51,17 @@ Skip: r/Connections (banned), r/incremental_games (wrong genre), r/DailyGames (c
   - r/movies (Blazing Saddles / Mel Brooks 100)
   - r/books (inappropriate-book-too-young thread)
   - r/books (sci-fi tech predictions thread)
+- 2026-06-30: 4 genuine comments (no links) — karma building, day 2:
+  - r/movies (The Mummy 1999 "blueprint adventure" thread — tone/Goldsmith score take)
+  - r/books ("best book you've hated" — Wuthering Heights)
+  - r/NYTConnections ("reverse rainbow" thread — solve-by-confidence-not-color)
+  - r/puzzles ("6 modes too much?" dev UX question — voted gradual unlock)
+- 2026-07-01: 4 genuine comments (no links) — karma building, day 3 (LAST warm-up day):
+  - r/movies (Apocalypto reviews — critics-vs-filmmakers craft take)
+  - r/books (Andy Weir PHM vs Artemis — one-voice thesis)
+  - r/NYTConnections ("Jun 30 top mistake" — trap psychology, no solve claim)
+  - r/puzzles (UK logic-problem mags — recommended Puzzler Logic Problems / Mensa / Dell)
+- **Warm-up complete. 2026-07-02 = posting phase begins** (1 link post/day, rotate game+sub, POST-OK subs only). Given the Mastodon suspension, be extra conservative — one careful link/day, no repeats.
 
 ## Automation note
 New Reddit's comment composer is a shadow-DOM web component that often fails to hydrate

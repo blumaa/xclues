@@ -5,9 +5,7 @@ import { Header } from "./header";
 import { Footer } from "../src/components/organisms/Footer";
 import { NativeSetup } from "../src/components/NativeSetup";
 import { AppSplash } from "../src/components/AppSplash";
-import { getServerTheme } from "../src/utils/getServerTheme";
 import { getThemeInitScript } from "../src/utils/themeScript";
-import { getBrandStyleTag } from "../src/utils/getBrandStyleTag";
 import "../src/index.css";
 import "../src/App.css";
 
@@ -58,30 +56,24 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function getThemeAndBrand() {
-  if (process.env.CAPACITOR) return { theme: 'light' as const, brand: undefined };
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-  const theme = getServerTheme(cookieStore.get("xclues-theme")?.value);
-  const brand = cookieStore.get("xclues-brand-theme")?.value;
-  return { theme, brand };
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { theme, brand } = await getThemeAndBrand();
-  const brandCSS = getBrandStyleTag(brand, theme as 'light' | 'dark');
-
+  // Theme and brand are applied entirely client-side by the inline init script
+  // (data-theme, before paint) and useTheme (brand tokens, on mount). The server
+  // renders a neutral default so the HTML is user-independent and edge-cacheable
+  // — no per-request cookies() read here.
   return (
-    <html lang="en" data-theme={theme} suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
-        {brandCSS && <style dangerouslySetInnerHTML={{ __html: brandCSS }} />}
       </head>
       <body>
+        <a href="#main-content" className="sr-only">
+          Skip to content
+        </a>
         <NativeSetup />
         <AppSplash />
         <Providers>

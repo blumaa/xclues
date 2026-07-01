@@ -14,6 +14,41 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run lint
+      - run: bun run style:lint
       - run: bunx tsc --noEmit
+      - run: bun run dup
       - run: bun run test
       - run: bun run build
+      - name: Bundle size budget
+        run: bun run bundle:budget
+      # Non-blocking for now: the dependency tree has transitive dev-tool
+      # advisories (capacitor → xmldom/tar, vitest UI, Next bump). This step
+      # surfaces them; patch the ones that matter manually (or enable GitHub
+      # Dependabot alerts for notifications). Flip to blocking (remove
+      # continue-on-error) and tighten the threshold once the tree is clean.
+      - name: Dependency audit (report-only)
+        run: bun run audit:ci
+        continue-on-error: true
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+
+  db-types-drift:
+    # Fails if the committed Supabase types are out of sync with the live
+    # schema. Skips automatically until SUPABASE_ACCESS_TOKEN is configured.
+    runs-on: ubuntu-latest
+    if: ${{ vars.SUPABASE_TYPES_CHECK == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Check generated DB types are up to date
+        run: bun run db:types:check
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

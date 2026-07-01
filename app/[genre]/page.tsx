@@ -3,14 +3,7 @@ import { notFound } from "next/navigation";
 import { GamePage } from "../game-page";
 import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/config/seoConfig";
 import { fetchPuzzleByDate } from "../../src/lib/supabase/puzzleQueries";
-
-function getTodayDate(): string {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(now.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+import { getTodayDate } from "../../src/utils/index";
 
 export async function generateStaticParams() {
   return VALID_GENRES.map((genre) => ({ genre }));

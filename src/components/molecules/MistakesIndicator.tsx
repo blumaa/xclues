@@ -14,14 +14,15 @@ export function MistakesIndicator({
 
   return (
     <div className="mistakes-container">
-      <div
-        className="mistakes-row"
-        role="status"
-        aria-label={`${remainingMistakes} mistake${remainingMistakes !== 1 ? "s" : ""} remaining`}
-      >
+      <div className="mistakes-row" role="status">
         <XText size="xs" weight="light">
           mistakes:
         </XText>
+        {/* Visually-hidden live text: changing text (not an aria-label) is what
+            screen readers reliably announce when the count updates. */}
+        <span className="sr-only">
+          {`${remainingMistakes} mistake${remainingMistakes !== 1 ? "s" : ""} remaining`}
+        </span>
         <div className="mistakes-dots" aria-hidden="true">
           {Array.from({ length: maxMistakes }).map((_, index) => (
             <Dot

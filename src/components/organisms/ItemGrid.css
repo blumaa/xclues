@@ -2,7 +2,7 @@
 .item-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--xclues-spacing-sm);
+  gap: var(--xclues-spacing-2);
   max-width: 100%;
   padding-right: .5rem;
   padding-left: .5rem;

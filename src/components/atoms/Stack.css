@@ -1,0 +1,35 @@
+.xstack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--xstack-gap, var(--xclues-spacing-4));
+}
+
+.xstack[data-direction="row"] {
+  flex-direction: row;
+}
+
+.xstack[data-align="start"] {
+  align-items: flex-start;
+}
+.xstack[data-align="center"] {
+  align-items: center;
+}
+.xstack[data-align="end"] {
+  align-items: flex-end;
+}
+.xstack[data-align="stretch"] {
+  align-items: stretch;
+}
+
+.xstack[data-justify="start"] {
+  justify-content: flex-start;
+}
+.xstack[data-justify="center"] {
+  justify-content: center;
+}
+.xstack[data-justify="end"] {
+  justify-content: flex-end;
+}
+.xstack[data-justify="between"] {
+  justify-content: space-between;
+}

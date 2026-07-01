@@ -2,7 +2,7 @@
 .stats-container {
   display: flex;
   justify-content: space-around;
-  gap: var(--xclues-spacing-md);
+  gap: var(--xclues-spacing-4);
   padding-left: var(--xclues-spacing-5);
   padding-right: var(--xclues-spacing-5);
   padding-top: var(--xclues-spacing-2);

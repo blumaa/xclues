@@ -29,7 +29,7 @@ export function ItemGrid({
           isShaking={isShaking}
           isJumping={jumpingItemIds.includes(item.id)}
           isRejected={item.id === rejectedItemId}
-          onClick={() => onSelectItem(item.id)}
+          onSelect={onSelectItem}
         />
       ))}
     </div>

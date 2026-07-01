@@ -7,6 +7,7 @@
 
 import type { IStatsStorage, UserStats, GameResult } from '../types/stats';
 import { getTodayDate, getYesterdayDate } from '../utils/index';
+import { UserStatsSchema } from '../lib/schemas/stats';
 
 export interface GenreStats {
   gamesPlayed: number;
@@ -66,7 +67,7 @@ function getDefaultStats(): UserStats {
  * Calculate streak based on last played date, current streak, and whether user won
  * Streak only continues/increments on wins. Losses reset the streak to 0.
  */
-function calculateStreak(lastPlayedDate: string | null, currentStreak: number, won: boolean): number {
+export function calculateStreak(lastPlayedDate: string | null, currentStreak: number, won: boolean): number {
   // If user lost, streak is broken
   if (!won) {
     return 0;
@@ -120,8 +121,15 @@ export class LocalStatsStorage implements IStatsStorage {
         return getDefaultStats();
       }
 
-      const stats = JSON.parse(stored) as UserStats;
-      return stats;
+      const result = UserStatsSchema.safeParse(JSON.parse(stored));
+      if (!result.success) {
+        console.error(
+          'Stored stats failed validation, resetting to defaults:',
+          result.error,
+        );
+        return getDefaultStats();
+      }
+      return result.data;
     } catch (error) {
       console.error('Failed to get stats from localStorage:', error);
       return getDefaultStats();

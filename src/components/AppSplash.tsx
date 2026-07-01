@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Capacitor } from "@capacitor/core";
+import { isNativePlatform } from "../lib/native";
 import { Logo } from "./organisms/Logo";
 import "./AppSplash.css";
 
 function shouldShowSplash(): boolean {
   if (typeof window === "undefined") return false;
-  if (Capacitor.isNativePlatform()) return true;
+  if (isNativePlatform()) return true;
   if (window.matchMedia("(display-mode: standalone)").matches) return true;
   return false;
 }

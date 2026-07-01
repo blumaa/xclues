@@ -8,6 +8,10 @@ export { XSpinner } from "./XSpinner";
 export { Dot } from "./Dot";
 export { IconButton } from "./IconButton";
 
+// Layout primitives
+export { Stack } from "./Stack";
+export { Container } from "./Container";
+
 // Compound atoms
 export { XCard, XCardBody } from "./XCard";
 export { XModal } from "./XModal";

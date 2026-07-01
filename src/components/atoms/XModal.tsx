@@ -5,10 +5,12 @@ import "./XModal.css";
 interface XModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Accessible name for the dialog (required by Radix for screen readers). */
+  title: string;
   children: ReactNode;
 }
 
-export function XModal({ isOpen, onClose, children }: XModalProps) {
+export function XModal({ isOpen, onClose, title, children }: XModalProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
@@ -17,7 +19,7 @@ export function XModal({ isOpen, onClose, children }: XModalProps) {
           className="xmodal__content"
           aria-describedby={undefined}
         >
-          <Dialog.Title />
+          <Dialog.Title className="sr-only">{title}</Dialog.Title>
           {children}
         </Dialog.Content>
       </Dialog.Portal>

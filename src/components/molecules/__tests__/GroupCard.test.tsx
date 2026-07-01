@@ -44,7 +44,9 @@ describe('GroupCard', () => {
     const { container } = render(<GroupCard group={group} />);
     const card = container.querySelector('.group-card');
     expect(card?.getAttribute('role')).toBe('status');
-    expect(card?.getAttribute('aria-label')).toBe('Found group: Test Connection');
+    expect(card?.getAttribute('aria-label')).toBe(
+      'Found group: Test Connection (difficulty: easy)',
+    );
   });
 
   it('connection text is inside group-card-connection span', () => {
@@ -60,5 +62,20 @@ describe('GroupCard', () => {
     const { container } = render(<GroupCard group={group} />);
     const content = container.querySelector('.group-card-content');
     expect(content).toBeTruthy();
+  });
+
+  it('shows a visible non-color difficulty indicator (WCAG 1.4.1)', () => {
+    const group = makeGroup({ difficulty: 'hard', color: 'blue' });
+    const { container } = render(<GroupCard group={group} />);
+    const indicator = container.querySelector('.group-card-difficulty');
+    expect(indicator).toBeTruthy();
+    expect(indicator?.textContent?.toLowerCase()).toContain('hard');
+  });
+
+  it('includes the difficulty in the accessible label', () => {
+    const group = makeGroup({ difficulty: 'hard', connection: 'Sci-fi' });
+    const { container } = render(<GroupCard group={group} />);
+    const card = container.querySelector('.group-card');
+    expect(card?.getAttribute('aria-label')).toMatch(/hard/i);
   });
 });

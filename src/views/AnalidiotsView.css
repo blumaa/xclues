@@ -46,6 +46,7 @@
 
 .analidiots__tab--active {
   background: var(--xclues-primary);
+  /* stylelint-disable-next-line color-no-hex -- defensive fallback for the token */
   color: var(--xclues-text-on-primary, #fff);
   border-color: var(--xclues-primary);
 }

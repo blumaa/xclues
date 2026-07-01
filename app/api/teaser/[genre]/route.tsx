@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { isValidGenre, getSeoConfig } from "../../../../src/config/seoConfig";
 import { fetchPuzzleByDate } from "../../../../src/lib/supabase/puzzleQueries";
 import { getDisplayTitle } from "../../../../src/utils/displayTitle";
+import { getTodayDate, getDayOfYear } from "../../../../src/utils/index";
 
 export const runtime = "nodejs";
 
@@ -10,20 +11,6 @@ const GENRE_THEMES: Record<string, { bg: string; accent: string; emoji: string }
   music: { bg: "#0d1520", accent: "#a78bfa", emoji: "🎵" },
   books: { bg: "#1a0a0a", accent: "#c96442", emoji: "📚" },
 };
-
-function getTodayDate(): string {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(now.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getDayOfYear(): number {
-  const now = new Date();
-  const start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
-  return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
-}
 
 export async function GET(
   req: Request,

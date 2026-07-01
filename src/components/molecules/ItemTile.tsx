@@ -2,6 +2,7 @@ import { XCard, XCardBody, XText } from "../atoms";
 import type { Item } from "../../types";
 import { getTextLengthProps, addSoftHyphens } from "../../utils";
 import { getDisplayTitle } from "../../utils/displayTitle";
+import { memo } from "react";
 import type { KeyboardEvent } from "react";
 import "./ItemTile.css";
 
@@ -11,16 +12,21 @@ interface ItemTileProps {
   isShaking?: boolean;
   isJumping?: boolean;
   isRejected?: boolean;
-  onClick: () => void;
+  /**
+   * Stable selection handler. Receiving the id (rather than a pre-bound
+   * onClick) lets the parent pass the store action directly, so memo can skip
+   * re-rendering tiles whose own props are unchanged.
+   */
+  onSelect: (itemId: number) => void;
 }
 
-export function ItemTile({
+export const ItemTile = memo(function ItemTile({
   item,
   isSelected,
   isShaking,
   isJumping,
   isRejected,
-  onClick,
+  onSelect,
 }: ItemTileProps) {
   const displayTitle = addSoftHyphens(getDisplayTitle(item));
   const textLengthProps = getTextLengthProps(displayTitle);
@@ -34,7 +40,7 @@ export function ItemTile({
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      onClick();
+      onSelect(item.id);
     }
   };
 
@@ -45,7 +51,7 @@ export function ItemTile({
       isSelected={isSelected}
       shake={(isShaking && isSelected) || isRejected}
       jump={isJumping}
-      onClick={onClick}
+      onClick={() => onSelect(item.id)}
       onKeyDown={handleKeyDown}
       hoverable
       variant="elevated"
@@ -68,4 +74,4 @@ export function ItemTile({
       </XCardBody>
     </XCard>
   );
-}
+});
