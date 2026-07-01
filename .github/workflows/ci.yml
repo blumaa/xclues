@@ -18,14 +18,7 @@ jobs:
       - run: bunx tsc --noEmit
       - run: bun run dup
       - run: bun run test
-      # The Supabase client throws on the server when its public env vars are
-      # absent (to surface broken deploys). Placeholders let the build compile —
-      # build-time pages don't hit the DB; real values live in Vercel.
-      - name: Build
-        run: bun run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      - run: bun run build
       - name: Bundle size budget
         run: bun run bundle:budget
       # Non-blocking for now: the dependency tree has transitive dev-tool

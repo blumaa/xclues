@@ -26,28 +26,40 @@ describe('supabase client env validation', () => {
     delete globalThis.window;
   }
 
-  it('throws on the server in production when env vars are missing', async () => {
+  it('never throws at import — the client is created lazily', async () => {
     simulateServer();
     vi.stubEnv('NODE_ENV', 'production');
-    await expect(import('../client')).rejects.toThrow(/Supabase/);
+    // Importing must be side-effect-free so `next build` can prerender pages
+    // that never touch Supabase without env vars present.
+    await expect(import('../client')).resolves.toBeDefined();
   });
 
-  it('throws on the server in development when env vars are missing', async () => {
+  it('throws on first use on the server in production when env vars are missing', async () => {
+    simulateServer();
+    vi.stubEnv('NODE_ENV', 'production');
+    const { supabase } = await import('../client');
+    expect(() => supabase.auth).toThrow(/Supabase/);
+  });
+
+  it('throws on first use on the server in development when env vars are missing', async () => {
     simulateServer();
     vi.stubEnv('NODE_ENV', 'development');
-    await expect(import('../client')).rejects.toThrow(/Supabase/);
+    const { supabase } = await import('../client');
+    expect(() => supabase.auth).toThrow(/Supabase/);
   });
 
   it('does not throw in the browser (window defined) even in production', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     // jsdom setup leaves `window` defined; just assert it's truthy.
     expect(typeof window).toBe('object');
-    await expect(import('../client')).resolves.toBeDefined();
+    const { supabase } = await import('../client');
+    expect(() => supabase.auth).not.toThrow();
   });
 
   it('does not throw in the test env on the server (unit tests mock the client)', async () => {
     simulateServer();
     vi.stubEnv('NODE_ENV', 'test');
-    await expect(import('../client')).resolves.toBeDefined();
+    const { supabase } = await import('../client');
+    expect(() => supabase.auth).not.toThrow();
   });
 });
