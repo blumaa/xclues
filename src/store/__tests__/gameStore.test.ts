@@ -551,4 +551,30 @@ describe('gameStore', () => {
     });
   });
 
+  // ============================================================
+  // resetGame cancels pending submitGuess timeouts (ghost-animation bug)
+  // ============================================================
+  describe('resetGame timeout cleanup', () => {
+    beforeEach(() => {
+      initializeTestGame();
+    });
+
+    it('does not apply queued submitGuess animations after a reset', () => {
+      // Correct guess for group g1 (items 1-4) queues staggered jump
+      // animations and a delayed foundGroups update.
+      [1, 2, 3, 4].forEach((id) => store().getState().selectItem(id));
+      store().getState().submitGuess();
+
+      // Reset before any of those timers fire.
+      store().getState().resetGame();
+      vi.runAllTimers();
+
+      const after = store().getState();
+      expect(after.foundGroups).toEqual([]);
+      expect(after.jumpingItemIds).toEqual([]);
+      expect(after.items).toEqual([]);
+      expect(after.gameStatus).toBe('playing');
+    });
+  });
+
 });

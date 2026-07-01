@@ -11,7 +11,7 @@ const meta: Meta<typeof ItemTile> = {
     isShaking: { control: "boolean" },
     isJumping: { control: "boolean" },
     isRejected: { control: "boolean" },
-    onClick: { action: "clicked" },
+    onSelect: { action: "selected" },
   },
 };
 

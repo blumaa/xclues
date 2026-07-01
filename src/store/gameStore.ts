@@ -30,6 +30,22 @@ const MAX_MISTAKES = 4;
 const MAX_SELECTIONS = 4;
 
 function createGameStoreInstance(): StoreApi<GameStore> {
+  // Track every animation/notification timeout so resetGame can cancel any
+  // still-pending ones — otherwise they fire after a reset and mutate the
+  // fresh game state (ghost animations / phantom found groups).
+  const pendingTimeouts = new Set<ReturnType<typeof setTimeout>>();
+  const schedule = (fn: () => void, ms: number): void => {
+    const id = setTimeout(() => {
+      pendingTimeouts.delete(id);
+      fn();
+    }, ms);
+    pendingTimeouts.add(id);
+  };
+  const clearPendingTimeouts = (): void => {
+    pendingTimeouts.forEach((id) => clearTimeout(id));
+    pendingTimeouts.clear();
+  };
+
   return createStore<GameStore>((set, get) => ({
     // Initial state
     items: [],
@@ -59,7 +75,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
         // Can't select more than 4 - shake the rejected tile
         if (selectedItemIds.length >= MAX_SELECTIONS) {
           set({ rejectedItemId: itemId });
-          setTimeout(() => set({ rejectedItemId: null }), 500);
+          schedule(() => set({ rejectedItemId: null }), 500);
           return;
         }
         set({ selectedItemIds: [...selectedItemIds, itemId] });
@@ -95,7 +111,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
 
       if (isDuplicate) {
         set({ notification: 'Already tried!' });
-        setTimeout(() => set({ notification: null }), 2000);
+        schedule(() => set({ notification: null }), 2000);
         return;
       }
 
@@ -118,9 +134,8 @@ function createGameStoreInstance(): StoreApi<GameStore> {
 
       if (oneAwayGroup) {
         set({ notification: 'One away!' });
-        setTimeout(() => set({ notification: null }), 2000);
+        schedule(() => set({ notification: null }), 2000);
       }
-
       if (matchedGroup) {
         // Correct guess!
         const matchedItemIds = matchedGroup.items.map((item) => item.id);
@@ -133,7 +148,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
         // Stagger the jump animation
         const staggerDelay = 100;
         matchedItemIds.forEach((itemId, index) => {
-          setTimeout(() => {
+          schedule(() => {
             set((state) => ({
               jumpingItemIds: [...state.jumpingItemIds, itemId],
             }));
@@ -142,7 +157,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
 
         // After all jumps complete, update foundGroups
         const totalAnimationTime = (matchedItemIds.length * staggerDelay) + 400;
-        setTimeout(() => {
+        schedule(() => {
           const currentState = get();
           const newFoundGroups = [...currentState.foundGroups, matchedGroup];
           const remainingItems = currentState.items.filter(
@@ -174,7 +189,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
           isShaking: true,
         });
 
-        setTimeout(() => set({ isShaking: false }), 500);
+        schedule(() => set({ isShaking: false }), 500);
       }
     },
 
@@ -230,6 +245,7 @@ function createGameStoreInstance(): StoreApi<GameStore> {
     },
 
     resetGame: () => {
+      clearPendingTimeouts();
       set({
         items: [],
         groups: [],

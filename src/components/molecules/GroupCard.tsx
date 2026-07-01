@@ -14,9 +14,10 @@ export function GroupCard({ group }: GroupCardProps) {
     <XCard
       className={`group-card ${group.color}`}
       role="status"
-      aria-label={`Found group: ${group.connection}`}
+      aria-label={`Found group: ${group.connection} (difficulty: ${group.difficulty})`}
     >
       <div className="group-card-content">
+        <span className="group-card-difficulty">{group.difficulty}</span>
         <XHeading
           level={3}
           responsive

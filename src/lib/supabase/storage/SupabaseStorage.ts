@@ -9,8 +9,9 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types';
-import type { SavedPuzzle, Group, Item } from '../../../types';
+import type { SavedPuzzle, Group } from '../../../types';
 import { ensureUniqueItemIds } from '../../puzzle/uniqueItemIds';
+import { ItemSchema, StoredGroupSchema } from '../../schemas/puzzle';
 import type {
   IPuzzleStorage,
   StoredPuzzle,
@@ -42,7 +43,7 @@ export class SupabaseStorage implements IPuzzleStorage {
   private rowToStoredPuzzle(row: DbPuzzleRow): StoredPuzzle {
     return {
       id: row.id,
-      createdAt: new Date(row.created_at).getTime(),
+      createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
       puzzleDate: row.puzzle_date,
       title: row.title,
       groupIds: row.group_ids,
@@ -57,7 +58,7 @@ export class SupabaseStorage implements IPuzzleStorage {
   private dbGroupToGroup(row: DbGroupRow): Group {
     return {
       id: row.id,
-      items: row.items as unknown as Item[],
+      items: ItemSchema.array().parse(row.items),
       connection: row.connection,
       difficulty: (row.difficulty || 'medium') as DifficultyLevel,
       color: (row.color || 'green') as DifficultyColor,
@@ -99,7 +100,7 @@ export class SupabaseStorage implements IPuzzleStorage {
 
     const { data, error } = await this.supabase
       .from('puzzles')
-      .insert(insert as never)
+      .insert(insert)
       .select()
       .single();
 
@@ -159,13 +160,15 @@ export class SupabaseStorage implements IPuzzleStorage {
     // The snapshot makes the puzzle self-contained for anonymous users
     const groups: Group[] = ensureUniqueItemIds(
       row.groups
-        ? (row.groups as unknown as Array<{ id: string; items: Item[]; connection: string; difficulty: string; color: string }>).map(g => ({
-            id: g.id,
-            items: g.items,
-            connection: g.connection,
-            difficulty: (g.difficulty || 'medium') as DifficultyLevel,
-            color: (g.color || 'green') as DifficultyColor,
-          }))
+        ? StoredGroupSchema.array()
+            .parse(row.groups)
+            .map((g) => ({
+              id: g.id,
+              items: g.items,
+              connection: g.connection,
+              difficulty: (g.difficulty || 'medium') as DifficultyLevel,
+              color: (g.color || 'green') as DifficultyColor,
+            }))
         : await this.fetchGroupsByIds(row.group_ids),
     );
 
@@ -177,7 +180,7 @@ export class SupabaseStorage implements IPuzzleStorage {
       id: row.id,
       groups,
       items,
-      createdAt: new Date(row.created_at).getTime(),
+      createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
       metadata: row.metadata as Record<string, unknown> | undefined,
     };
   }
@@ -270,7 +273,9 @@ export class SupabaseStorage implements IPuzzleStorage {
 
     const { data, error } = await this.supabase
       .from('puzzles')
-      .update(dbUpdate as never)
+      // dbUpdate is assembled dynamically; assert the exact Update row type so
+      // it satisfies postgrest's strict no-excess-properties update signature.
+      .update(dbUpdate as Database['public']['Tables']['puzzles']['Update'])
       .eq('id', id)
       .select()
       .single();

@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* stylelint-disable-next-line color-no-hex -- defensive fallback for the token */
   background: var(--xclues-surface, #0f0a1a);
   z-index: 9999;
   font-size: 3rem;

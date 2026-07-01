@@ -76,7 +76,7 @@ export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
   };
 
   return (
-    <XModal isOpen={isOpen} onClose={handleSkip}>
+    <XModal isOpen={isOpen} onClose={handleSkip} title="Rate today's puzzle">
       <div className="feedback-modal">
         <XHeading level={2} responsive>
           How was it?
@@ -90,6 +90,7 @@ export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
         <textarea
           className="feedback-modal__comment"
           placeholder="Optional comment"
+          aria-label="Optional comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={3}

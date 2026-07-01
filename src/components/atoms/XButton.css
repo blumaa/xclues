@@ -74,6 +74,38 @@
   opacity: var(--xclues-hover-opacity, 1);
 }
 
+/* Link variant — renders as an inline text link */
+.xbtn--link {
+  background: transparent;
+  color: var(--xclues-primary);
+  min-height: auto;
+  min-width: auto;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.xbtn--link:hover:not(:disabled) {
+  opacity: var(--xclues-hover-opacity, 0.8);
+}
+
+/* Toggle variant — outlined chip that fills when pressed (aria-pressed) */
+.xbtn--toggle {
+  background: transparent;
+  border: 1px solid var(--xclues-primary);
+  color: var(--xclues-primary);
+}
+
+.xbtn--toggle[aria-pressed="true"] {
+  background: var(--xclues-btn-primary-bg);
+  color: var(--xclues-btn-primary-text, var(--xclues-card-selected-text));
+}
+
+.xbtn--toggle:hover:not(:disabled) {
+  background: var(--xclues-primary-8);
+  opacity: var(--xclues-hover-opacity, 1);
+}
+
 /* Icon only */
 .xbtn--icon-only {
   padding: var(--xclues-spacing-2);

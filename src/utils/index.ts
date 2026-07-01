@@ -18,6 +18,13 @@ export function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
+/** Day of the year (1-based, UTC). Used to rotate daily content. */
+export function getDayOfYear(): number {
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
+  return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
+}
+
 /**
  * Get tomorrow's date in YYYY-MM-DD format (UTC).
  * Used for prefetching tomorrow's puzzle.

@@ -21,7 +21,7 @@ export const Default: Story = {
     return (
       <>
         <XButton onClick={() => setOpen(true)}>Open Modal</XButton>
-        <XModal isOpen={open} onClose={() => setOpen(false)}>
+        <XModal isOpen={open} onClose={() => setOpen(false)} title="Modal Title">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <XHeading level={2} align="center">Modal Title</XHeading>
             <XText>This is a modal dialog with focus trapping, scroll lock, and escape key dismissal powered by Radix UI.</XText>
@@ -39,7 +39,7 @@ export const LongContent: Story = {
     return (
       <>
         <XButton onClick={() => setOpen(true)}>Open Long Modal</XButton>
-        <XModal isOpen={open} onClose={() => setOpen(false)}>
+        <XModal isOpen={open} onClose={() => setOpen(false)} title="Long Content">
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <XHeading level={2} align="center">Long Content</XHeading>
             {Array.from({ length: 20 }, (_, i) => (

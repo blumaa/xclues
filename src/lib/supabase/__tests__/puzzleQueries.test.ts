@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { parsePuzzleRow, fetchPuzzleByDate, fetchAllPublishedDates, clearPuzzleCache } from "../puzzleQueries";
+import { parsePuzzleRow, fetchPuzzleByDate, fetchAllPublishedDates } from "../puzzleQueries";
 
 vi.mock("../server", () => ({
   createServerSupabaseClient: vi.fn(),
@@ -114,12 +114,58 @@ describe("parsePuzzleRow", () => {
 
     expect(result.groups.flatMap((g) => g.items.map((i) => i.id))).toEqual([1, 2, 3, 4]);
   });
+
+  it("throws a descriptive error when groups is null", () => {
+    expect(() =>
+      parsePuzzleRow({ id: "bad", groups: null, created_at: "2026-04-14T00:00:00Z" }),
+    ).toThrow(/groups/i);
+  });
+
+  it("throws a descriptive error when groups is missing", () => {
+    expect(() =>
+      parsePuzzleRow({ id: "bad", created_at: "2026-04-14T00:00:00Z" }),
+    ).toThrow(/groups/i);
+  });
+
+  it("throws when a group is missing its connection", () => {
+    expect(() =>
+      parsePuzzleRow({
+        id: "bad",
+        created_at: "2026-04-14T00:00:00Z",
+        groups: [
+          {
+            id: "g1",
+            items: [{ id: 1, title: "A" }],
+            difficulty: "easy",
+            color: "yellow",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it("throws when an item is missing its title", () => {
+    expect(() =>
+      parsePuzzleRow({
+        id: "bad",
+        created_at: "2026-04-14T00:00:00Z",
+        groups: [
+          {
+            id: "g1",
+            items: [{ id: 1 }],
+            connection: "C",
+            difficulty: "easy",
+            color: "yellow",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
 });
 
 describe("fetchPuzzleByDate", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    clearPuzzleCache();
   });
 
   it("queries supabase with correct filters", async () => {

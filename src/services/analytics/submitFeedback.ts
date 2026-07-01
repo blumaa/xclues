@@ -12,7 +12,7 @@ export async function submitFeedback(payload: FeedbackPayload): Promise<void> {
       rating: payload.rating,
       comment: payload.comment,
       user_id: payload.userId ?? null,
-    } as never);
+    });
   } catch {
     // Fire-and-forget: never block UI on feedback failure.
   }

@@ -47,3 +47,10 @@ storybook-static/
 
 .tool-versions
 .aider*
+
+# MCP tool artifacts (local, not for commit)
+.playwright-mcp/
+.serena/
+
+# TypeScript incremental build cache (never commit — causes CI/local drift)
+*.tsbuildinfo

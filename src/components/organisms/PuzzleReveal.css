@@ -16,6 +16,7 @@
 }
 
 .puzzle-reveal__back-link {
+  /* stylelint-disable-next-line color-no-hex -- defensive fallback for the token */
   color: var(--xclues-text-secondary, #666);
   text-decoration: underline;
   font-size: 0.875rem;

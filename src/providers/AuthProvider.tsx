@@ -21,11 +21,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Hydrate initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        // Network/hydration failure: fall back to the logged-out state
+        // instead of hanging the app on an infinite loading spinner.
+        console.error('Failed to hydrate auth session', error);
+        setIsLoading(false);
+      });
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {

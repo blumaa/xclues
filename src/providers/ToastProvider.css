@@ -142,6 +142,7 @@
   justify-content: center;
   font-size: var(--xclues-font-size-sm);
   line-height: 1;
+  /* stylelint-disable-next-line color-no-hex -- fixed icon contrast, theme-independent */
   color: #fff;
 }
 
@@ -155,6 +156,7 @@
 
 .xtoast--warning .xtoast__icon {
   background: var(--xclues-yellow);
+  /* stylelint-disable-next-line color-no-hex -- fixed dark text on yellow, theme-independent */
   color: #1a1a1a;
 }
 

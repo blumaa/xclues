@@ -42,8 +42,12 @@ function formatTimestamp(iso: string): string {
   return `${y}-${m}-${day} ${hh}:${mm}`;
 }
 
-function sum<T>(rows: T[], key: keyof T): number {
-  return rows.reduce((acc, r) => acc + (r[key] as unknown as number), 0);
+type NumericKeys<T> = {
+  [K in keyof T]: T[K] extends number ? K : never;
+}[keyof T];
+
+function sum<T>(rows: T[], key: NumericKeys<T>): number {
+  return rows.reduce((acc, r) => acc + (r[key] as number), 0);
 }
 
 function Pagination({

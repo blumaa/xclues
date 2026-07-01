@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createServerSupabaseClient } from "../../src/lib/supabase/server";
+import { createServiceRoleClient } from "../../src/lib/supabase/server";
 import {
   aggregateEventsByGenre,
   type GameEventRow,
@@ -43,8 +44,21 @@ async function fetchAllEvents(supabase: SupabaseClient, since: string): Promise<
   return all;
 }
 
-export default async function AnalidiotsPage() {
-  const supabase = createServerSupabaseClient();
+export default async function AnalidiotsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ key?: string }>;
+}) {
+  // Closed by default: the dashboard is hidden unless ANALIDIOTS_SECRET is
+  // configured AND the matching ?key=… is supplied. Full session-based auth
+  // is deferred to the Security phase; this stops the page being public.
+  const secret = process.env.ANALIDIOTS_SECRET;
+  const { key } = await searchParams;
+  if (!secret || key !== secret) {
+    notFound();
+  }
+
+  const supabase = createServiceRoleClient();
   const since = sinceIso();
 
   let events: GameEventRow[] = [];

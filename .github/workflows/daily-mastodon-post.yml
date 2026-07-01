@@ -1,11 +1,14 @@
 name: Daily Mastodon Post
 
 on:
-  schedule:
-    # Runs at 13:30 UTC daily — 30 min offset from Bluesky so the two
-    # don't compete for the same image-fetch + logs don't collide.
-    - cron: "30 13 * * *"
-  workflow_dispatch: # Allow manual trigger for testing
+  # DISABLED 2026-07-01 — the xClues Mastodon account was suspended, so the
+  # daily schedule is commented out (would fail every run). Re-enable the cron
+  # below only if the account is reinstated.
+  # schedule:
+  #   # Runs at 13:30 UTC daily — 30 min offset from Bluesky so the two
+  #   # don't compete for the same image-fetch + logs don't collide.
+  #   - cron: "30 13 * * *"
+  workflow_dispatch: # Manual trigger only while suspended
 
 jobs:
   post:

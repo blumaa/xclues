@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "color-no-hex": true
+  },
+  "ignoreFiles": ["src/index.css", "**/node_modules/**", ".next/**"]
+}

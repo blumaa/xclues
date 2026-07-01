@@ -1,7 +1,7 @@
 .about-body-content {
   display: flex;
   flex-direction: column;
-  gap: var(--xclues-spacing-md);
+  gap: var(--xclues-spacing-4);
 }
 
 .about-body-design-link {

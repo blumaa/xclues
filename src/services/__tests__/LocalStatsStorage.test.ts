@@ -67,6 +67,14 @@ describe('LocalStatsStorage', () => {
   }
 
   describe('getStats', () => {
+    it('returns default stats when stored data is malformed', async () => {
+      // Partial/old-version blob missing required fields.
+      localStorage.setItem('xclues-stats', JSON.stringify({ gamesPlayed: 5 }));
+      const stats = await storage.getStats();
+      expect(stats.gamesPlayed).toBe(0);
+      expect(stats.gameHistory).toEqual([]);
+    });
+
     it('returns default stats when localStorage is empty', async () => {
       const stats = await storage.getStats();
       expect(stats).toEqual({

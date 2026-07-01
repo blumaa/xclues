@@ -23,6 +23,19 @@ export function GenreSwitch() {
     window.history.replaceState(null, "", `/${genre}`);
   };
 
+  // Roving tabindex: Arrow keys move focus between tabs and activate them
+  // (automatic-activation tablist pattern).
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const dir = e.key === "ArrowRight" ? 1 : -1;
+    const nextIndex =
+      (index + dir + GENRE_OPTIONS.length) % GENRE_OPTIONS.length;
+    const nextGenre = GENRE_OPTIONS[nextIndex].genre;
+    buttonRefs.current.get(nextGenre)?.focus();
+    handleClick(nextGenre);
+  };
+
   const setButtonRef = useCallback(
     (genre: Genre) => (el: HTMLButtonElement | null) => {
       if (el) buttonRefs.current.set(genre, el);
@@ -77,15 +90,23 @@ export function GenreSwitch() {
   }, [activeGenre, positionPill]);
 
   return (
-    <div className="genre-switch" ref={containerRef}>
+    <div
+      className="genre-switch"
+      ref={containerRef}
+      role="tablist"
+      aria-label="Puzzle genre"
+    >
       <span className="genre-switch__pill" ref={pillRef} aria-hidden="true" />
-      {GENRE_OPTIONS.map(({ genre, label }) => (
+      {GENRE_OPTIONS.map(({ genre, label }, index) => (
         <button
           key={genre}
           ref={setButtonRef(genre)}
           className={`genre-switch__button${genre === activeGenre ? " genre-switch__button--active" : ""}`}
-          aria-current={genre === activeGenre ? "true" : undefined}
+          role="tab"
+          aria-selected={genre === activeGenre}
+          tabIndex={genre === activeGenre ? 0 : -1}
           onClick={() => handleClick(genre)}
+          onKeyDown={(e) => handleKeyDown(e, index)}
         >
           {label}
         </button>

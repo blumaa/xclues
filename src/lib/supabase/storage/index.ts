@@ -8,5 +8,4 @@
 // Puzzle storage
 export * from './IPuzzleStorage';
 export * from './SupabaseStorage';
-export * from './usePuzzleStorage';
 
