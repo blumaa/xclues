@@ -273,7 +273,9 @@ export class SupabaseStorage implements IPuzzleStorage {
 
     const { data, error } = await this.supabase
       .from('puzzles')
-      .update(dbUpdate)
+      // dbUpdate is assembled dynamically; assert the exact Update row type so
+      // it satisfies postgrest's strict no-excess-properties update signature.
+      .update(dbUpdate as Database['public']['Tables']['puzzles']['Update'])
       .eq('id', id)
       .select()
       .single();
