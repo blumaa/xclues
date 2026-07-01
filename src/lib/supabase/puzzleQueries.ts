@@ -3,6 +3,8 @@ import { createServerSupabaseClient } from "./server";
 import { ensureUniqueItemIds } from "../puzzle/uniqueItemIds";
 import { RawPuzzleRowSchema } from "../schemas/puzzle";
 import { withRetry, isTransientDbError } from "../retry";
+import type { Genre } from "../../config/seoConfig";
+import { isNotFutureDate } from "../../utils/dateValidation";
 import type {
   SavedPuzzle,
   Group,
@@ -105,5 +107,21 @@ export async function fetchAllPublishedDates(): Promise<Array<{ genre: string; p
 
   if (error || !data) return [];
 
-  return data as Array<{ genre: string; puzzle_date: string }>;
+  // Exclude future-scheduled puzzles: they are `published` but their puzzle_date
+  // hasn't arrived, so their pages 404 (the date page guards with isNotFutureDate).
+  // Filtering here keeps the public surfaces (sitemap + archive hub) in sync with
+  // what's actually viewable.
+  return (data as Array<{ genre: string; puzzle_date: string }>).filter((row) =>
+    isNotFutureDate(row.puzzle_date),
+  );
+}
+
+/**
+ * Published puzzle dates for a single genre, newest-first. Derived from
+ * fetchAllPublishedDates() so the published set has a single source of truth
+ * (shared with the sitemap). Powers the archive hub and prev/next navigation.
+ */
+export async function fetchPublishedDatesForGenre(genre: Genre): Promise<string[]> {
+  const all = await fetchAllPublishedDates();
+  return all.filter((row) => row.genre === genre).map((row) => row.puzzle_date);
 }

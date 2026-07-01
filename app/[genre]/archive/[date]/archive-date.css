@@ -1,0 +1,5 @@
+.archive-date {
+  max-width: var(--xclues-board-width-desktop, 600px);
+  margin: 0 auto;
+  padding-block: var(--xclues-spacing-4, 1rem);
+}

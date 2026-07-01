@@ -1,0 +1,103 @@
+.archive-index {
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--xclues-spacing-6, 1.5rem) var(--xclues-spacing-4, 1rem);
+}
+
+.archive-index__header {
+  margin-bottom: var(--xclues-spacing-6, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-2, 0.5rem);
+}
+
+.archive-index__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--xclues-spacing-3, 0.75rem);
+}
+
+.archive-index__card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.archive-index__card {
+  height: 100%;
+  border: 1px solid var(--xclues-border);
+}
+
+.archive-index__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-1, 0.25rem);
+  padding: var(--xclues-spacing-4, 1rem);
+}
+
+.archive-index__card-date {
+  color: var(--xclues-text-primary);
+  font-weight: 600;
+  font-size: var(--xclues-font-size-md, 1rem);
+}
+
+.archive-index__card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--xclues-spacing-2, 0.5rem);
+}
+
+.archive-index__card-chevron {
+  color: var(--xclues-text-tertiary);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.archive-index__card-link:hover .archive-index__card-chevron {
+  color: var(--xclues-primary);
+  transform: translateX(3px);
+}
+
+.archive-index__empty {
+  padding: var(--xclues-spacing-6, 1.5rem) 0;
+}
+
+.archive-index__pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--xclues-spacing-4, 1rem);
+  margin-top: var(--xclues-spacing-6, 1.5rem);
+}
+
+.archive-index__pager-link {
+  color: var(--xclues-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--xclues-font-size-sm, 0.875rem);
+  padding: var(--xclues-spacing-2, 0.5rem) var(--xclues-spacing-3, 0.75rem);
+  border: 1px solid var(--xclues-border);
+  border-radius: var(--xclues-border-radius-xs, 0.25rem);
+}
+
+.archive-index__pager-link:hover {
+  border-color: var(--xclues-text-primary);
+}
+
+.archive-index__pager-link--disabled {
+  color: var(--xclues-text-tertiary);
+  font-weight: 400;
+  cursor: default;
+}
+
+.archive-index__pager-link--disabled:hover {
+  border-color: var(--xclues-border);
+}
+
+.archive-index__pager-status {
+  color: var(--xclues-text-secondary);
+  font-size: var(--xclues-font-size-sm, 0.875rem);
+}

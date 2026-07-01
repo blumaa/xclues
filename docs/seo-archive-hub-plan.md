@@ -58,5 +58,28 @@ metadata, OG images, SSR content — is already solid).
 ## Out of scope (today's separate fix, already done)
 - Teaser image comma-split bug (titles delimiter) — fixed in `route.tsx` + the two poster scripts.
 
+## Search Console — manual steps for owner (code can't do this)
+Do this after deploy. Free; the archive hub is useless if Google can't see coverage.
+1. https://search.google.com/search-console → add each property: `filmclues.space`,
+   `litclues.space`, `musiclues.space` (Domain property = DNS TXT verify).
+2. For each: Sitemaps → submit `https://<domain>/sitemap.xml` (the dynamic `app/sitemap.ts`,
+   which now includes the archive hub URLs).
+3. Watch Coverage/Pages over the following days — indexed count should climb as the internal
+   links (breadcrumbs + prev/next + hub) give Google a crawl path into the ~690 archive pages.
+
+## Status (2026-07-01)
+Shipped (in working tree, not committed):
+- Archive hub `/[genre]/archive` + `/[genre]/archive/page/[n]` (path-based pagination, 30/page).
+- `ArchiveIndexView` (card grid), `Breadcrumbs`, `ArchiveDateNav` — all with Storybook stories.
+- `fetchPublishedDatesForGenre` (derives from `fetchAllPublishedDates` — SSOT).
+- Prev/next + breadcrumbs + `BreadcrumbList` JSON-LD on each archive-date page.
+- Deleted committed `public/sitemap.xml` + `public/robots.txt` (build artifacts; shadow risk) and
+  gitignored them — iOS build regenerates via `scripts/generate-seo.ts`.
+- Sitemap already lists the date pages; hub URLs reachable via breadcrumbs. Footer link deliberately
+  skipped per owner (breadcrumbs still give the hub a crawl path in from every date page).
+
+Deferred: per-domain sitemap scoping (low priority); playable/paywalled archive is a separate
+future effort (see memory `project_archive_paywall_playable`).
+
 ## Owner's additional ideas
 - _(add tomorrow)_

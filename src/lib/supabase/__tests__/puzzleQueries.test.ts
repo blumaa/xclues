@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { parsePuzzleRow, fetchPuzzleByDate, fetchAllPublishedDates } from "../puzzleQueries";
+import {
+  parsePuzzleRow,
+  fetchPuzzleByDate,
+  fetchAllPublishedDates,
+  fetchPublishedDatesForGenre,
+} from "../puzzleQueries";
 
 vi.mock("../server", () => ({
   createServerSupabaseClient: vi.fn(),
@@ -255,6 +260,58 @@ describe("fetchAllPublishedDates", () => {
     mockOrder.mockResolvedValue({ data: null, error: new Error("db error") });
 
     const result = await fetchAllPublishedDates();
+
+    expect(result).toEqual([]);
+  });
+});
+
+describe("fetchAllPublishedDates", () => {
+  it("excludes future-scheduled published puzzles", async () => {
+    setupMockChain();
+    mockOrder.mockResolvedValue({
+      data: [
+        { genre: "films", puzzle_date: "2999-12-31" }, // far future — must be dropped
+        { genre: "films", puzzle_date: "2020-01-02" },
+        { genre: "films", puzzle_date: "2020-01-01" },
+      ],
+      error: null,
+    });
+
+    const result = await fetchAllPublishedDates();
+
+    expect(result.map((r) => r.puzzle_date)).toEqual(["2020-01-02", "2020-01-01"]);
+  });
+});
+
+describe("fetchPublishedDatesForGenre", () => {
+  it("returns only the requested genre's viewable dates, newest-first", async () => {
+    setupMockChain();
+    // fetchAllPublishedDates orders by puzzle_date desc across all genres.
+    mockOrder.mockResolvedValue({
+      data: [
+        { genre: "films", puzzle_date: "2999-01-01" }, // future — excluded
+        { genre: "films", puzzle_date: "2020-01-03" },
+        { genre: "music", puzzle_date: "2020-01-03" },
+        { genre: "films", puzzle_date: "2020-01-02" },
+        { genre: "books", puzzle_date: "2020-01-02" },
+        { genre: "films", puzzle_date: "2020-01-01" },
+      ],
+      error: null,
+    });
+
+    const result = await fetchPublishedDatesForGenre("films");
+
+    expect(result).toEqual(["2020-01-03", "2020-01-02", "2020-01-01"]);
+  });
+
+  it("returns empty array when the genre has no published puzzles", async () => {
+    setupMockChain();
+    mockOrder.mockResolvedValue({
+      data: [{ genre: "music", puzzle_date: "2020-01-01" }],
+      error: null,
+    });
+
+    const result = await fetchPublishedDatesForGenre("films");
 
     expect(result).toEqual([]);
   });

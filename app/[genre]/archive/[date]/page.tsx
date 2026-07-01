@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchPuzzleByDate } from "../../../../src/lib/supabase/puzzleQueries";
-import { isValidDateFormat, isNotFutureDate, formatDateForDisplay } from "../../../../src/utils/dateValidation";
+import {
+  fetchPuzzleByDate,
+  fetchPublishedDatesForGenre,
+} from "../../../../src/lib/supabase/puzzleQueries";
+import {
+  isValidDateFormat,
+  isNotFutureDate,
+  formatDateForDisplay,
+} from "../../../../src/utils/dateValidation";
+import { getAdjacentDates } from "../../../../src/utils/archiveDates";
 import { type Genre, getSeoConfig, isValidGenre } from "../../../../src/config/seoConfig";
+import { buildBreadcrumbJsonLd } from "../../../../src/lib/seo/breadcrumbJsonLd";
 import { PuzzleReveal } from "../../../../src/components/organisms/PuzzleReveal";
+import { Breadcrumbs } from "../../../../src/components/molecules/Breadcrumbs";
+import { ArchiveDateNav } from "../../../../src/components/molecules/ArchiveDateNav";
+import "./archive-date.css";
 
 interface ArchiveParams {
   genre: string;
@@ -57,10 +69,15 @@ export default async function ArchivePage({
   if (!puzzle) notFound();
 
   const config = getSeoConfig(genre);
-  const jsonLd = {
+  const displayDate = formatDateForDisplay(date);
+
+  const publishedDates = await fetchPublishedDatesForGenre(genre);
+  const { older, newer } = getAdjacentDates(publishedDates, date);
+
+  const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${config.siteName} Puzzle - ${formatDateForDisplay(date)}`,
+    name: `${config.siteName} Puzzle - ${displayDate}`,
     datePublished: date,
     url: `https://${config.domain}/${genre}/archive/${date}`,
     isPartOf: {
@@ -70,13 +87,33 @@ export default async function ArchivePage({
     },
   };
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: config.siteName, url: `https://${config.domain}` },
+    { name: "Archive", url: `https://${config.domain}/${genre}/archive` },
+    { name: displayDate },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
-      <PuzzleReveal puzzle={puzzle} genre={genre as Genre} date={date} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="archive-date">
+        <Breadcrumbs
+          items={[
+            { label: config.siteName, href: "/" },
+            { label: "Archive", href: `/${genre}/archive` },
+            { label: displayDate },
+          ]}
+        />
+        <PuzzleReveal puzzle={puzzle} genre={genre as Genre} date={date} />
+        <ArchiveDateNav genre={genre} older={older} newer={newer} />
+      </div>
     </>
   );
 }

@@ -8,3 +8,5 @@ export { GameResultDisplay } from "./GameResultDisplay";
 export { HowToPlayBanner } from "./HowToPlayBanner";
 export { WinCelebration } from "./WinCelebration";
 export { GameSkeleton } from "./GameSkeleton";
+export { Breadcrumbs, type Crumb } from "./Breadcrumbs";
+export { ArchiveDateNav } from "./ArchiveDateNav";

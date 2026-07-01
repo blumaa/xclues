@@ -4,13 +4,17 @@ export function isValidDateFormat(date: string): boolean {
   return DATE_REGEX.test(date);
 }
 
-export function isNotFutureDate(date: string): boolean {
+/** Today's date as a UTC `YYYY-MM-DD` string. Single source of truth for "today". */
+export function getUtcToday(): string {
   const now = new Date();
   const year = now.getUTCFullYear();
   const month = String(now.getUTCMonth() + 1).padStart(2, "0");
   const day = String(now.getUTCDate()).padStart(2, "0");
-  const today = `${year}-${month}-${day}`;
-  return date <= today;
+  return `${year}-${month}-${day}`;
+}
+
+export function isNotFutureDate(date: string): boolean {
+  return date <= getUtcToday();
 }
 
 export function formatDateForDisplay(date: string): string {

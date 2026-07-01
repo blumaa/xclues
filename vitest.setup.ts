@@ -32,8 +32,9 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// Mock next/link
+// Mock next/link — forward all anchor props (href, rel, className, ...) so
+// tests can assert on them, mirroring real next/link's prop passthrough.
 vi.mock('next/link', () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => 
-    React.createElement('a', { href }, children),
+  default: ({ children, ...props }: { children: React.ReactNode } & Record<string, unknown>) =>
+    React.createElement('a', props, children),
 }));
