@@ -186,4 +186,18 @@ describe('GamePage footer fade', () => {
     // still in the DOM so opacity can animate — no unmount jerk
     expect(container.querySelector('.game-controls')).toBeTruthy();
   });
+
+  it('renders the how-to-play hint under the game controls, not inside the board', async () => {
+    localStorage.removeItem('xclues-how-to-play-seen');
+    const { container } = renderFresh();
+    await waitFor(() => expect(container.querySelector('.game-footer')).toBeTruthy());
+
+    const footer = container.querySelector('.game-footer')!;
+    const children = [...footer.children].map((c) => c.className);
+    const controlsIdx = children.findIndex((c) => c.includes('game-controls'));
+    const bannerIdx = children.findIndex((c) => c.includes('how-to-play'));
+
+    expect(bannerIdx).toBeGreaterThan(-1);
+    expect(bannerIdx).toBeGreaterThan(controlsIdx);
+  });
 });

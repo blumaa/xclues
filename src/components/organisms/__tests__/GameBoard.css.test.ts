@@ -46,15 +46,14 @@ describe('GameBoard CSS - tablet/desktop board sizing', () => {
     expect(css).toContain('--xclues-board-width');
   });
 
-  it('board fills vertical space on desktop only (tablet keeps footer under grid)', () => {
-    const tabletSection = css.slice(
-      css.indexOf('@media (min-width: 640px)'),
-      css.indexOf('@media (min-width: 1025px)')
-    );
-    expect(tabletSection).not.toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
+  it('board never flex-fills — uniform layout at every width (natural height, controls under grid)', () => {
+    expect(css).not.toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
+  });
+});
 
-    const desktopSection = css.slice(css.indexOf('@media (min-width: 1025px)'));
-    expect(desktopSection).toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
+describe('GameBoard CSS - no flex-basis 0', () => {
+  it('vertical fill uses flex-basis auto, never the flex: 1 shorthand (basis 0 clips the board on short windows)', () => {
+    expect(css).not.toMatch(/flex:\s*1\s*;/);
   });
 });
 

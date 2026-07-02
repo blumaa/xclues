@@ -63,12 +63,6 @@
 }
 
 @media (min-width: 1025px) {
-  /* Desktop only: board fills vertical space so the game fits the viewport.
-     Tablet keeps natural height so the controls stay under the grid. */
-  .game-board {
-    flex: 1;
-  }
-
   .game-board,
   .game-grid {
     --grid-gap: 0.75rem;

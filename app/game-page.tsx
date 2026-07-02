@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GameBoard } from "../src/components/organisms/GameBoard";
 import { GameControls } from "../src/components/organisms/GameControls";
+import { HowToPlayBanner } from "../src/components/molecules/HowToPlayBanner";
 import { MistakesIndicator } from "../src/components/molecules/MistakesIndicator";
 import { XButton } from "../src/components/atoms";
 import { useGameStore, getGameStore } from "../src/store/gameStore";
@@ -216,6 +217,7 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
           hasSelection={selectedItemIds.length > 0}
           canSubmit={selectedItemIds.length === MAX_SELECTIONS}
         />
+        <HowToPlayBanner />
       </div>
 
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackDismissed("1")} />

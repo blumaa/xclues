@@ -53,13 +53,13 @@
 }
 
 .app-main {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
 
 .homepage-game {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
@@ -78,19 +78,6 @@
   transition: transform var(--xclues-duration-normal) ease-in-out;
 }
 
-/* Desktop only: fill vertical space so the game fits the viewport.
-   Tablet keeps natural height — leftover space there is large and would
-   push the game controls far below the grid. */
-@media (min-width: 1025px) {
-  .carousel-viewport {
-    flex: 1;
-  }
-
-  .carousel-track {
-    flex: 1;
-  }
-}
-
 .carousel-panel {
   flex: 0 0 100%;
   display: flex;
@@ -107,7 +94,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--xclues-spacing-2);
-  padding: var(--xclues-spacing-4) 0;
+  padding: var(--xclues-spacing-2) 0;
   /* Fade instead of unmounting so genre switches don't jerk the layout */
   transition: opacity var(--xclues-duration-normal, 0.2s) ease, visibility var(--xclues-duration-normal, 0.2s);
 }
@@ -126,9 +113,5 @@
 /* Desktop: tighter game footer. Layout height stays min-height (base rule) —
    a hard 100dvh height buries the site footer on pages taller than the viewport. */
 @media (min-width: 1025px) {
-  .game-footer {
-    gap: 0;
-    padding: var(--xclues-spacing-1) 0;
-  }
 }
 
