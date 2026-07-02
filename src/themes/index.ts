@@ -27,6 +27,9 @@ import { raycastTheme } from './raycast';
 import { framerTheme } from './framer';
 import { pinterestTheme } from './pinterest';
 
+/** Brand every visitor gets before choosing one — single source of truth. */
+export const DEFAULT_BRAND = 'vercel';
+
 export const BRAND_THEMES: Record<string, BrandThemeDefinition> = {
   xclues: xcluesTheme,
   superhuman: superhumanTheme,

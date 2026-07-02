@@ -38,6 +38,27 @@ describe("PuzzleReveal", () => {
     expect(screen.getByText(/The Godfather/)).toBeInTheDocument();
   });
 
+  it("renders group cards inside the shared game grid (same sizing as the game board)", () => {
+    const { container } = render(
+      <PuzzleReveal puzzle={mockPuzzle} genre="films" date="2026-04-14" />
+    );
+
+    const grid = container.querySelector(".game-grid");
+    expect(grid).toBeTruthy();
+    expect(grid?.querySelectorAll(".group-card")).toHaveLength(4);
+    expect(container.querySelector(".puzzle-reveal__grid")).toBeNull();
+  });
+
+  it("keeps the h1 for SEO but styles it at a modest size", () => {
+    const { container } = render(
+      <PuzzleReveal puzzle={mockPuzzle} genre="films" date="2026-04-14" />
+    );
+
+    const h1 = container.querySelector("h1");
+    expect(h1).toBeTruthy();
+    expect(h1?.className).toContain("xheading--md");
+  });
+
   it("renders groups in difficulty order", () => {
     render(<PuzzleReveal puzzle={mockPuzzle} genre="films" date="2026-04-14" />);
 

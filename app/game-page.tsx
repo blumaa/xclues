@@ -203,20 +203,19 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
         </div>
       </div>
 
-      {/* Footer — outside carousel, shows controls for active genre */}
-      <div className="game-footer">
-        {gameStatus === "playing" && (
-          <>
-            <MistakesIndicator mistakes={mistakes} maxMistakes={MAX_MISTAKES} />
-            <GameControls
-              onSubmit={submitGuess}
-              onShuffle={shuffleItems}
-              onDeselect={deselectAll}
-              hasSelection={selectedItemIds.length > 0}
-              canSubmit={selectedItemIds.length === MAX_SELECTIONS}
-            />
-          </>
-        )}
+      {/* Footer — outside carousel, shows controls for active genre.
+          Stays mounted and fades so genre switches don't jerk the layout. */}
+      <div
+        className={`game-footer${gameStatus === "playing" ? "" : " game-footer--hidden"}`}
+      >
+        <MistakesIndicator mistakes={mistakes} maxMistakes={MAX_MISTAKES} />
+        <GameControls
+          onSubmit={submitGuess}
+          onShuffle={shuffleItems}
+          onDeselect={deselectAll}
+          hasSelection={selectedItemIds.length > 0}
+          canSubmit={selectedItemIds.length === MAX_SELECTIONS}
+        />
       </div>
 
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackDismissed("1")} />

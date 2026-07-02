@@ -34,3 +34,10 @@
 .archive-date-nav__link--disabled:hover {
   border-color: var(--xclues-border);
 }
+
+/* Mobile: tight rhythm so the archive page fits one viewport with the sticky footer */
+@media (max-width: 639px) {
+  .archive-date-nav {
+    margin-top: var(--xclues-spacing-2, 0.5rem);
+  }
+}

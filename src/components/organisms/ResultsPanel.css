@@ -5,6 +5,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--xclues-spacing-3);
+  /* Exactly the grid's height (var from .game-board) — no jump when toggling
+     between results and board */
+  min-height: var(--grid-total-height);
 }
 
 .results-panel__heading {

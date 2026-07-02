@@ -161,3 +161,29 @@ describe('GamePage completion → trackGameEvent', () => {
     });
   });
 });
+
+describe('GamePage footer fade', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    resetAppStore();
+    resetStatsStore();
+    resetAllStores();
+    trackGameEventMock.mockClear();
+  });
+
+  it('keeps controls mounted and fades the footer out when the game ends', async () => {
+    const { container } = renderFresh();
+    await waitFor(() => expect(container.querySelector('.game-footer')).toBeTruthy());
+    expect(container.querySelector('.game-footer--hidden')).toBeNull();
+
+    await act(async () => {
+      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+    });
+
+    await waitFor(() =>
+      expect(container.querySelector('.game-footer--hidden')).toBeTruthy()
+    );
+    // still in the DOM so opacity can animate — no unmount jerk
+    expect(container.querySelector('.game-controls')).toBeTruthy();
+  });
+});

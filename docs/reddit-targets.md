@@ -35,6 +35,11 @@ New accounts get link posts auto-removed in many subs. Ramp:
 Skip: r/Connections (banned), r/incremental_games (wrong genre), r/DailyGames (collab story sub).
 
 ## Posting log
+- 2026-07-02: r/NYTConnections — Litclues (litclues.space), flair "Similar Games", framed as a
+  self-made book Connections board. permalink /r/NYTConnections/comments/1ulgytc/. Live logged-in
+  (1pt, 100% up, body+flair intact, no automod removal). Logged-OUT shadow-check NOT done — Reddit
+  403s cookieless requests from the agent env; owner should eyeball in a private window.
+  First posting-phase link post from u/xClues (warm-up complete).
 - 2026-06-29: r/SideProject — Filmclues (filmclues.space) link in a "first 10 users" thread that
   invited projects ("Drop your project below"). From u/xClues during warm-up (owner-approved
   deviation from no-link rule; thread invited it). permalink .../ouj3st2/. Verify still shows logged-out.

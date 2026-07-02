@@ -64,12 +64,10 @@ describe('GroupCard', () => {
     expect(content).toBeTruthy();
   });
 
-  it('shows a visible non-color difficulty indicator (WCAG 1.4.1)', () => {
+  it('does not render a visible difficulty label (owner decision: maximize card space)', () => {
     const group = makeGroup({ difficulty: 'hard', color: 'blue' });
     const { container } = render(<GroupCard group={group} />);
-    const indicator = container.querySelector('.group-card-difficulty');
-    expect(indicator).toBeTruthy();
-    expect(indicator?.textContent?.toLowerCase()).toContain('hard');
+    expect(container.querySelector('.group-card-difficulty')).toBeNull();
   });
 
   it('includes the difficulty in the accessible label', () => {

@@ -45,3 +45,10 @@
   align-items: center;
   color: var(--xclues-text-tertiary);
 }
+
+/* Mobile: tight rhythm so the archive page fits one viewport with the sticky footer */
+@media (max-width: 639px) {
+  .breadcrumbs {
+    margin-bottom: var(--xclues-spacing-2, 0.5rem);
+  }
+}

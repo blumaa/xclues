@@ -8,6 +8,7 @@ import type { SavedPuzzle } from "../../types";
 import type { Genre } from "../../config/seoConfig";
 import type { DifficultyColor } from "../../types";
 import "./PuzzleReveal.css";
+import "./GameBoard.css";
 
 const DIFFICULTY_ORDER: DifficultyColor[] = ["yellow", "green", "blue", "purple"];
 
@@ -25,11 +26,13 @@ export function PuzzleReveal({ puzzle, genre, date }: PuzzleRevealProps) {
 
   return (
     <div className="puzzle-reveal">
-      <XHeading level={1} align="center">
+      {/* h1 kept for SEO; sized down so the board stays the hero */}
+      <XHeading level={1} size="md" align="center">
         {config.siteName} &mdash; {formatDateForDisplay(date)}
       </XHeading>
 
-      <div className="puzzle-reveal__grid">
+      {/* Shared game grid: same square rows and card sizing as the game board */}
+      <div className="game-grid">
         {sortedGroups.map((group) => (
           <GroupCard key={group.id} group={group} />
         ))}

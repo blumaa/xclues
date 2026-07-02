@@ -44,6 +44,7 @@ export default [js.configs.recommended, {
       HTMLHeadingElement: 'readonly',
       HTMLAnchorElement: 'readonly',
       HTMLSpanElement: 'readonly',
+      ResizeObserver: 'readonly',
       Window: 'readonly',
       crypto: 'readonly',
       Storage: 'readonly',

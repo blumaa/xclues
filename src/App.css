@@ -64,18 +64,31 @@
   flex-direction: column;
 }
 
-/* Carousel: 3 genre boards side by side, shift via translateX */
+/* Carousel: 3 genre boards side by side, shift via translateX.
+   Mobile: natural height so the footer sits right under the grid.
+   Tablet+: fills vertical space so the game fits the viewport. */
 .carousel-viewport {
-  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .carousel-track {
-  flex: 1;
   display: flex;
   transition: transform var(--xclues-duration-normal) ease-in-out;
+}
+
+/* Desktop only: fill vertical space so the game fits the viewport.
+   Tablet keeps natural height — leftover space there is large and would
+   push the game controls far below the grid. */
+@media (min-width: 1025px) {
+  .carousel-viewport {
+    flex: 1;
+  }
+
+  .carousel-track {
+    flex: 1;
+  }
 }
 
 .carousel-panel {
@@ -93,6 +106,16 @@
 .game-footer {
   display: flex;
   flex-direction: column;
+  gap: var(--xclues-spacing-2);
+  padding: var(--xclues-spacing-4) 0;
+  /* Fade instead of unmounting so genre switches don't jerk the layout */
+  transition: opacity var(--xclues-duration-normal, 0.2s) ease, visibility var(--xclues-duration-normal, 0.2s);
+}
+
+.game-footer--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .game-footer__view-results {
@@ -100,10 +123,12 @@
   justify-content: center;
 }
 
-/* On desktop, constrain layout to viewport so game fits without scrolling */
+/* Desktop: tighter game footer. Layout height stays min-height (base rule) —
+   a hard 100dvh height buries the site footer on pages taller than the viewport. */
 @media (min-width: 1025px) {
-  .app-layout {
-    height: 100dvh;
+  .game-footer {
+    gap: 0;
+    padding: var(--xclues-spacing-1) 0;
   }
 }
 

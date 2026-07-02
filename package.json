@@ -17,6 +17,7 @@
     "bundle:budget": "bun run scripts/bundle-budget.ts",
     "dup": "jscpd",
     "style:lint": "stylelint \"src/**/*.css\"",
+    "gen:brands": "bun scripts/generate-brand-css.ts",
     "db:types": "npx supabase gen types typescript --project-id thvrwkzeqkppkvgsuenc > src/lib/supabase/types.ts",
     "db:types:check": "npx supabase gen types typescript --project-id thvrwkzeqkppkvgsuenc > /tmp/db-types-check.ts && diff -q src/lib/supabase/types.ts /tmp/db-types-check.ts",
     "lint": "eslint . --ext ts,tsx",

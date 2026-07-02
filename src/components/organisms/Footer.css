@@ -1,6 +1,10 @@
 .footer {
   /* margin-top: auto; */
   /* border-top: 1px solid var(--xclues-footer-border); */
+  /* Sticky: footer stays visible even when the page is taller than the viewport */
+  position: sticky;
+  bottom: 0;
+  z-index: var(--xclues-z-header);
   background: var(--xclues-footer-bg);
   backdrop-filter: blur(var(--xclues-blur-md));
   -webkit-backdrop-filter: blur(var(--xclues-blur-md));

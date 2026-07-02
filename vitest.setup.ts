@@ -17,6 +17,14 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// jsdom has no ResizeObserver (used by useFitScale)
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+window.ResizeObserver = window.ResizeObserver ?? ResizeObserverStub;
+
 // Mock next/navigation for tests
 vi.mock('next/navigation', () => ({
   useRouter: () => ({

@@ -1,0 +1,62 @@
+import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+const css = readFileSync(resolve(__dirname, '../App.css'), 'utf-8');
+
+// Extract the base (non-media-query) block for a selector
+function baseBlock(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = css.match(new RegExp(`${escaped}\\s*\\{[^}]*\\}`));
+  if (!match) throw new Error(`No base block found for ${selector}`);
+  return match[0];
+}
+
+describe('App CSS - layout height', () => {
+  it('never fixes the layout to viewport height (buries the footer on pages taller than the viewport)', () => {
+    // min-height: 100dvh is fine; a hard height is not
+    expect(css).not.toMatch(/\.app-layout\s*\{[^}]*[^-]height:\s*100dvh/);
+  });
+});
+
+describe('App CSS - mobile layout (footer follows grid, NYT-style)', () => {
+  it('carousel viewport does not flex-grow on mobile', () => {
+    expect(baseBlock('.carousel-viewport')).not.toMatch(/flex\s*:\s*1/);
+  });
+
+  it('carousel track does not flex-grow on mobile', () => {
+    expect(baseBlock('.carousel-track')).not.toMatch(/flex\s*:\s*1/);
+  });
+
+  it('carousel fills vertical space on desktop only (tablet keeps footer under grid)', () => {
+    const tabletSection = css.slice(
+      css.indexOf('@media (min-width: 640px)'),
+      css.indexOf('@media (min-width: 1025px)')
+    );
+    expect(tabletSection).not.toMatch(/\.carousel-viewport\s*\{[^}]*flex:\s*1/);
+    expect(tabletSection).not.toMatch(/\.carousel-track\s*\{[^}]*flex:\s*1/);
+
+    const desktopSection = css.slice(css.indexOf('@media (min-width: 1025px)'));
+    expect(desktopSection).toMatch(/\.carousel-viewport\s*\{[^}]*flex:\s*1/);
+    expect(desktopSection).toMatch(/\.carousel-track\s*\{[^}]*flex:\s*1/);
+  });
+
+  it('game footer has vertical breathing room between grid, dots, and buttons', () => {
+    const footer = baseBlock('.game-footer');
+    expect(footer).toMatch(/gap\s*:/);
+    expect(footer).toMatch(/padding\s*:/);
+  });
+});
+
+describe('App CSS - game footer fade (no jerk when switching genres)', () => {
+  it('footer opacity is animated', () => {
+    expect(baseBlock('.game-footer')).toMatch(/transition\s*:[^;]*opacity/);
+  });
+
+  it('hidden state fades out, drops interaction, and leaves the a11y tree', () => {
+    const hidden = baseBlock('.game-footer--hidden');
+    expect(hidden).toContain('opacity: 0');
+    expect(hidden).toContain('visibility: hidden');
+    expect(hidden).toContain('pointer-events: none');
+  });
+});

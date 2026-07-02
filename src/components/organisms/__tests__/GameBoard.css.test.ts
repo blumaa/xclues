@@ -7,26 +7,79 @@ const css = readFileSync(
   'utf-8'
 );
 
-describe('GameBoard CSS - grid row equality', () => {
-  it('uses minmax(0, 1fr) for mobile grid rows (prevents content overflow)', () => {
-    expect(css).toContain('grid-template-rows: repeat(4, minmax(0, 1fr))');
+// Extract the base (non-media-query) block for a selector
+function baseBlock(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = css.match(new RegExp(`${escaped}\\s*\\{[^}]*\\}`));
+  if (!match) throw new Error(`No base block found for ${selector}`);
+  return match[0];
+}
+
+describe('GameBoard CSS - square tiles on mobile (NYT-style)', () => {
+  it('derives mobile row height from viewport width (square tiles, SSOT with tile width)', () => {
+    // 2 x side padding + 3 x gap = 5 x spacing-2
+    expect(css).toContain(
+      '--grid-row-height: calc((100vw - 5 * var(--xclues-spacing-2)) / 4)'
+    );
   });
 
-  it('computes row height from board width on tablet+ (SSOT)', () => {
-    // Row height must derive from the same source as tile width: board width
-    expect(css).toContain('--grid-row-height');
-    expect(css).toContain('--xclues-board-width');
-  });
-
-  it('uses the computed row height for grid rows on tablet+', () => {
+  it('uses the computed row height for grid rows', () => {
     expect(css).toContain('grid-template-rows: repeat(4, var(--grid-row-height))');
   });
 
-  it('does not use align-content: center (collapses 1fr rows to auto)', () => {
+  it('does not stretch rows to fill leftover screen height', () => {
+    expect(css).not.toContain('minmax(0, 1fr)');
+  });
+
+  it('grid does not flex-grow to fill the board', () => {
+    expect(baseBlock('.game-grid')).not.toMatch(/flex\s*:/);
+  });
+
+  it('board does not flex-grow on mobile (footer sits right under grid)', () => {
+    expect(baseBlock('.game-board')).not.toMatch(/flex\s*:\s*1/);
+  });
+});
+
+describe('GameBoard CSS - tablet/desktop board sizing', () => {
+  it('computes row height from board width on tablet+ (SSOT)', () => {
+    // Row height must derive from the same source as tile width: board width
+    expect(css).toContain('--xclues-board-width');
+  });
+
+  it('board fills vertical space on desktop only (tablet keeps footer under grid)', () => {
+    const tabletSection = css.slice(
+      css.indexOf('@media (min-width: 640px)'),
+      css.indexOf('@media (min-width: 1025px)')
+    );
+    expect(tabletSection).not.toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
+
+    const desktopSection = css.slice(css.indexOf('@media (min-width: 1025px)'));
+    expect(desktopSection).toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
+  });
+});
+
+describe('GameBoard CSS - board height SSOT', () => {
+  it('exposes the total grid height so siblings (results panel) can match it', () => {
+    expect(css).toMatch(
+      /--grid-total-height:\s*calc\(4 \* var\(--grid-row-height\) \+ 3 \* var\(--grid-gap\)\)/
+    );
+  });
+
+  it('sizing vars are defined on the board too, not just the grid', () => {
+    expect(css).toMatch(/\.game-board,\s*\.game-grid\s*\{/);
+  });
+});
+
+describe('GameBoard CSS - shared grid rules', () => {
+  it('does not use align-content: center (collapses rows to auto)', () => {
     expect(css).not.toContain('align-content: center');
   });
 
   it('group cards span all 4 columns', () => {
     expect(css).toContain('grid-column: 1 / -1');
+  });
+
+  it('group cards keep the exact row height (min-height: auto would let content stretch them)', () => {
+    expect(baseBlock('.game-grid > .group-card')).toContain('min-height: 0');
   });
 });

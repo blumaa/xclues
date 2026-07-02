@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BRAND_THEMES, applyThemeTokens } from '../themes';
+import { BRAND_THEMES, DEFAULT_BRAND } from '../themes';
 
 type Theme = 'light' | 'dark';
 export type BrandTheme = keyof typeof BRAND_THEMES;
@@ -13,10 +13,10 @@ function isValidBrand(value: string): value is BrandTheme {
 }
 
 function getInitialBrand(): BrandTheme {
-  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return 'claude';
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return DEFAULT_BRAND;
   const stored = localStorage.getItem(BRAND_STORAGE_KEY);
   if (stored && isValidBrand(stored)) return stored;
-  return 'claude';
+  return DEFAULT_BRAND;
 }
 
 export { BRAND_NAMES };
@@ -72,11 +72,8 @@ export function useTheme(storagePrefix: string): UseThemeReturn {
     // Sync cookie for SSR consistency
     document.cookie = `${THEME_STORAGE_KEY}=${theme}; path=/; max-age=31536000; SameSite=Lax`;
 
-    // Apply brand tokens
-    const brandDef = BRAND_THEMES[brandTheme];
-    if (brandDef) {
-      applyThemeTokens(theme === 'dark' ? brandDef.dark : brandDef.light);
-    }
+    // Brand via attribute — brands.css applies the tokens (same pattern as data-theme)
+    document.documentElement.setAttribute('data-brand', brandTheme);
 
     localStorage.setItem(BRAND_STORAGE_KEY, brandTheme);
     document.cookie = `${BRAND_STORAGE_KEY}=${brandTheme}; path=/; max-age=31536000; SameSite=Lax`;
