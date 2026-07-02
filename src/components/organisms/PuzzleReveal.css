@@ -3,15 +3,46 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  padding: 1.5rem 1rem;
+  /* No horizontal padding: .game-grid brings its own, keeping card width
+     identical to the game board */
+  padding: 1.5rem 0;
   max-width: var(--xclues-board-width-desktop, 600px);
   margin: 0 auto;
 }
 
-.puzzle-reveal__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
+/* Mobile: tight rhythm so board, date nav, and sticky footer all fit one viewport */
+@media (max-width: 639px) {
+  .puzzle-reveal {
+    gap: var(--xclues-spacing-1);
+    padding: var(--xclues-spacing-1) 0;
+  }
+}
+
+/* Tablet+: rows stay width-derived (like the game board) but are capped by the
+   remaining viewport height (~26rem of page chrome: header, breadcrumbs, title,
+   back link, date nav, footer) so the whole archive page fits without scrolling */
+@media (min-width: 640px) {
+  .puzzle-reveal .game-grid {
+    --grid-row-height: clamp(
+      4rem,
+      calc((100dvh - 28rem) / 4),
+      calc((var(--xclues-board-width-tablet) - 3 * 0.625rem) / 4)
+    );
+  }
+}
+
+@media (min-width: 1025px) {
+  .puzzle-reveal .game-grid {
+    --grid-row-height: clamp(
+      4rem,
+      calc((100dvh - 28rem) / 4),
+      calc((var(--xclues-board-width-desktop) - 3 * 0.75rem) / 4)
+    );
+  }
+}
+
+/* Board sizing comes from the shared .game-grid (GameBoard.css) */
+.puzzle-reveal .game-grid {
   width: 100%;
 }
 

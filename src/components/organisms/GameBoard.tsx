@@ -4,7 +4,6 @@ import { ItemTile } from "../molecules/ItemTile";
 import { ResultsPanel } from "./ResultsPanel";
 import { GameSkeleton } from "../molecules/GameSkeleton";
 import { WinCelebration } from "../molecules/WinCelebration";
-import { HowToPlayBanner } from "../molecules/HowToPlayBanner";
 import { XText } from "../atoms";
 import type { GuessColor } from "../../types/stats";
 import "./GameBoard.css";
@@ -86,7 +85,6 @@ export function GameBoard({
             />
           ))}
       </div>
-      <HowToPlayBanner />
 
       {gameStatus === "won" && <WinCelebration />}
     </div>

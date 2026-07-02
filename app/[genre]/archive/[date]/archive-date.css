@@ -3,3 +3,10 @@
   margin: 0 auto;
   padding-block: var(--xclues-spacing-4, 1rem);
 }
+
+/* Mobile: tight rhythm so board, date nav, and sticky footer all fit one viewport */
+@media (max-width: 639px) {
+  .archive-date {
+    padding-block: var(--xclues-spacing-1, 0.25rem);
+  }
+}

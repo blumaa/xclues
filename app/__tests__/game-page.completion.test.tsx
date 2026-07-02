@@ -161,3 +161,43 @@ describe('GamePage completion → trackGameEvent', () => {
     });
   });
 });
+
+describe('GamePage footer fade', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    resetAppStore();
+    resetStatsStore();
+    resetAllStores();
+    trackGameEventMock.mockClear();
+  });
+
+  it('keeps controls mounted and fades the footer out when the game ends', async () => {
+    const { container } = renderFresh();
+    await waitFor(() => expect(container.querySelector('.game-footer')).toBeTruthy());
+    expect(container.querySelector('.game-footer--hidden')).toBeNull();
+
+    await act(async () => {
+      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+    });
+
+    await waitFor(() =>
+      expect(container.querySelector('.game-footer--hidden')).toBeTruthy()
+    );
+    // still in the DOM so opacity can animate — no unmount jerk
+    expect(container.querySelector('.game-controls')).toBeTruthy();
+  });
+
+  it('renders the how-to-play hint under the game controls, not inside the board', async () => {
+    localStorage.removeItem('xclues-how-to-play-seen');
+    const { container } = renderFresh();
+    await waitFor(() => expect(container.querySelector('.game-footer')).toBeTruthy());
+
+    const footer = container.querySelector('.game-footer')!;
+    const children = [...footer.children].map((c) => c.className);
+    const controlsIdx = children.findIndex((c) => c.includes('game-controls'));
+    const bannerIdx = children.findIndex((c) => c.includes('how-to-play'));
+
+    expect(bannerIdx).toBeGreaterThan(-1);
+    expect(bannerIdx).toBeGreaterThan(controlsIdx);
+  });
+});

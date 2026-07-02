@@ -147,6 +147,29 @@ export const Completed: Story = {
   ],
 };
 
+// Results panel replaces the grid — must keep the exact grid height (no jump)
+export const Results: Story = {
+  args: {
+    genre: STORY_GENRE,
+    showResults: true,
+    onViewPuzzle: () => {},
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <StoreInitializer
+          items={[]}
+          groups={mockGroups}
+          foundGroups={mockGroups}
+          gameStatus="won"
+          mistakes={2}
+        />
+        <Story />
+      </>
+    ),
+  ],
+};
+
 // Story with mixed text lengths to test tile sizing at all viewports
 const mixedLengthItems: Item[] = [
   { id: 1, title: "Up" },

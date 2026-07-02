@@ -7,6 +7,7 @@ import { NativeSetup } from "../src/components/NativeSetup";
 import { AppSplash } from "../src/components/AppSplash";
 import { getThemeInitScript } from "../src/utils/themeScript";
 import "../src/index.css";
+import "../src/styles/brands.css";
 import "../src/App.css";
 
 export const viewport: Viewport = {

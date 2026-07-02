@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getThemeInitScript } from '../themeScript';
+import { BRAND_THEMES, DEFAULT_BRAND } from '../../themes';
 
 describe('getThemeInitScript', () => {
   it('returns a string', () => {
@@ -51,5 +52,18 @@ describe('getThemeInitScript', () => {
     const script = getThemeInitScript();
     expect(script).toMatch(/^\(function\s*\(\)\s*\{/);
     expect(script).toMatch(/\}\)\(\)$/);
+  });
+
+  it('sets data-brand before paint (same pattern as data-theme)', () => {
+    const script = getThemeInitScript();
+    expect(script).toContain("setAttribute('data-brand'");
+    expect(script).toContain('xclues-brand-theme');
+  });
+
+  it('falls back to the default brand for missing or unknown stored values', () => {
+    const script = getThemeInitScript();
+    expect(script).toContain(`'${DEFAULT_BRAND}'`);
+    // valid brand whitelist is embedded so a stale value can't produce an unstyled brand
+    expect(script).toContain(JSON.stringify(Object.keys(BRAND_THEMES)));
   });
 });

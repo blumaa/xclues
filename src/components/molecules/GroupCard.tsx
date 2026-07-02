@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import { XCard, XHeading, XText } from "../atoms";
 import type { Group } from "../../types";
 import "./GroupCard.css";
 import { getTextLengthProps } from "../../utils";
 import { getDisplayTitle } from "../../utils/displayTitle";
+import { useFitScale } from "../../hooks/useFitScale";
 
 interface GroupCardProps {
   group: Group;
@@ -10,14 +12,15 @@ interface GroupCardProps {
 
 export function GroupCard({ group }: GroupCardProps) {
   const textLengthProps = getTextLengthProps(group.connection);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useFitScale(contentRef, [group]);
   return (
     <XCard
       className={`group-card ${group.color}`}
       role="status"
       aria-label={`Found group: ${group.connection} (difficulty: ${group.difficulty})`}
     >
-      <div className="group-card-content">
-        <span className="group-card-difficulty">{group.difficulty}</span>
+      <div className="group-card-content" ref={contentRef}>
         <XHeading
           level={3}
           responsive

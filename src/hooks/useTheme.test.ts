@@ -151,9 +151,9 @@ describe('useTheme', () => {
     expect(result.current.isDarkMode).toBe(false);
   });
 
-  it('brandTheme defaults to claude', () => {
+  it('brandTheme defaults to vercel', () => {
     const { result } = renderHook(() => useTheme(TEST_PREFIX));
-    expect(result.current.brandTheme).toBe('claude');
+    expect(result.current.brandTheme).toBe('vercel');
   });
 
   it('setBrandTheme updates brandTheme', () => {
@@ -176,31 +176,29 @@ describe('useTheme', () => {
     expect(localStorage.getItem('xclues-brand-theme')).toBe('superhuman');
   });
 
-  it('setBrandTheme applies theme tokens to document root', () => {
+  it('setBrandTheme sets data-brand on the document root (CSS cascade applies tokens)', () => {
     const { result } = renderHook(() => useTheme(TEST_PREFIX));
 
     act(() => {
       result.current.setBrandTheme('superhuman');
     });
 
-    // Superhuman primary is #714cb6
-    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#714cb6');
+    expect(document.documentElement.getAttribute('data-brand')).toBe('superhuman');
+    // no per-token inline styles — brands.css owns the values
+    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('');
   });
 
-  it('setBrandTheme switches back to xclues tokens', () => {
+  it('setBrandTheme switches the attribute back', () => {
     const { result } = renderHook(() => useTheme(TEST_PREFIX));
 
     act(() => {
       result.current.setBrandTheme('superhuman');
     });
-
-    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#714cb6');
-
     act(() => {
       result.current.setBrandTheme('xclues');
     });
 
-    expect(document.documentElement.style.getPropertyValue('--xclues-primary')).toBe('#6c5ce7');
+    expect(document.documentElement.getAttribute('data-brand')).toBe('xclues');
   });
 
   it('should use different storage keys for different prefixes', () => {

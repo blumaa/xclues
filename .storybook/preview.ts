@@ -2,7 +2,8 @@ import type { Preview } from '@storybook/react-vite';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { createElement } from 'react';
 import '../src/index.css';
-import { BRAND_THEMES, applyThemeTokens } from '../src/themes';
+import { BRAND_THEMES } from '../src/themes';
+import '../src/styles/brands.css';
 
 // Clear persisted globals to prevent stale theme values
 try {
@@ -55,17 +56,12 @@ const preview: Preview = {
     // 3. Wraps story in a keyed div to force remount on brand change
     (Story: any, context: any) => {
       const brand = context.globals.brand || 'xclues';
-      const colorScheme = document.documentElement.getAttribute('data-theme') || 'light';
 
       // Sync to localStorage so the in-app useTheme hook reads the right brand
       localStorage.setItem('xclues-brand-theme', brand);
 
-      // Apply tokens
-      const brandDef = BRAND_THEMES[brand];
-      if (brandDef) {
-        const tokens = colorScheme === 'dark' ? brandDef.dark : brandDef.light;
-        applyThemeTokens(tokens);
-      }
+      // Same pattern as the app: data-brand attribute + generated brands.css
+      document.documentElement.setAttribute('data-brand', brand);
 
       // Key forces full remount when brand changes, so useTheme re-inits
       return createElement('div', { key: brand }, Story());

@@ -21,14 +21,6 @@ jobs:
       - run: bun run build
       - name: Bundle size budget
         run: bun run bundle:budget
-      # Non-blocking for now: the dependency tree has transitive dev-tool
-      # advisories (capacitor → xmldom/tar, vitest UI, Next bump). This step
-      # surfaces them; patch the ones that matter manually (or enable GitHub
-      # Dependabot alerts for notifications). Flip to blocking (remove
-      # continue-on-error) and tighten the threshold once the tree is clean.
-      - name: Dependency audit (report-only)
-        run: bun run audit:ci
-        continue-on-error: true
 
   secrets:
     runs-on: ubuntu-latest

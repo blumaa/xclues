@@ -1,5 +1,4 @@
 .game-board {
-  flex: 1;
   display: flex;
   flex-direction: column;
   padding-top: var(--xclues-spacing-4);
@@ -14,48 +13,63 @@
   padding: var(--xclues-spacing-xl) 0;
 }
 
-/* Unified grid for group cards + item tiles — single source of truth for sizing */
+/* Board sizing — single source of truth for the grid AND siblings that must
+   match its height (results panel). Row height derives from the same source
+   as tile width, so tiles stay square: mobile = viewport width,
+   tablet/desktop = board width. Vars live on .game-board too because the
+   results panel replaces the grid and still needs them. */
+.game-board,
 .game-grid {
-  flex: 1;
+  --grid-gap: var(--xclues-spacing-2);
+  /* 2 x side padding + 3 x gap = 5 x spacing-2 */
+  --grid-row-height: calc((100vw - 5 * var(--xclues-spacing-2)) / 4);
+  --grid-total-height: calc(4 * var(--grid-row-height) + 3 * var(--grid-gap));
+}
+
+/* Unified grid for group cards + item tiles */
+.game-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, minmax(0, 1fr));
-  gap: var(--xclues-spacing-2);
-  padding: 0 0.5rem;
+  grid-template-rows: repeat(4, var(--grid-row-height));
+  gap: var(--grid-gap);
+  padding: 0 var(--xclues-spacing-2);
   max-width: 100%;
 }
 
-/* Group cards span all 4 columns, matching the width of one tile row */
+/* Group cards span all 4 columns, matching the width of one tile row.
+   min-height: 0 keeps them at the exact row height — the grid-item default
+   (min-height: auto) would let long content stretch them over the next row. */
 .game-grid > .group-card {
   grid-column: 1 / -1;
+  min-height: 0;
 }
 
-/* Inside the game grid, tiles fill the grid cell instead of forcing square */
+/* Inside the game grid, the row height defines the tile shape */
 .game-grid > .item-tile.xcard {
   aspect-ratio: unset;
 }
 
-
-/* Tablet+: row height derived from board width (same source as tile width = SSOT) */
 @media (min-width: 640px) {
+  .game-board,
   .game-grid {
-    flex: 0;
-    gap: 0.625rem;
+    --grid-gap: 0.625rem;
     --grid-row-height: calc((var(--xclues-board-width-tablet) - 3 * 0.625rem) / 4);
-    grid-template-rows: repeat(4, var(--grid-row-height));
-    max-width: var(--xclues-board-width-tablet);
-    margin: 0 auto;
   }
 
-  .game-grid > .item-tile.xcard {
-    aspect-ratio: 1 / 1;
+  .game-grid {
+    max-width: var(--xclues-board-width-tablet);
+    margin: 0 auto;
   }
 }
 
 @media (min-width: 1025px) {
+  .game-board,
   .game-grid {
-    gap: 0.75rem;
+    --grid-gap: 0.75rem;
     --grid-row-height: calc((var(--xclues-board-width-desktop) - 3 * 0.75rem) / 4);
+  }
+
+  .game-grid {
     max-width: var(--xclues-board-width-desktop);
   }
 }
