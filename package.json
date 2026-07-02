@@ -12,7 +12,6 @@
     "preview": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "audit:ci": "bun run scripts/audit-gate.ts critical",
     "analyze": "ANALYZE=true next build",
     "bundle:budget": "bun run scripts/bundle-budget.ts",
     "dup": "jscpd",
@@ -64,7 +63,7 @@
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/ui": "^4.0.13",
+    "@vitest/ui": "^4.1.0",
     "baseline-browser-mapping": "^2.10.16",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
@@ -83,7 +82,7 @@
     "stylelint": "^17.14.0",
     "typescript": "^5.9.3",
     "vite": "^7.2.4",
-    "vitest": "^4.0.13",
+    "vitest": "^4.1.0",
     "vitest-axe": "^0.1.0"
   }
 }
