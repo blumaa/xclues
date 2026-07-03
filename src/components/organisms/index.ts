@@ -1,9 +1,7 @@
 export { GameBoard } from "./GameBoard";
 export { GameControls } from "./GameControls";
-export { ItemGrid } from "./ItemGrid";
 export { ResultsPanel } from "./ResultsPanel";
 export { GenreSwitch } from "./GenreSwitch";
 export { Footer } from "./Footer";
 export { Logo } from "./Logo";
-export { GameHeader } from "./GameHeader";
 export { BrandThemeSwitcher } from "./BrandThemeSwitcher";

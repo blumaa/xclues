@@ -21,5 +21,3 @@ export { XDrawer, XDrawerHeader, XDrawerBody } from "./XDrawer";
 export { SunIcon } from "./SunIcon";
 export { MoonIcon } from "./MoonIcon";
 export { ShareIcon } from "./ShareIcon";
-export { default as StatsIcon } from "./StatsIcon";
-export { default as PuzzleSubmitIcon } from "./PuzzleSubmitIcon";

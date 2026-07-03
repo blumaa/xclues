@@ -92,3 +92,4 @@ keeps the domain-ratio heuristic from ever tripping. Recommended before ramping 
 - r/NYTConnections: post a themed board, framed as "made this" — highest convert, do carefully.
 - Stagger games on r/WebGames (3mo repost rule): Filmclues / Litclues next, months apart.
 - Build comment karma in r/movies, r/books, r/puzzles before any link there.
+- 2026-07-03: Musiclues -> r/puzzlevideogames (link post, [Dev]-flagged, playable). Permalink /comments/1um7ug6/. Different game+sub from 07-02 Litclues->r/NYTConnections.

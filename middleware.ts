@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveRedirectHost } from "./src/lib/domainRedirects";
 
 /**
  * Edge-cache hint for public, user-independent pages.
@@ -12,6 +13,16 @@ import { NextResponse, type NextRequest } from "next/server";
  * copy while a fresh one is rendered in the background.
  */
 export function middleware(req: NextRequest): NextResponse {
+  // SEO: 301 alt brand domains onto their canonical primary (path + query kept).
+  const redirectHost = resolveRedirectHost(req.headers.get("host") ?? "");
+  if (redirectHost) {
+    const url = req.nextUrl.clone();
+    url.host = redirectHost;
+    url.protocol = "https";
+    url.port = "";
+    return NextResponse.redirect(url, 301);
+  }
+
   const res = NextResponse.next();
   if (req.method === "GET") {
     res.headers.set(

@@ -1,5 +1,4 @@
 export type { ThemeTokens, BrandThemeDefinition } from './types';
-export { applyThemeTokens } from './types';
 export { xcluesTheme } from './xclues';
 export { superhumanTheme } from './superhuman';
 export { stripeTheme } from './stripe';
