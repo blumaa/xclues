@@ -83,38 +83,44 @@ describe("Logo", () => {
     expect(logo?.getAttribute("aria-label")).toBe("xClues");
   });
 
-  it("only ever translates the reel to whole-item positions (no partial frame shows a sliver of the neighbouring slot)", async () => {
-    // jsdom has no layout, so force a measurable item height for the reel.
-    const ITEM_H = 24;
-    const rect = {
-      height: ITEM_H, width: 0, top: 0, left: 0, right: 0, bottom: ITEM_H,
+  it("only ever snaps the reel to whole-item --reel-pos values (no partial frame shows a sliver of the neighbouring slot)", async () => {
+    const { container } = render(<Logo genre="books" />);
+    const reel = container.querySelector(".logo-reel-track") as HTMLElement;
+    await flushGsapImport();
+
+    // Step through the spin; every frame's --reel-pos must be a whole integer —
+    // a fractional value parks the reel between two items and exposes a sliver.
+    for (let i = 0; i < 60; i++) {
+      act(() => { advanceGSAP(33); });
+      const v = reel.style.getPropertyValue("--reel-pos");
+      if (v !== "") expect(Number.isInteger(Number(v))).toBe(true);
+    }
+
+    // books is index 2; CYCLES=3 -> lands on finalPos = 3*4 + 2 = 14.
+    expect(reel.style.getPropertyValue("--reel-pos")).toBe("14");
+  });
+
+  it("positions the reel from em via --reel-pos, never from a measured pixel size", () => {
+    // The logo must be self-contained: it derives its offset from its own em
+    // sizing, not by measuring layout (getBoundingClientRect), which Brave
+    // farbles for fingerprint resistance — an error amplified by finalPos into
+    // the reel transform. Even with a farbled/zero rect, the static reel must
+    // land on its slot via --reel-pos.
+    const farbled = {
+      height: 23.9137, width: 0, top: 0, left: 0, right: 0, bottom: 23.9137,
       x: 0, y: 0, toJSON: () => ({}),
     };
     const rectSpy = vi
       .spyOn(window.Element.prototype, "getBoundingClientRect")
-      .mockReturnValue(rect);
-    const setSpy = vi.spyOn(gsap, "set");
-
+      .mockReturnValue(farbled);
     try {
-      render(<Logo genre="books" />);
-      await flushGsapImport();
-      // Step through the spin so intermediate onUpdate frames actually fire
-      // (a single large jump would skip them and hide a continuous scroll).
-      act(() => { for (let i = 0; i < 60; i++) advanceGSAP(33); });
-
-      const ys = setSpy.mock.calls
-        .map(([, vars]) => (vars as { y?: number })?.y)
-        .filter((y): y is number => typeof y === "number");
-
-      expect(ys.length).toBeGreaterThan(0);
-      // Every reel position must be an exact multiple of the item height —
-      // a fractional multiple parks the reel between two items, exposing the
-      // "strange part of the x" the target should have replaced.
-      for (const y of ys) {
-        expect(Number.isInteger(y / ITEM_H)).toBe(true);
-      }
+      const { container } = render(<Logo genre="films" static />);
+      const reel = container.querySelector(".logo-reel-track") as HTMLElement;
+      // films is index 1 in the sequence (x, films, books, music).
+      expect(reel.style.getPropertyValue("--reel-pos")).toBe("1");
+      // must not fall back to an inline pixel transform
+      expect(reel.style.transform).toBe("");
     } finally {
-      setSpy.mockRestore();
       rectSpy.mockRestore();
     }
   });

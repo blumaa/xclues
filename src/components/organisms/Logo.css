@@ -1,16 +1,12 @@
 .logo {
   display: inline;
   font-family: var(--xclues-font-family, inherit);
-  font-size: 1.25em;
+  /* Fixed, root-relative size so the logo is the same (big) size on every
+     breakpoint — not em, which would inherit the responsive parent font-size. */
+  font-size: 1.5rem;
   line-height: 1;
   white-space: nowrap;
   user-select: none;
-}
-
-@media (min-width: 640px) {
-  .logo {
-    font-size: 1em;
-  }
 }
 
 .logo-word {
@@ -38,7 +34,9 @@
 .logo-slot {
   display: inline-grid;
   vertical-align: baseline;
-  width: 1em;
+  /* Match the icon width (0.8em) so the icon sits flush on the left instead of
+     right-aligned inside a wider 1em box, which left a gap before the icon. */
+  width: 0.8em;
   overflow: hidden;
 }
 
@@ -54,14 +52,26 @@
   visibility: hidden;
 }
 
-/* Vertical reel — same grid cell, max-height:0 prevents stretching */
+/*
+  Reel viewport: fills the 1em grid cell and clips with a plain overflow:hidden
+  box — a standard clip every engine version handles identically. (The old
+  max-height:0 + overflow:visible trick leaked a sliver of the neighbouring item
+  in some Chromium builds, e.g. Brave, at desktop sizes.)
+*/
 .logo-reel {
-  max-height: 0;
-  overflow: visible;
+  height: 1em;
+  overflow: hidden;
+}
+
+/*
+  Track: the column of 1em items, offset in em via --reel-pos (animated by GSAP
+  in Logo.tsx). No pixel measurement — the logo sizes and positions itself.
+*/
+.logo-reel-track {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  align-self: start;
+  transform: translateY(calc(var(--reel-pos, 0) * -1em));
 }
 
 .logo-reel-item {
@@ -70,6 +80,10 @@
   justify-content: flex-end;
   height: 1em;
   flex-shrink: 0;
+  /* Clip each item to its own 1em box. A text glyph's ascent/descent renders
+     taller than line-height:1, so the "x" bled ~2px into the next item's slot
+     and showed above the icon in some Chromium builds (Brave, desktop). */
+  overflow: hidden;
 }
 
 /* "x" character inside the reel */

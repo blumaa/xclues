@@ -63,48 +63,47 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
   }
 
   useEffect(() => {
+    const reel = reelRef.current;
+    if (!reel) return;
+
+    // The reel is offset in em via the --reel-pos CSS variable (see Logo.css:
+    // `translateY(calc(var(--reel-pos) * -1em))`). Each item is 1em tall, so the
+    // logo positions itself from its own sizing — no getBoundingClientRect, no
+    // viewport math. That keeps it robust (Brave farbles rect measurements) and
+    // self-contained.
     if (skipAnimation) {
-      if (reelRef.current) {
-        const h = reelRef.current.children[0]?.getBoundingClientRect().height || 0;
-        if (h > 0) reelRef.current.style.transform = `translateY(${-targetIdx * h}px)`;
-      }
+      reel.style.setProperty("--reel-pos", String(targetIdx));
       return;
     }
 
+    // Don't reset to 0 (the "x") — the initial paint already shows the target
+    // (--reel-pos = finalPos), so there's no bare-x flash during GSAP's async
+    // import. The spin starts one target-copy earlier (targetIdx, same icon as
+    // finalPos), so the jump into the animation is invisible.
     let cancelled = false;
     let tween: { kill: () => void } | null = null;
 
     import('gsap').then(({ default: gsap }) => {
       if (cancelled) return;
-      const itemH = reelRef.current?.children[0]?.getBoundingClientRect().height || 0;
-      if (reelRef.current && itemH > 0) {
-        gsap.set(reelRef.current, { y: 0 });
-      }
-      const proxy = { pos: 0 };
-      let lastItem: SlotItem = "x";
+      const proxy = { pos: targetIdx };
+      let lastItem: SlotItem = target;
       tween = gsap.to(proxy, {
         pos: finalPos,
         duration: 1.8,
         ease: "power4.out",
         onUpdate() {
+          // Snap to whole items so a frame never parks between two slots.
           const p = Math.round(proxy.pos);
+          reelRef.current?.style.setProperty("--reel-pos", String(p));
           const item = SEQUENCE[p % SEQUENCE.length];
           if (item !== lastItem) {
             lastItem = item;
             setAnimActive(item);
           }
-          if (reelRef.current && itemH > 0) {
-            // Snap to whole items (same rounding as the label above) so a
-            // frame never parks the reel between two slots — that midway
-            // sliver read as a "strange part of the x" behind the target.
-            gsap.set(reelRef.current, { y: -p * itemH });
-          }
         },
         onComplete() {
           setAnimActive(target);
-          if (reelRef.current && itemH > 0) {
-            gsap.set(reelRef.current, { y: -finalPos * itemH });
-          }
+          reelRef.current?.style.setProperty("--reel-pos", String(finalPos));
         },
       });
     });
@@ -117,16 +116,22 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
       <span className="logo-word">
         <span className="logo-slot">
           <span className="logo-x" aria-hidden="true">x</span>
-          <span className="logo-reel" ref={reelRef}>
-            {reelItems.map((item, i) => (
-              <span key={i} className="logo-reel-item">
-                {item === "x" ? (
-                  <span className="logo-reel-x">x</span>
-                ) : (
-                  (() => { const Icon = ICONS[item]; return <Icon />; })()
-                )}
-              </span>
-            ))}
+          <span className="logo-reel">
+            <span
+              className="logo-reel-track"
+              ref={reelRef}
+              style={{ "--reel-pos": skipAnimation ? targetIdx : finalPos } as React.CSSProperties}
+            >
+              {reelItems.map((item, i) => (
+                <span key={i} className="logo-reel-item">
+                  {item === "x" ? (
+                    <span className="logo-reel-x">x</span>
+                  ) : (
+                    (() => { const Icon = ICONS[item]; return <Icon />; })()
+                  )}
+                </span>
+              ))}
+            </span>
           </span>
         </span>
         Clues
