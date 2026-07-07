@@ -113,3 +113,64 @@ AnaghaC
 iwantmyTVN0W
 AuthorAronstein
 Atkins_Dave
+# 2026-07-04 (Bluesky):
+jakeout.com
+ens0.me
+lilhistorian.bsky.social
+twochewbaccas.bsky.social
+untenablewhale.bsky.social
+neonne.bsky.social
+# 2026-07-04 (Mastodon):
+lackattack@mastodon.social
+cygnoir@social.lol
+# 2026-07-04 (X):
+MothsFromVenus
+__godshapedhole
+butchologist
+# 2026-07-05 (Bluesky):
+mikeymcfilms.bsky.social
+ksantillus.bsky.social
+mark2000.bsky.social
+esshemasha.bsky.social
+stvmrshll.bsky.social
+justlilo.bsky.social
+philibin.bsky.social
+aconitemusic.bsky.social
+# 2026-07-05 (Mastodon):
+musicmatze@social.linux.pizza
+Ianmcgecko@meow.social
+donkey@mastodon.nz
+# 2026-07-05 (X):
+Synsidar
+# 2026-07-06 (Bluesky):
+2ndaryprotocol.bsky.social
+chrissteller.bsky.social
+dermudetude.bsky.social
+sydspages.bsky.social
+joannemerriam.bsky.social
+kylieswift31.bsky.social
+# 2026-07-06 (Mastodon):
+Fpccraig@mastodon.social
+Kaye@chattrbx.com
+littlemiao@babka.social
+Nomad13@mstdn.ca
+# 2026-07-06 (X):
+joek1228
+MNVikingZombie
+EyeKimYouLeeSuh
+kzone8
+iwantmyTVN0W
+AnnyeongCola94
+rosiehues
+catfishhwho
+# 2026-07-07 (Bluesky):
+danthurot.bsky.social
+d-coo.bsky.social
+helloyorick.fightins.online
+renegadekangaroo.bsky.social
+jamestringham.bsky.social
+dennisyslas.bsky.social
+# 2026-07-07 (Mastodon):
+gam3@hostux.social
+mdmrn@mstdn.games
+faxpaladin@mastodon.sdf.org

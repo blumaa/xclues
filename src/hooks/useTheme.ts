@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BRAND_THEMES, DEFAULT_BRAND } from '../themes';
+import { BRAND_THEMES, BRAND_STORAGE_KEY, DEFAULT_BRAND } from '../themes';
 
 type Theme = 'light' | 'dark';
 export type BrandTheme = keyof typeof BRAND_THEMES;
 
 const BRAND_NAMES = Object.keys(BRAND_THEMES) as BrandTheme[];
-const BRAND_STORAGE_KEY = 'xclues-brand-theme';
 const THEME_STORAGE_KEY = 'xclues-theme';
 
 function isValidBrand(value: string): value is BrandTheme {

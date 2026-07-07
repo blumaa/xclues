@@ -23,6 +23,19 @@ describe('App CSS - layout height', () => {
   });
 });
 
+describe('App CSS - carousel viewport overflow', () => {
+  it('clips horizontally but lets tiles overflow vertically (selected bottom-row tiles scale up and must not be cut off)', () => {
+    const block = baseBlock('.carousel-viewport');
+    // A blanket `overflow: hidden` clips the scaled/glowing bottom row vertically.
+    expect(block).not.toMatch(/overflow:\s*hidden/);
+    // Horizontal clip hides the off-screen genre panels...
+    expect(block).toMatch(/overflow-x:\s*clip/);
+    // ...while vertical stays visible so scaled tiles can spill past the grid.
+    // (clip on one axis is the only value that lets the other stay `visible`.)
+    expect(block).toMatch(/overflow-y:\s*visible/);
+  });
+});
+
 describe('App CSS - mobile layout (footer follows grid, NYT-style)', () => {
   it('carousel viewport does not flex-grow on mobile', () => {
     expect(baseBlock('.carousel-viewport')).not.toMatch(/flex\s*:\s*1/);

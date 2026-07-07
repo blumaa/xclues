@@ -35,6 +35,28 @@ New accounts get link posts auto-removed in many subs. Ramp:
 Skip: r/Connections (banned), r/incremental_games (wrong genre), r/DailyGames (collab story sub).
 
 ## Posting log
+- 2026-07-07: r/NYTConnections — Filmclues (filmclues.space), flair "Similar Games", self-post framed
+  as a self-made film Connections board (R4 encourages created boards). No category spoiler in title
+  (R3). Permalink /r/NYTConnections/comments/1upn329/. **SHADOW-FILTERED** (verified 07-07): author-side
+  permalink renders fine (post object t3_1upn329 exists, flair+body intact) BUT absent from
+  r/NYTConnections/new (newest there 54min old; ours ~10min, missing) and score dropped 1→0 (self-upvote
+  stripped) = caught by spam filter, NOT publicly visible. Likely trigger: bare filmclues.space URL in
+  selftext from low-karma u/xClues. **LESSON: author-side "it's live / 1pt / no removal banner" is NOT
+  proof — a shadow-filtered post looks normal to its author. Always verify via /new or logged-out.**
+  Fix path: modmail for approval (R4 welcomes created boards) or delete + repost link-free.
+  First Filmclues post to r/NYTConnections. Game rotated (last Filmclues
+  07-04). NOTE: r/WebGames is now burned for all 3 games within 3mo (Filmclues "(earlier)" undated but
+  risky, Litclues 07-05, Musiclues 06-29) — avoid until dates clear ~3mo.
+- 2026-07-06: r/TriviaChat — Musiclues (musiclues.space) — link post. Title "Musiclues: a daily
+  music-grouping puzzle — sort 16 songs into 4 hidden groups". Permalink /r/TriviaChat/comments/1uopiv6/.
+  Musiclues never posted to r/TriviaChat before → no 3-mo conflict. Different game+sub from 07-05
+  (Litclues→r/WebGames). Live logged-in.
+- 2026-07-05: r/WebGames — Litclues (litclues.space) — link post. Title started "Litclues" (R3),
+  hook = today's flower-in-title category. Permalink /r/WebGames/comments/1unwqmv/. Live logged-in
+  (1pt, 100% up, link intact, no automod removal). Litclues never posted to r/WebGames before → no
+  3-mo repost conflict. Different game+sub from 07-04 (Filmclues→r/TriviaChat). Also posted 1 genuine
+  no-link comment in r/books (Catch-22 "why Doc Daneeka got slugged" thread /comments/1ukowy3/).
+- 2026-07-04: r/TriviaChat — Filmclues (filmclues.space) — link post. Permalink /r/TriviaChat/comments/1un3of1/. Different game+sub from 07-03 Musiclues→r/puzzlevideogames. Logged-out shadow-check pending (owner eyeball in private window; agent env 403s cookieless).
 - 2026-07-02: r/NYTConnections — Litclues (litclues.space), flair "Similar Games", framed as a
   self-made book Connections board. permalink /r/NYTConnections/comments/1ulgytc/. Live logged-in
   (1pt, 100% up, body+flair intact, no automod removal). Logged-OUT shadow-check NOT done — Reddit

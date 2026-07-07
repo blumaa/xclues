@@ -94,7 +94,10 @@ export function Logo({ genre, static: isStatic }: LogoProps) {
             setAnimActive(item);
           }
           if (reelRef.current && itemH > 0) {
-            gsap.set(reelRef.current, { y: -proxy.pos * itemH });
+            // Snap to whole items (same rounding as the label above) so a
+            // frame never parks the reel between two slots — that midway
+            // sliver read as a "strange part of the x" behind the target.
+            gsap.set(reelRef.current, { y: -p * itemH });
           }
         },
         onComplete() {

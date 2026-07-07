@@ -83,6 +83,42 @@ describe("Logo", () => {
     expect(logo?.getAttribute("aria-label")).toBe("xClues");
   });
 
+  it("only ever translates the reel to whole-item positions (no partial frame shows a sliver of the neighbouring slot)", async () => {
+    // jsdom has no layout, so force a measurable item height for the reel.
+    const ITEM_H = 24;
+    const rect = {
+      height: ITEM_H, width: 0, top: 0, left: 0, right: 0, bottom: ITEM_H,
+      x: 0, y: 0, toJSON: () => ({}),
+    };
+    const rectSpy = vi
+      .spyOn(window.Element.prototype, "getBoundingClientRect")
+      .mockReturnValue(rect);
+    const setSpy = vi.spyOn(gsap, "set");
+
+    try {
+      render(<Logo genre="books" />);
+      await flushGsapImport();
+      // Step through the spin so intermediate onUpdate frames actually fire
+      // (a single large jump would skip them and hide a continuous scroll).
+      act(() => { for (let i = 0; i < 60; i++) advanceGSAP(33); });
+
+      const ys = setSpy.mock.calls
+        .map(([, vars]) => (vars as { y?: number })?.y)
+        .filter((y): y is number => typeof y === "number");
+
+      expect(ys.length).toBeGreaterThan(0);
+      // Every reel position must be an exact multiple of the item height —
+      // a fractional multiple parks the reel between two items, exposing the
+      // "strange part of the x" the target should have replaced.
+      for (const y of ys) {
+        expect(Number.isInteger(y / ITEM_H)).toBe(true);
+      }
+    } finally {
+      setSpy.mockRestore();
+      rectSpy.mockRestore();
+    }
+  });
+
   it("always shows Clues text", async () => {
     const { container } = render(<Logo genre="films" />);
     expect(container.textContent).toContain("Clues");

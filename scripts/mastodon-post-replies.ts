@@ -17,36 +17,22 @@ interface Reply {
   inReplyToId: string;
 }
 
+// Drafted 2026-07-07. Fresh accounts only (no repeats of prior days' targets).
 const REPLIES: Reply[] = [
   {
-    label: "@VedaDalsette@mstdn.social",
-    text: `clean board on #1112 — opening blue is a power move 🟦 if you ever want one more grouping puzzle in the daily rotation: filmclues.space, sort 16 films into 4 hidden groups. same "how are these connected" feel, fresh daily, no signup.`,
-    inReplyToId: "116823068135042518",
+    label: "@gam3@hostux.social",
+    text: `opening with a scattered first row and still finishing #1122 clean is the fun kind of recovery 👏 if you ever want another grouping puzzle in the day, filmclues.space — 16 films sorted into 4 hidden groups, same Connections snap. daily, free, no signup.`,
+    inReplyToId: "116877097308074569",
   },
   {
-    label: "@dhsholly@dragonscave.space",
-    text: `that one fought back on #1112 😅 the scramble right before it clicks is the best part. if you want another grouping puzzle for the rotation, litclues.space — 16 books into 4 hidden groups, fresh daily.`,
-    inReplyToId: "116822203610764268",
+    label: "@mdmrn@mstdn.games",
+    text: `one green-purple slip and otherwise a tidy #1121 — that overlap row is always the trap 👏 if the grouping itch wants a book spin, litclues.space: 16 books into 4 hidden groups, Connections-style. daily + free.`,
+    inReplyToId: "116874759406898450",
   },
   {
-    label: "@WiccaCoolMom@sfba.social",
-    text: `spotless #1112, nicely done 👏 if you ever want a second grouping puzzle once the NYT one's done: musiclues.space — sort 16 songs into 4 hidden groups, same satisfying snap. daily, free.`,
-    inReplyToId: "116821782511731154",
-  },
-  {
-    label: "@degroof@mastodon.social",
-    text: `one slip on #1112 but you brought it home 👏 if the grouping itch wants another hit, filmclues.space — 16 films into 4 hidden groups, Connections-style, fresh daily. no signup.`,
-    inReplyToId: "116821707200716663",
-  },
-  {
-    label: "@grizzlyfrog@mastodon.social",
-    text: `clean run on #1111 🟨 if you ever want one more grouping puzzle in the rotation: litclues.space — sort 16 books into 4 hidden groups, same "wait, how are these connected" feel. fresh daily.`,
-    inReplyToId: "116821201404900468",
-  },
-  {
-    label: "@drsbello@mstdn.social",
-    text: `opening purple-first on #1112 is genuinely elite 🟪 if you want another grouping puzzle that rewards spotting the tricky set early, musiclues.space — 16 songs into 4 hidden groups, fresh daily.`,
-    inReplyToId: "116823498650798232",
+    label: "@faxpaladin@mastodon.sdf.org",
+    text: `a crossword-plus-Connections stream is a great puzzle combo 🎵 if you ever want to work a music one into the rotation, musiclues.space — 16 songs sorted into 4 hidden groups, same grouping mechanic. daily, free, no signup.`,
+    inReplyToId: "116874756159557536",
   },
 ];
 

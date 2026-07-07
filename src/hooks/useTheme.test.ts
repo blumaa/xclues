@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useTheme } from './useTheme';
+import { BRAND_STORAGE_KEY } from '../themes';
 
 const TEST_PREFIX = 'test';
 const STORAGE_KEY = `${TEST_PREFIX}-theme`;
@@ -166,14 +167,14 @@ describe('useTheme', () => {
     expect(result.current.brandTheme).toBe('superhuman');
   });
 
-  it('setBrandTheme persists to localStorage key xclues-brand-theme', () => {
+  it('setBrandTheme persists to the versioned brand storage key', () => {
     const { result } = renderHook(() => useTheme(TEST_PREFIX));
 
     act(() => {
       result.current.setBrandTheme('superhuman');
     });
 
-    expect(localStorage.getItem('xclues-brand-theme')).toBe('superhuman');
+    expect(localStorage.getItem(BRAND_STORAGE_KEY)).toBe('superhuman');
   });
 
   it('setBrandTheme sets data-brand on the document root (CSS cascade applies tokens)', () => {

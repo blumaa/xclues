@@ -70,7 +70,12 @@
 .carousel-viewport {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Clip the off-screen genre panels horizontally, but let the bottom row's
+     selected tiles (which scale up + glow) spill past the grid vertically.
+     `clip` on one axis is the only value that permits `visible` on the other —
+     `hidden` would silently force overflow-y to `auto` and re-clip. */
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .carousel-track {

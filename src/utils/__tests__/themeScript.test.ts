@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getThemeInitScript } from '../themeScript';
-import { BRAND_THEMES, DEFAULT_BRAND } from '../../themes';
+import { BRAND_THEMES, BRAND_STORAGE_KEY, DEFAULT_BRAND } from '../../themes';
 
 describe('getThemeInitScript', () => {
   it('returns a string', () => {
@@ -65,5 +65,21 @@ describe('getThemeInitScript', () => {
     expect(script).toContain(`'${DEFAULT_BRAND}'`);
     // valid brand whitelist is embedded so a stale value can't produce an unstyled brand
     expect(script).toContain(JSON.stringify(Object.keys(BRAND_THEMES)));
+  });
+
+  // Old sessions persisted a brand under the unversioned key; reading it back
+  // pinned returning users to the old theme. The key must be versioned so a
+  // bump invalidates every previously stored brand.
+  it('uses a versioned brand storage key', () => {
+    expect(BRAND_STORAGE_KEY).toMatch(/-v\d+$/);
+    expect(getThemeInitScript()).toContain(BRAND_STORAGE_KEY);
+  });
+
+  it('never reads or writes the legacy unversioned brand key', () => {
+    const script = getThemeInitScript();
+    // a bare `xclues-brand-theme'` / `xclues-brand-theme=` (no -vN) would let a
+    // stale brand from an old session win again.
+    expect(script).not.toMatch(/xclues-brand-theme'/);
+    expect(script).not.toMatch(/xclues-brand-theme=/);
   });
 });

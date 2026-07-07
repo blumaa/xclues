@@ -28,8 +28,8 @@ export interface GenrePostConfig {
   hashtags: string;
 }
 
-interface Item { id: number; title: string; artist?: string }
-interface PuzzleGroup {
+interface Item { id: number; title: string; year?: number; artist?: string }
+export interface PuzzleGroup {
   id: string;
   items: Item[];
   connection: string;
@@ -72,6 +72,14 @@ export function getTodayDate(): string {
   const year = now.getUTCFullYear();
   const month = String(now.getUTCMonth() + 1).padStart(2, "0");
   const day = String(now.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function getTomorrowDate(): string {
+  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const year = tomorrow.getUTCFullYear();
+  const month = String(tomorrow.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(tomorrow.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 

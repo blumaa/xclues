@@ -29,6 +29,13 @@ import { pinterestTheme } from './pinterest';
 /** Brand every visitor gets before choosing one — single source of truth. */
 export const DEFAULT_BRAND = 'vercel';
 
+/**
+ * Storage key for the persisted brand. Versioned on purpose: bump the suffix
+ * to invalidate every brand persisted under an older key, so returning sessions
+ * fall back to DEFAULT_BRAND instead of resurrecting a retired theme.
+ */
+export const BRAND_STORAGE_KEY = 'xclues-brand-theme-v2';
+
 export const BRAND_THEMES: Record<string, BrandThemeDefinition> = {
   xclues: xcluesTheme,
   superhuman: superhumanTheme,

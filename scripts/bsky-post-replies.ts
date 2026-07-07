@@ -15,55 +15,43 @@ interface Reply {
   parentCid: string;
 }
 
-// Top-level targets, so root === parent.
+// Top-level targets, so root === parent. Drafted 2026-07-07.
 const REPLIES: Reply[] = [
   {
-    label: "@idontreadwell",
-    text: `skill 94 / luck 76 is a real solve, not a fluke 👏 if you ever want another grouping puzzle in the rotation I built filmclues.space — sort 16 films into 4 hidden groups, same "how are these connected" itch, fresh daily.`,
-    parentUri: "at://did:plc:wwovywc5fzbsp2a4opftbnxc/app.bsky.feed.post/3mpbvzzfl7k23",
-    parentCid: "bafyreidaohg7ug2nsj5wbw46l33tu46hcz2znkj5u6qvcuueimeowoohnq",
+    label: "@danthurot",
+    text: `'rewards creative thinking and semantic interpretation as much as raw factoid retrieval' — that's exactly the line I design to 🎬 filmclues.space: 16 films into 4 hidden groups, the fun's in the overlap traps. daily, free, no signup if you ever want to try one.`,
+    parentUri: "at://did:plc:cbsfyaqlkubkui3zayodl3aw/app.bsky.feed.post/3mpyorkq6hs2c",
+    parentCid: "bafyreickvveu6onhubdrwxv4ikwotu4ob2i5gxteciwbwrhjlcyzrq5gqa",
   },
   {
-    label: "@therealmrsweary",
-    text: `the billiard-ball category was a war crime, you're right 🎱 if you want a grouping puzzle that plays fair I made filmclues.space — 16 films into 4 hidden groups, no "technically a stripe" nonsense. free, daily.`,
-    parentUri: "at://did:plc:dogizyzrqaxdydrsnk74gmoy/app.bsky.feed.post/3mpbwfccmkc2k",
-    parentCid: "bafyreievtombkrtt4pxk5xec6bcuy6yv7olzu3t6bmvb5jhobzfjznnrsi",
+    label: "@d-coo",
+    text: `a 'Tom Hanks pretending to be someone else' teaser is a perfect little spot-the-connection hook 🎬 that's the whole game at filmclues.space — 16 films into 4 hidden groups, figure out the shared thread. daily, free, no signup.`,
+    parentUri: "at://did:plc:hsxaifl5bo43dv3o5sfreorb/app.bsky.feed.post/3mpyelljnqc24",
+    parentCid: "bafyreib7llu5tnfat6hqhxwma7pcitjlb5vhyz5emphcqigrdv43442dzq",
   },
   {
-    label: "@ravinder70",
-    text: `Sunday Connections as solace is the correct use of it 😄 if you want a second hit once it's done, musiclues.space — sort 16 songs into 4 hidden groups, same satisfying snap. fresh daily.`,
-    parentUri: "at://did:plc:6rtb3zoosw7aeksbqnrx6v7d/app.bsky.feed.post/3mpdjqsg5tk2b",
-    parentCid: "bafyreibwkysrcy7kv2hlxje2fnl6mfjzwnx57h7wh76v6gvwebnnym5l3q",
+    label: "@helloyorick",
+    text: `the Swayze-skydiving-compromise bit is elite Point Break trivia 🪂 you'd like filmclues.space then — 16 films sorted into 4 hidden groups, half the fun is the deep-cut connections. daily, free, no signup.`,
+    parentUri: "at://did:plc:o5mp4orkhjrmcgv2c7bj4azz/app.bsky.feed.post/3mpwrxztkvk26",
+    parentCid: "bafyreigyq5nmnw4simfmjbjck3dn5bb7lhydrybtr5xqrwpctzggd3rmxe",
   },
   {
-    label: "@temoku",
-    text: `that one-category-instantly, rest-is-fog feeling is the whole game 😄 if you like the grouping mechanic I made musiclues.space — 16 songs into 4 hidden groups, daily. same click when a set finally lands.`,
-    parentUri: "at://did:plc:lxqp4wsmw2zbknuu3cv7znol/app.bsky.feed.post/3mpchowdras2l",
-    parentCid: "bafyreic6ltr26hd4m4nmxqmv5ul6cx6zctmpvzcuawcuasj2wpnvhwqllm",
+    label: "@renegadekangaroo",
+    text: `FFX as Uematsu's peak is a hill worth dying on — 'To Zanarkand' alone makes the case 🎵 if you ever want a music-grouping break, musiclues.space: 16 songs into 4 hidden groups, Connections-style. daily, no signup.`,
+    parentUri: "at://did:plc:2f6vb3pusi3gvhaewoxr463o/app.bsky.feed.post/3mpyoatod2k2l",
+    parentCid: "bafyreiapegasatg2r6sx6kbh3dbi4t7m7alffyntahpfmaiff5xbajl3ju",
   },
   {
-    label: "@bookmeister",
-    text: `the Monopoly category was genuinely unfair, valid complaint 📚 if you want grouping puzzles that keep it tight, litclues.space — sort 16 books into 4 hidden groups, fresh daily. same itch, fewer cheap shots.`,
-    parentUri: "at://did:plc:br3qbx25njo5zytafcuii2pm/app.bsky.feed.post/3mpb5zqt7p22m",
-    parentCid: "bafyreibp337doox2qa7qo2bw4r75pxw6apbuhkjc2dn6kpf32nd6uzxl5a",
+    label: "@jamestringham",
+    text: `getting blue first and chalking it up to a childhood well spent is the most wholesome Connections flex 📚 if you want another grouping puzzle in the rotation, litclues.space — 16 books into 4 hidden groups. daily, free, no signup.`,
+    parentUri: "at://did:plc:aytwes4vyimod4eubypxrnpy/app.bsky.feed.post/3mpxwjtzv2s2w",
+    parentCid: "bafyreielpp7zoeufq5bhyvevgwaggtu2vm7dmjf3qq2i5x2wjljv5sykpi",
   },
   {
-    label: "@sydspages",
-    text: `five stars for House of Open Wounds, noted 📚 if you ever want a bookish puzzle break I made litclues.space — sort 16 books into 4 hidden groups, Connections-style, daily.`,
-    parentUri: "at://did:plc:4s6yddaeom2i5a2tytwvlkq5/app.bsky.feed.post/3mp4mixoxqs2z",
-    parentCid: "bafyreignonqfgyjrogwhjtqqokqjguuihdxcblun4r3m2xkercibsnnhvq",
-  },
-  {
-    label: "@jjellybeano",
-    text: `an 80s movie-music trivia night is exactly my crowd 🎬🎵 made musiclues.space if you want a daily version — sort 16 songs into 4 hidden groups, Connections-style. free, no signup.`,
-    parentUri: "at://did:plc:3odrein2jgtclkg2cmpp54vb/app.bsky.feed.post/3mpcrlgtx3s2j",
-    parentCid: "bafyreif4pqqbrxt2xikzkzjhpiyyz32kht2zrg663xk2225tcmtqokxz5y",
-  },
-  {
-    label: "@cici6923",
-    text: `No Such Thing As A Fish is such a good trivia rabbit hole 🐟 if you like that pull, filmclues.space might land — 16 films into 4 hidden groups, a daily Connections-style puzzle. free.`,
-    parentUri: "at://did:plc:uktv7elssirwzbpxuvqapvrq/app.bsky.feed.post/3mp6f7efzic2q",
-    parentCid: "bafyreifmqcw7a2mb7ib3wwkbtehhszx2ltcntwg44ste3wo45b6cnjxq7u",
+    label: "@dennisyslas",
+    text: `a clean Strands + Connections sweep in one sitting is a real flex 🎵 if you want one more for the daily circuit, musiclues.space — 16 songs sorted into 4 hidden groups, Connections-style. free, no signup.`,
+    parentUri: "at://did:plc:kimze5xm4hjczgtbftfs3q4e/app.bsky.feed.post/3mpvk3vld5mbo",
+    parentCid: "bafyreic33badiinhpcjlsz2yotx6uuz64eqgxiitfxgcl4y2am5a7ebnim",
   },
 ];
 
