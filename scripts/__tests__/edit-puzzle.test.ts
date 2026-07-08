@@ -48,10 +48,16 @@ describe('applyPuzzleEdit', () => {
     expect(out[1].connection).toBe('Contains water');
   });
 
-  it('replaces a group difficulty', () => {
+  it('replaces a group difficulty and syncs the color', () => {
     const edit: PuzzleEdit = { group: 1, difficulty: 'hardest' };
     const out = applyPuzzleEdit(groups, edit);
     expect(out[0].difficulty).toBe('hardest');
+    // Color must follow difficulty — the game paints tiles by color.
+    expect(out[0].color).toBe('purple');
+  });
+
+  it('throws on an unknown difficulty', () => {
+    expect(() => applyPuzzleEdit(groups, { group: 1, difficulty: 'trivial' })).toThrow();
   });
 
   it('does not mutate the input', () => {

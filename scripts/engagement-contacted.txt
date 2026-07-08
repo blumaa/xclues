@@ -174,3 +174,19 @@ dennisyslas.bsky.social
 gam3@hostux.social
 mdmrn@mstdn.games
 faxpaladin@mastodon.sdf.org
+# 2026-07-08 (Bluesky):
+mutablesoul.bsky.social
+multicitrusmarg.bsky.social
+smylers.uk
+moviepostmortem.bsky.social
+jhammersley.bsky.social
+# 2026-07-08 (Mastodon):
+flyingsquirrel@mastodon.social
+VedaDalsette@mstdn.social
+# 2026-07-08 (X):
+Kikko_Mang
+GigglingGanon
+swiftbenot
+Deaureliapalmer
+EthanMary42828
+cornellooo

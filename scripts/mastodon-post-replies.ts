@@ -17,22 +17,18 @@ interface Reply {
   inReplyToId: string;
 }
 
-// Drafted 2026-07-07. Fresh accounts only (no repeats of prior days' targets).
+// Drafted 2026-07-08. Fresh accounts only (no repeats of prior days' targets).
+// Links carry ?ref=mastodon for first-party attribution in /analidiots.
 const REPLIES: Reply[] = [
   {
-    label: "@gam3@hostux.social",
-    text: `opening with a scattered first row and still finishing #1122 clean is the fun kind of recovery 👏 if you ever want another grouping puzzle in the day, filmclues.space — 16 films sorted into 4 hidden groups, same Connections snap. daily, free, no signup.`,
-    inReplyToId: "116877097308074569",
+    label: "@flyingsquirrel@mastodon.social",
+    text: `The post-hint guilt is real 😄 a solve's a solve in my book. If you want a no-guilt grouping fix, Filmclues is a fun one: 16 films into 4 hidden categories. https://filmclues.space/?ref=mastodon`,
+    inReplyToId: "116797621059268840",
   },
   {
-    label: "@mdmrn@mstdn.games",
-    text: `one green-purple slip and otherwise a tidy #1121 — that overlap row is always the trap 👏 if the grouping itch wants a book spin, litclues.space: 16 books into 4 hidden groups, Connections-style. daily + free.`,
-    inReplyToId: "116874759406898450",
-  },
-  {
-    label: "@faxpaladin@mastodon.sdf.org",
-    text: `a crossword-plus-Connections stream is a great puzzle combo 🎵 if you ever want to work a music one into the rotation, musiclues.space — 16 songs sorted into 4 hidden groups, same grouping mechanic. daily, free, no signup.`,
-    inReplyToId: "116874756159557536",
+    label: "@VedaDalsette@mstdn.social",
+    text: `"No soup for you" is exactly how a missed Connections feels 😄 some days purple just refuses. If you like the format, Filmclues runs the same 4-group puzzle with movies — good redemption after a rough NYT day. https://filmclues.space/?ref=mastodon`,
+    inReplyToId: "116880040339849148",
   },
 ];
 

@@ -21,7 +21,7 @@ import {
   type Genre,
   type PuzzleGroup,
 } from './post-daily-bluesky';
-import { getPuzzleClient, fetchPuzzleRow, writeGroups } from './puzzle-db';
+import { getPuzzleClient, fetchPuzzleRow, writeGroups, colorForDifficulty } from './puzzle-db';
 
 export interface NewItem {
   title: string;
@@ -57,7 +57,11 @@ export function replacePuzzleGroup(
   }));
   const g = next[gi];
   if (repl.connection !== undefined) g.connection = repl.connection;
-  if (repl.difficulty !== undefined) g.difficulty = repl.difficulty;
+  if (repl.difficulty !== undefined) {
+    g.difficulty = repl.difficulty;
+    // Color and difficulty are one concept — keep them in lockstep.
+    g.color = colorForDifficulty(repl.difficulty);
+  }
 
   // Rebuild each item from scratch (reusing the id) so no stale field survives.
   g.items = repl.items.map((ni, i) => ({

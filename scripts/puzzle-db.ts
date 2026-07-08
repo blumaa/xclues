@@ -5,6 +5,26 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Genre, PuzzleGroup } from './post-daily-bluesky';
 
+// A group's difficulty and color are the same concept (the game paints tiles by
+// `color`; `difficulty` is metadata). They must never desync, so any tool that
+// sets one derives the other from this single map.
+export const DIFFICULTY_TO_COLOR: Record<string, string> = {
+  easy: 'yellow',
+  medium: 'green',
+  hard: 'blue',
+  hardest: 'purple',
+};
+
+export function colorForDifficulty(difficulty: string): string {
+  const color = DIFFICULTY_TO_COLOR[difficulty];
+  if (!color) {
+    throw new Error(
+      `Unknown difficulty "${difficulty}". Expected one of: ${Object.keys(DIFFICULTY_TO_COLOR).join(', ')}.`,
+    );
+  }
+  return color;
+}
+
 export function getPuzzleClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

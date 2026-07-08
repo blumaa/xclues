@@ -88,13 +88,14 @@ describe('replacePuzzleGroup', () => {
     expect(out[1].items[0].year).toBeUndefined();
   });
 
-  it('optionally changes difficulty, preserves color', () => {
+  it('changes difficulty and syncs the color', () => {
     const out = replacePuzzleGroup(groups, 1, {
       difficulty: 'hardest',
       items: [{ title: 'A' }, { title: 'B' }, { title: 'C' }, { title: 'D' }],
     });
     expect(out[0].difficulty).toBe('hardest');
-    expect(out[0].color).toBe('yellow');
+    // Color must follow difficulty — the game paints tiles by color.
+    expect(out[0].color).toBe('purple');
   });
 
   it('does not mutate the input', () => {

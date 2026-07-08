@@ -21,7 +21,7 @@ import {
   type Genre,
   type PuzzleGroup,
 } from './post-daily-bluesky';
-import { getPuzzleClient, fetchPuzzleRow, writeGroups } from './puzzle-db';
+import { getPuzzleClient, fetchPuzzleRow, writeGroups, colorForDifficulty } from './puzzle-db';
 
 export interface PuzzleEdit {
   /** 1-based group index. */
@@ -57,7 +57,11 @@ export function applyPuzzleEdit(groups: PuzzleGroup[], edit: PuzzleEdit): Puzzle
   const group = next[gi];
 
   if (edit.connection !== undefined) group.connection = edit.connection;
-  if (edit.difficulty !== undefined) group.difficulty = edit.difficulty;
+  if (edit.difficulty !== undefined) {
+    group.difficulty = edit.difficulty;
+    // Color and difficulty are one concept — keep them in lockstep.
+    group.color = colorForDifficulty(edit.difficulty);
+  }
 
   if (hasItemFields) {
     const ii = (edit.item as number) - 1;
