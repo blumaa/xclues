@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { Header } from "./header";
 import { Footer } from "../src/components/organisms/Footer";
 import { NativeSetup } from "../src/components/NativeSetup";
+import { AttributionCapture } from "../src/components/AttributionCapture";
 import { AppSplash } from "../src/components/AppSplash";
 import { getThemeInitScript } from "../src/utils/themeScript";
 import "../src/index.css";
@@ -76,6 +77,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <NativeSetup />
+        <AttributionCapture />
         <AppSplash />
         <Providers>
           <div className="app-layout">

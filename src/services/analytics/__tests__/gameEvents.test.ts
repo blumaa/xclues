@@ -7,10 +7,12 @@ beforeEach(() => {
   fetchMock.mockReset();
   fetchMock.mockResolvedValue({ ok: true, status: 201 });
   vi.stubGlobal('fetch', fetchMock);
+  sessionStorage.clear();
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  sessionStorage.clear();
 });
 
 describe('trackGameEvent', () => {
@@ -27,6 +29,7 @@ describe('trackGameEvent', () => {
           genre: 'films',
           puzzle_date: '2026-04-19',
           user_id: null,
+          source: null,
         }),
       }),
     );
@@ -55,7 +58,39 @@ describe('trackGameEvent', () => {
       genre: 'music',
       puzzle_date: '2026-04-19',
       user_id: 'user-123',
+      source: null,
     });
+  });
+
+  it('includes the session-captured attribution source', async () => {
+    sessionStorage.setItem('xclues-ref', 'reddit');
+
+    await trackGameEvent('started', { genre: 'films', puzzleDate: '2026-04-19' });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.source).toBe('reddit');
+  });
+
+  it('does not POST in local development', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+
+    await trackGameEvent('started', { genre: 'films', puzzleDate: '2026-04-19' });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it('lets meta.source override the captured source', async () => {
+    sessionStorage.setItem('xclues-ref', 'reddit');
+
+    await trackGameEvent('started', {
+      genre: 'films',
+      puzzleDate: '2026-04-19',
+      source: 'bluesky',
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.source).toBe('bluesky');
   });
 
   it('sends a lost event', async () => {

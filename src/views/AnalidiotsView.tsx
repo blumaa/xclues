@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { AggregatedEvents, DailyBucket, GenreAggregations, WeeklyBucket } from "../services/analytics/aggregateEvents";
+import type { AggregatedEvents, DailyBucket, GenreAggregations, SourceBucket, WeeklyBucket } from "../services/analytics/aggregateEvents";
 import { paginate } from "../utils/paginate";
 import "./AnalidiotsView.css";
 
@@ -14,6 +14,7 @@ export interface FeedbackRow {
 
 interface AnalidiotsViewProps {
   data: GenreAggregations;
+  bySource: SourceBucket[];
   feedback: FeedbackRow[];
 }
 
@@ -188,7 +189,7 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
   );
 }
 
-export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
+export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps) {
   const [activeTab, setActiveTab] = useState<GenreTabKey>('all');
   const [feedbackPage, setFeedbackPage] = useState(1);
 
@@ -223,6 +224,41 @@ export function AnalidiotsView({ data, feedback }: AnalidiotsViewProps) {
       </nav>
 
       <GenreSection data={data[activeTab]} />
+
+      <section className="analidiots__section">
+        <h2 className="analidiots__section-title">
+          Traffic sources
+          <span className="analidiots__section-meta">
+            plays by channel &middot; last 30 days
+          </span>
+        </h2>
+        {bySource.length === 0 ? (
+          <p className="analidiots__empty">No attributed traffic yet.</p>
+        ) : (
+          <table className="analidiots__table">
+            <thead>
+              <tr>
+                <th className="analidiots__cell analidiots__cell--label">Source</th>
+                <th className="analidiots__cell analidiots__cell--num">Started</th>
+                <th className="analidiots__cell analidiots__cell--num">Won</th>
+                <th className="analidiots__cell analidiots__cell--num">Win rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bySource.map((s) => (
+                <tr key={s.source} className="analidiots__row">
+                  <td className="analidiots__cell analidiots__cell--label">{s.source}</td>
+                  <td className="analidiots__cell analidiots__cell--num">{s.started}</td>
+                  <td className="analidiots__cell analidiots__cell--num">{s.won}</td>
+                  <td className="analidiots__cell analidiots__cell--num">
+                    {s.started > 0 ? `${Math.round((s.won / s.started) * 100)}%` : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
 
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">

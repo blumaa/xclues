@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalidiotsView, type FeedbackRow } from "./AnalidiotsView";
-import { aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
+import { aggregateBySource, aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
 
 const meta: Meta<typeof AnalidiotsView> = {
   title: "Views/AnalidiotsView",
@@ -15,6 +15,8 @@ type Story = StoryObj<typeof AnalidiotsView>;
 
 const NOW = new Date("2026-04-19T12:00:00Z");
 const GENRES = ['films', 'books', 'music'] as const;
+// null = organic; the rest exercise the traffic-source panel.
+const SOURCES = ['reddit', 'bluesky', 'mastodon', null] as const;
 
 function seedRows(): GameEventRow[] {
   const rows: GameEventRow[] = [];
@@ -24,17 +26,27 @@ function seedRows(): GameEventRow[] {
     const iso = d.toISOString();
 
     for (const genre of GENRES) {
+      const source = SOURCES[(daysAgo + GENRES.indexOf(genre)) % SOURCES.length];
       const started = Math.floor(8 + Math.random() * 20);
       const won = Math.floor(started * (0.55 + Math.random() * 0.25));
       const lost = started - won - Math.floor(Math.random() * 3);
 
-      for (let i = 0; i < started; i++) rows.push({ event_type: "started", created_at: iso, genre });
-      for (let i = 0; i < won; i++) rows.push({ event_type: "won", created_at: iso, genre });
-      for (let i = 0; i < Math.max(lost, 0); i++) rows.push({ event_type: "lost", created_at: iso, genre });
+      for (let i = 0; i < started; i++) rows.push({ event_type: "started", created_at: iso, genre, source });
+      for (let i = 0; i < won; i++) rows.push({ event_type: "won", created_at: iso, genre, source });
+      for (let i = 0; i < Math.max(lost, 0); i++) rows.push({ event_type: "lost", created_at: iso, genre, source });
     }
   }
   return rows;
 }
+
+const REALISTIC_ROWS = seedRows();
+const SPARSE_ROWS: GameEventRow[] = [
+  { event_type: "started", created_at: "2026-04-19T10:00:00Z", genre: "films", source: "reddit" },
+  { event_type: "won", created_at: "2026-04-19T10:05:00Z", genre: "films", source: "reddit" },
+  { event_type: "started", created_at: "2026-04-18T14:00:00Z", genre: "books", source: "bluesky" },
+  { event_type: "lost", created_at: "2026-04-18T14:10:00Z", genre: "books", source: "bluesky" },
+  { event_type: "started", created_at: "2026-04-17T09:00:00Z", genre: "music", source: null },
+];
 
 const FEEDBACK_SAMPLE: FeedbackRow[] = [
   {
@@ -62,7 +74,8 @@ const FEEDBACK_SAMPLE: FeedbackRow[] = [
 
 export const Realistic: Story = {
   args: {
-    data: aggregateEventsByGenre(seedRows(), NOW),
+    data: aggregateEventsByGenre(REALISTIC_ROWS, NOW),
+    bySource: aggregateBySource(REALISTIC_ROWS, NOW),
     feedback: FEEDBACK_SAMPLE,
   },
 };
@@ -70,22 +83,15 @@ export const Realistic: Story = {
 export const Empty: Story = {
   args: {
     data: aggregateEventsByGenre([], NOW),
+    bySource: aggregateBySource([], NOW),
     feedback: [],
   },
 };
 
 export const SparseEarlyDays: Story = {
   args: {
-    data: aggregateEventsByGenre(
-      [
-        { event_type: "started", created_at: "2026-04-19T10:00:00Z", genre: "films" },
-        { event_type: "won", created_at: "2026-04-19T10:05:00Z", genre: "films" },
-        { event_type: "started", created_at: "2026-04-18T14:00:00Z", genre: "books" },
-        { event_type: "lost", created_at: "2026-04-18T14:10:00Z", genre: "books" },
-        { event_type: "started", created_at: "2026-04-17T09:00:00Z", genre: "music" },
-      ],
-      NOW,
-    ),
+    data: aggregateEventsByGenre(SPARSE_ROWS, NOW),
+    bySource: aggregateBySource(SPARSE_ROWS, NOW),
     feedback: [
       {
         id: 1,

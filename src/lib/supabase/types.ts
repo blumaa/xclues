@@ -169,6 +169,7 @@ export type Database = {
           genre: string
           id: number
           puzzle_date: string
+          source: string | null
           user_id: string | null
         }
         Insert: {
@@ -177,6 +178,7 @@ export type Database = {
           genre: string
           id?: never
           puzzle_date: string
+          source?: string | null
           user_id?: string | null
         }
         Update: {
@@ -185,6 +187,7 @@ export type Database = {
           genre?: string
           id?: never
           puzzle_date?: string
+          source?: string | null
           user_id?: string | null
         }
         Relationships: []

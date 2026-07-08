@@ -4,6 +4,14 @@ export interface GameEventRow {
   event_type: EventType;
   created_at: string;
   genre?: string;
+  source?: string | null;
+}
+
+export interface SourceBucket {
+  source: string;
+  started: number;
+  won: number;
+  lost: number;
 }
 
 export interface DailyBucket {
@@ -79,6 +87,33 @@ export function aggregateEvents(rows: GameEventRow[], now: Date = new Date()): A
   }
 
   return { daily, weekly };
+}
+
+const SOURCE_WINDOW_DAYS = 30;
+
+// Groups plays by traffic source over the trailing window. Untagged traffic
+// (organic search, dark social) collapses into a single 'organic' bucket.
+// Sorted by started desc so the highest-volume channels surface first.
+export function aggregateBySource(
+  rows: GameEventRow[],
+  now: Date = new Date(),
+  windowDays: number = SOURCE_WINDOW_DAYS,
+): SourceBucket[] {
+  const cutoff = addUTCDays(now, -windowDays).getTime();
+  const index = new Map<string, SourceBucket>();
+
+  for (const row of rows) {
+    if (new Date(row.created_at).getTime() < cutoff) continue;
+    const source = row.source ?? 'organic';
+    let bucket = index.get(source);
+    if (!bucket) {
+      bucket = { source, started: 0, won: 0, lost: 0 };
+      index.set(source, bucket);
+    }
+    bucket[row.event_type] += 1;
+  }
+
+  return [...index.values()].sort((a, b) => b.started - a.started);
 }
 
 export type GenreAggregations = Record<'films' | 'books' | 'music' | 'all', AggregatedEvents>;

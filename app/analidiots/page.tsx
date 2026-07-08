@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServiceRoleClient } from "../../src/lib/supabase/server";
 import {
+  aggregateBySource,
   aggregateEventsByGenre,
   type GameEventRow,
 } from "../../src/services/analytics/aggregateEvents";
@@ -31,7 +32,7 @@ async function fetchAllEvents(supabase: SupabaseClient, since: string): Promise<
   while (true) {
     const { data } = await supabase
       .from("game_events")
-      .select("event_type, created_at, genre")
+      .select("event_type, created_at, genre, source")
       .gte("created_at", since)
       .range(from, from + PAGE_SIZE - 1);
 
@@ -81,6 +82,7 @@ export default async function AnalidiotsPage({
   }
 
   const data = aggregateEventsByGenre(events);
+  const bySource = aggregateBySource(events);
 
-  return <AnalidiotsView data={data} feedback={feedback} />;
+  return <AnalidiotsView data={data} bySource={bySource} feedback={feedback} />;
 }

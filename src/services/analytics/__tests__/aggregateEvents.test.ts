@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aggregateEvents, aggregateEventsByGenre, type GameEventRow } from '../aggregateEvents';
+import { aggregateEvents, aggregateEventsByGenre, aggregateBySource, type GameEventRow } from '../aggregateEvents';
 
 function row(event_type: 'started' | 'won' | 'lost', created_at: string, genre = 'films'): GameEventRow {
   return { event_type, created_at, genre };
@@ -130,5 +130,47 @@ describe('aggregateEventsByGenre', () => {
     const result = aggregateEventsByGenre(rows, now);
 
     expect(result.all.daily[0]).toMatchObject({ date: '2026-04-19', started: 2, won: 1, lost: 0 });
+  });
+});
+
+describe('aggregateBySource', () => {
+  const now = new Date('2026-04-19T12:00:00Z');
+
+  it('groups plays by source and sorts by started desc', () => {
+    const rows: GameEventRow[] = [
+      { event_type: 'started', created_at: '2026-04-19T10:00:00Z', source: 'reddit' },
+      { event_type: 'won', created_at: '2026-04-19T10:05:00Z', source: 'reddit' },
+      { event_type: 'started', created_at: '2026-04-19T11:00:00Z', source: 'bluesky' },
+      { event_type: 'started', created_at: '2026-04-18T09:00:00Z', source: 'reddit' },
+    ];
+
+    const result = aggregateBySource(rows, now);
+
+    expect(result).toEqual([
+      { source: 'reddit', started: 2, won: 1, lost: 0 },
+      { source: 'bluesky', started: 1, won: 0, lost: 0 },
+    ]);
+  });
+
+  it('collapses null/undefined source into an organic bucket', () => {
+    const rows: GameEventRow[] = [
+      { event_type: 'started', created_at: '2026-04-19T10:00:00Z', source: null },
+      { event_type: 'started', created_at: '2026-04-19T10:01:00Z' },
+    ];
+
+    const result = aggregateBySource(rows, now);
+
+    expect(result).toEqual([{ source: 'organic', started: 2, won: 0, lost: 0 }]);
+  });
+
+  it('excludes rows outside the trailing window', () => {
+    const rows: GameEventRow[] = [
+      { event_type: 'started', created_at: '2026-04-19T10:00:00Z', source: 'reddit' },
+      { event_type: 'started', created_at: '2026-01-01T10:00:00Z', source: 'reddit' },
+    ];
+
+    const result = aggregateBySource(rows, now, 30);
+
+    expect(result).toEqual([{ source: 'reddit', started: 1, won: 0, lost: 0 }]);
   });
 });
