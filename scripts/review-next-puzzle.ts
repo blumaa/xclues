@@ -1,5 +1,5 @@
 /**
- * Daily-program step: review tomorrow's puzzle for each genre.
+ * Review tomorrow's puzzle for each genre.
  *
  * Prints the next-day puzzle (films / music / books) so the owner can eyeball
  * it and approve, or ask for adjustments (see scripts/edit-puzzle.ts).
@@ -14,12 +14,12 @@ import {
   GENRE_CONFIGS,
   getTomorrowDate,
   fetchPuzzle,
-  type GenrePostConfig,
+  type GenreConfig,
   type Puzzle,
-} from './post-daily-bluesky';
+} from './puzzle-model';
 
 export function formatPuzzleForReview(
-  config: GenrePostConfig,
+  config: GenreConfig,
   date: string,
   puzzle: Puzzle | null,
 ): string {

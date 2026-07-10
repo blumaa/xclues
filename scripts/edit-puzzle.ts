@@ -1,5 +1,5 @@
 /**
- * Daily-program step: adjust a puzzle after reviewing it.
+ * Adjust a puzzle after reviewing it.
  *
  * Patches the `puzzles.groups` JSONB snapshot the game actually reads. Group and
  * item indices are 1-based to match the numbering in `bun run puzzle:review`.
@@ -7,7 +7,7 @@
  * Scope: item text (title/artist), a group's connection, or a group's
  * difficulty. Structural swaps (replace a whole group) belong in the admin app
  * (puzzlecules), which keeps `group_ids` in sync — this tool only touches the
- * self-contained `groups` snapshot, so use it for in-place daily fixes.
+ * self-contained `groups` snapshot, so use it for in-place fixes.
  *
  * Usage:
  *   bun run puzzle:edit --genre films --date 2026-07-07 --group 2 --item 3 --title "Alien"
@@ -20,7 +20,7 @@ import {
   getTomorrowDate,
   type Genre,
   type PuzzleGroup,
-} from './post-daily-bluesky';
+} from './puzzle-model';
 import { getPuzzleClient, fetchPuzzleRow, writeGroups, colorForDifficulty } from './puzzle-db';
 
 export interface PuzzleEdit {

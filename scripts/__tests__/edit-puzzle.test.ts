@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { applyPuzzleEdit, type PuzzleEdit } from '../edit-puzzle';
-import type { PuzzleGroup } from '../post-daily-bluesky';
+import type { PuzzleGroup } from '../puzzle-model';
 
 const groups: PuzzleGroup[] = [
   {

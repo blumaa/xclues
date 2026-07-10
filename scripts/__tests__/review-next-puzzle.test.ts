@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { formatPuzzleForReview } from '../review-next-puzzle';
-import { GENRE_CONFIGS, type Puzzle } from '../post-daily-bluesky';
+import { GENRE_CONFIGS, type Puzzle } from '../puzzle-model';
 
 const puzzle: Puzzle = {
   id: 'p1',

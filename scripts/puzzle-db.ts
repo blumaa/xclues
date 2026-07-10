@@ -3,7 +3,7 @@
  * (review / edit / set-group). Service-role or anon key from .env.local.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Genre, PuzzleGroup } from './post-daily-bluesky';
+import type { Genre, PuzzleGroup } from './puzzle-model';
 
 // A group's difficulty and color are the same concept (the game paints tiles by
 // `color`; `difficulty` is metadata). They must never desync, so any tool that

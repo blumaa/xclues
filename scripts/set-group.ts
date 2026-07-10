@@ -1,8 +1,8 @@
 /**
- * Daily-program step: replace a whole puzzle group with a new connection + 4 items.
+ * Replace a whole puzzle group with a new connection + 4 items.
  *
  * This is the routine "swap group N for a brand-new connection" path used during the
- * daily puzzle review. Reuses the group's existing item ids and color; sets a new
+ * puzzle review. Reuses the group's existing item ids and color; sets a new
  * connection, the four items (with correct year / artist metadata), and optionally a
  * new difficulty. Writes the `puzzles.groups` JSONB the game reads.
  *
@@ -20,7 +20,7 @@ import {
   getTomorrowDate,
   type Genre,
   type PuzzleGroup,
-} from './post-daily-bluesky';
+} from './puzzle-model';
 import { getPuzzleClient, fetchPuzzleRow, writeGroups, colorForDifficulty } from './puzzle-db';
 
 export interface NewItem {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { replacePuzzleGroup, parseItemSpec } from '../set-group';
-import type { PuzzleGroup } from '../post-daily-bluesky';
+import type { PuzzleGroup } from '../puzzle-model';
 
 const groups: PuzzleGroup[] = [
   {
