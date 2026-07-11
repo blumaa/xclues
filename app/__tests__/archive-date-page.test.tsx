@@ -40,4 +40,18 @@ describe("archive date page", () => {
       container.querySelectorAll(".game-grid > .group-card")
     ).toHaveLength(4);
   });
+
+  it("404s today's live puzzle so its answers aren't revealed in the archive", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-11T12:00:00Z"));
+
+    // notFound() throws; the page must not render today's board.
+    await expect(
+      ArchivePage({
+        params: Promise.resolve({ genre: "films", date: "2026-07-11" }),
+      })
+    ).rejects.toThrow();
+
+    vi.useRealTimers();
+  });
 });

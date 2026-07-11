@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { isValidDateFormat, isNotFutureDate, formatDateForDisplay } from "../dateValidation";
+import { isValidDateFormat, isPastDate, formatDateForDisplay } from "../dateValidation";
 
 describe("isValidDateFormat", () => {
   it("returns true for valid YYYY-MM-DD", () => {
@@ -24,32 +24,32 @@ describe("isValidDateFormat", () => {
   });
 });
 
-describe("isNotFutureDate", () => {
+describe("isPastDate", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("returns true for today", () => {
+  it("returns false for today (the live puzzle must never leak into the archive)", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-14T12:00:00Z"));
 
-    expect(isNotFutureDate("2026-04-14")).toBe(true);
+    expect(isPastDate("2026-04-14")).toBe(false);
   });
 
   it("returns true for past dates", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-14T12:00:00Z"));
 
-    expect(isNotFutureDate("2026-04-13")).toBe(true);
-    expect(isNotFutureDate("2025-01-01")).toBe(true);
+    expect(isPastDate("2026-04-13")).toBe(true);
+    expect(isPastDate("2025-01-01")).toBe(true);
   });
 
   it("returns false for future dates", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-14T12:00:00Z"));
 
-    expect(isNotFutureDate("2026-04-15")).toBe(false);
-    expect(isNotFutureDate("2027-01-01")).toBe(false);
+    expect(isPastDate("2026-04-15")).toBe(false);
+    expect(isPastDate("2027-01-01")).toBe(false);
   });
 });
 

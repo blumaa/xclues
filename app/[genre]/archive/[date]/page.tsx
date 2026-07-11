@@ -6,7 +6,7 @@ import {
 } from "../../../../src/lib/supabase/puzzleQueries";
 import {
   isValidDateFormat,
-  isNotFutureDate,
+  isPastDate,
   formatDateForDisplay,
 } from "../../../../src/utils/dateValidation";
 import { getAdjacentDates } from "../../../../src/utils/archiveDates";
@@ -63,7 +63,9 @@ export default async function ArchivePage({
 
   if (!isValidGenre(genre)) notFound();
   if (!isValidDateFormat(date)) notFound();
-  if (!isNotFutureDate(date)) notFound();
+  // Only past puzzles are archived; today's live puzzle and future dates 404 so
+  // players can't read the answers early.
+  if (!isPastDate(date)) notFound();
 
   const puzzle = await fetchPuzzleByDate(genre, date);
   if (!puzzle) notFound();

@@ -281,6 +281,24 @@ describe("fetchAllPublishedDates", () => {
 
     expect(result.map((r) => r.puzzle_date)).toEqual(["2020-01-02", "2020-01-01"]);
   });
+
+  it("excludes today's live puzzle so players can't read the answers early", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-14T12:00:00Z"));
+    setupMockChain();
+    mockOrder.mockResolvedValue({
+      data: [
+        { genre: "films", puzzle_date: "2026-04-14" }, // today — live game, must be dropped
+        { genre: "films", puzzle_date: "2026-04-13" }, // yesterday — archived
+      ],
+      error: null,
+    });
+
+    const result = await fetchAllPublishedDates();
+
+    expect(result.map((r) => r.puzzle_date)).toEqual(["2026-04-13"]);
+    vi.useRealTimers();
+  });
 });
 
 describe("fetchPublishedDatesForGenre", () => {

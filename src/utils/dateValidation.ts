@@ -13,8 +13,13 @@ export function getUtcToday(): string {
   return `${year}-${month}-${day}`;
 }
 
-export function isNotFutureDate(date: string): boolean {
-  return date <= getUtcToday();
+/**
+ * True only for dates strictly before today (UTC). Today's puzzle is the live,
+ * in-progress game, so it must be excluded from every archive surface (hub list,
+ * sitemap, date pages) or players could read the answers early and cheat.
+ */
+export function isPastDate(date: string): boolean {
+  return date < getUtcToday();
 }
 
 export function formatDateForDisplay(date: string): string {

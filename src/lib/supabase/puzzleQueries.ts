@@ -4,7 +4,7 @@ import { ensureUniqueItemIds } from "../puzzle/uniqueItemIds";
 import { RawPuzzleRowSchema } from "../schemas/puzzle";
 import { withRetry, isTransientDbError } from "../retry";
 import type { Genre } from "../../config/seoConfig";
-import { isNotFutureDate } from "../../utils/dateValidation";
+import { isPastDate } from "../../utils/dateValidation";
 import type {
   SavedPuzzle,
   Group,
@@ -107,12 +107,12 @@ export async function fetchAllPublishedDates(): Promise<Array<{ genre: string; p
 
   if (error || !data) return [];
 
-  // Exclude future-scheduled puzzles: they are `published` but their puzzle_date
-  // hasn't arrived, so their pages 404 (the date page guards with isNotFutureDate).
-  // Filtering here keeps the public surfaces (sitemap + archive hub) in sync with
-  // what's actually viewable.
+  // Only expose past puzzles. Future-scheduled puzzles haven't arrived yet, and
+  // today's puzzle is the live game — surfacing either would let players read the
+  // answers early. The date page guards with isPastDate, so filtering here keeps
+  // the public surfaces (sitemap + archive hub) in sync with what's viewable.
   return (data as Array<{ genre: string; puzzle_date: string }>).filter((row) =>
-    isNotFutureDate(row.puzzle_date),
+    isPastDate(row.puzzle_date),
   );
 }
 
