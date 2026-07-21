@@ -49,6 +49,14 @@ describe('GameBoard CSS - tablet/desktop board sizing', () => {
   it('board never flex-fills — uniform layout at every width (natural height, controls under grid)', () => {
     expect(css).not.toMatch(/\.game-board\s*\{[^}]*flex:\s*1/);
   });
+
+  it('grid has a definite width so solving a group never narrows the board', () => {
+    // On tablet+ the grid is centered with `margin: 0 auto`, which disables flex-stretch.
+    // Without an explicit width the grid shrink-to-fits its content, so removing a solved
+    // group's 4 tiles narrows the columns and the whole board. A definite width pins it.
+    const gridBlock = css.match(/\.game-grid\s*\{[^}]*display:\s*grid[^}]*\}/)?.[0] ?? '';
+    expect(gridBlock).toMatch(/(?<!-)width:\s*100%/);
+  });
 });
 
 describe('GameBoard CSS - no flex-basis 0', () => {

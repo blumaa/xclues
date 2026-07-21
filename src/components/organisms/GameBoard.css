@@ -33,6 +33,10 @@
   grid-template-rows: repeat(4, var(--grid-row-height));
   gap: var(--grid-gap);
   padding: 0 var(--xclues-spacing-2);
+  /* Definite width: on tablet+ the grid is centered with `margin: 0 auto`, which disables
+     flex-stretch. Without an explicit width the grid shrink-to-fits its content, so removing
+     a solved group's tiles narrows the columns and the board. width:100% + max-width pins it. */
+  width: 100%;
   max-width: 100%;
 }
 
