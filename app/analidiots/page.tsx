@@ -7,10 +7,9 @@ import {
   aggregateEventsByGenre,
   type GameEventRow,
 } from "../../src/services/analytics/aggregateEvents";
-import {
-  AnalidiotsView,
-  type FeedbackRow,
-} from "../../src/views/AnalidiotsView";
+import { AnalidiotsView } from "../../src/views/AnalidiotsView";
+import type { SurveyResponseRow } from "../../src/services/feedback/aggregateSurvey";
+import { SURVEY_VERSION } from "../../src/services/feedback/survey";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -63,21 +62,24 @@ export default async function AnalidiotsPage({
   const since = sinceIso();
 
   let events: GameEventRow[] = [];
-  let feedback: FeedbackRow[] = [];
+  let feedback: SurveyResponseRow[] = [];
 
   if (supabase) {
     const [fetchedEvents, feedbackResult] = await Promise.all([
       fetchAllEvents(supabase, since),
       supabase
         .from("feedback")
-        .select("id, rating, comment, created_at")
+        .select(
+          "id, created_at, frequency, difficulty, favorite_genre, pmf, improvement",
+        )
+        .eq("survey_version", SURVEY_VERSION)
         .order("created_at", { ascending: false })
         .limit(500),
     ]);
 
     events = fetchedEvents;
     if (feedbackResult.data) {
-      feedback = feedbackResult.data as FeedbackRow[];
+      feedback = feedbackResult.data as SurveyResponseRow[];
     }
   }
 

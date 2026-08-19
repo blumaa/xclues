@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AnalidiotsView, type FeedbackRow } from "./AnalidiotsView";
+import { AnalidiotsView } from "./AnalidiotsView";
+import type { SurveyResponseRow } from "../services/feedback/aggregateSurvey";
 import { aggregateBySource, aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
 
 const meta: Meta<typeof AnalidiotsView> = {
@@ -48,29 +49,63 @@ const SPARSE_ROWS: GameEventRow[] = [
   { event_type: "started", created_at: "2026-04-17T09:00:00Z", genre: "music", source: null },
 ];
 
-const FEEDBACK_SAMPLE: FeedbackRow[] = [
+const FEEDBACK_SAMPLE: SurveyResponseRow[] = [
   {
     id: 12,
-    rating: 5,
-    comment: "Love this game! Play it every morning with coffee.",
     created_at: "2026-04-19T08:14:00Z",
+    frequency: "daily",
+    difficulty: "just_right",
+    favorite_genre: "films",
+    pmf: "very_disappointed",
+    improvement: "Love this game! Play it every morning with coffee.",
   },
   {
     id: 11,
-    rating: 4,
-    comment: "Books genre could use more classic literature clues.",
     created_at: "2026-04-18T21:02:00Z",
+    frequency: "weekly",
+    difficulty: "a_bit_hard",
+    favorite_genre: "books",
+    pmf: "very_disappointed",
+    improvement: "Books genre could use more classic literature clues.",
   },
-  { id: 10, rating: 5, comment: null, created_at: "2026-04-18T11:30:00Z" },
+  {
+    id: 10,
+    created_at: "2026-04-18T11:30:00Z",
+    frequency: "daily",
+    difficulty: "just_right",
+    favorite_genre: "all",
+    pmf: "somewhat_disappointed",
+    improvement: null,
+  },
   {
     id: 9,
-    rating: 3,
-    comment: "Fun but the music genre is too hard for me.",
     created_at: "2026-04-17T19:45:00Z",
+    frequency: "sometimes",
+    difficulty: "way_too_hard",
+    favorite_genre: "music",
+    pmf: "somewhat_disappointed",
+    improvement: "Fun but the music genre is too hard for me.",
   },
-  { id: 8, rating: 4, comment: "Nice little break each day.", created_at: "2026-04-16T07:20:00Z" },
-  { id: 7, rating: 2, comment: "Some connections feel arbitrary.", created_at: "2026-04-15T16:08:00Z" },
+  {
+    id: 8,
+    created_at: "2026-04-16T07:20:00Z",
+    frequency: "weekly",
+    difficulty: "a_bit_easy",
+    favorite_genre: "films",
+    pmf: "very_disappointed",
+    improvement: "Nice little break each day.",
+  },
+  {
+    id: 7,
+    created_at: "2026-04-15T16:08:00Z",
+    frequency: "first_time",
+    difficulty: "a_bit_hard",
+    favorite_genre: "films",
+    pmf: "not_disappointed",
+    improvement: "Some connections feel arbitrary.",
+  },
 ];
+
 
 export const Realistic: Story = {
   args: {
@@ -95,9 +130,12 @@ export const SparseEarlyDays: Story = {
     feedback: [
       {
         id: 1,
-        rating: 5,
-        comment: "Just found this — so good!",
         created_at: "2026-04-19T10:30:00Z",
+        frequency: "first_time",
+        difficulty: "just_right",
+        favorite_genre: "films",
+        pmf: "somewhat_disappointed",
+        improvement: "Just found this — so good!",
       },
     ],
   },

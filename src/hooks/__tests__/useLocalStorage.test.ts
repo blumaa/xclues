@@ -56,4 +56,46 @@ describe('useLocalStorage', () => {
     result.current[1](5);
     expect(JSON.parse(window.localStorage.getItem('w-key')!)).toBe(5);
   });
+
+  it('reports hydrated only after localStorage has been read', async () => {
+    window.localStorage.setItem('h-key', JSON.stringify('stored'));
+    const { result } = renderHook(() => useLocalStorage<string>('h-key', ''));
+
+    // First render must not claim to know the persisted value yet: callers
+    // gate one-time UI on it and would flash it to returning users.
+    expect(result.current[2]).toBe(false);
+
+    await waitFor(() => expect(result.current[2]).toBe(true));
+    expect(result.current[0]).toBe('stored');
+  });
+
+  it('reports hydrated when the key holds nothing', async () => {
+    const { result } = renderHook(() => useLocalStorage<string>('empty-key', ''));
+    await waitFor(() => expect(result.current[2]).toBe(true));
+    expect(result.current[0]).toBe('');
+  });
+
+  it('reports hydrated when the stored value fails the schema', async () => {
+    window.localStorage.setItem('bad-h', JSON.stringify({ a: 'nope' }));
+    const { result } = renderHook(() =>
+      useLocalStorage<{ a: number }>('bad-h', { a: 0 }, schema),
+    );
+    await waitFor(() => expect(result.current[2]).toBe(true));
+    expect(result.current[0]).toEqual({ a: 0 });
+  });
+
+  it('re-arms hydration when the key changes', async () => {
+    window.localStorage.setItem('k1', JSON.stringify('one'));
+    window.localStorage.setItem('k2', JSON.stringify('two'));
+    const { result, rerender } = renderHook(
+      ({ key }) => useLocalStorage<string>(key, ''),
+      { initialProps: { key: 'k1' } },
+    );
+    await waitFor(() => expect(result.current[0]).toBe('one'));
+
+    rerender({ key: 'k2' });
+    expect(result.current[2]).toBe(false);
+    await waitFor(() => expect(result.current[0]).toBe('two'));
+    expect(result.current[2]).toBe(true);
+  });
 });

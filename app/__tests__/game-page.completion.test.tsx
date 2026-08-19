@@ -190,7 +190,11 @@ describe('GamePage footer fade', () => {
   it('renders the how-to-play hint under the game controls, not inside the board', async () => {
     localStorage.removeItem('xclues-how-to-play-seen');
     const { container } = renderFresh();
-    await waitFor(() => expect(container.querySelector('.game-footer')).toBeTruthy());
+    // The banner renders only after useLocalStorage has read the key, so it
+    // never flashes at players who already dismissed it.
+    await waitFor(() =>
+      expect(container.querySelector('[class*="how-to-play"]')).toBeTruthy(),
+    );
 
     const footer = container.querySelector('.game-footer')!;
     const children = [...footer.children].map((c) => c.className);

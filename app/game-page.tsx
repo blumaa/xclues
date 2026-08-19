@@ -14,7 +14,11 @@ import { guessesToColorHistory } from "../src/utils/guessHistory";
 import { VALID_GENRES, type Genre } from "../src/config/seoConfig";
 import type { SavedPuzzle } from "../src/types";
 import { trackGameEvent } from "../src/services/analytics/gameEvents";
-import { FeedbackModal, FEEDBACK_STORAGE_KEY } from "../src/components/organisms/FeedbackModal";
+import { FeedbackModal } from "../src/components/organisms/FeedbackModal";
+import {
+  FEEDBACK_STORAGE_KEY,
+  FEEDBACK_MIN_GAMES,
+} from "../src/services/feedback/survey";
 import { useLocalStorage } from "../src/hooks/useLocalStorage";
 
 const STATS_STORAGE_KEY = "xclues-stats";
@@ -131,16 +135,12 @@ function GenrePanel({ genre, puzzle, puzzleDate }: {
   );
 }
 
-const FEEDBACK_THRESHOLD = 3;
-
 export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
   const activeGenre = useAppStore((s) => s.activeGenre);
   const { showInfo } = useToast();
   const gameCount = useStatsStore((s) => s.gameHistory.length);
-  const [feedbackDismissed, setFeedbackDismissed] = useLocalStorage<string>(
-    FEEDBACK_STORAGE_KEY,
-    "",
-  );
+  const [feedbackSubmitted, setFeedbackSubmitted, feedbackHydrated] =
+    useLocalStorage<string>(FEEDBACK_STORAGE_KEY, "");
 
   const startedGenres = useRef(new Set<string>());
   const initialized = useAppStore((s) => s.initialized);
@@ -169,7 +169,12 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
     void trackGameEvent('started', { genre: activeGenre, puzzleDate });
   }, [initialized, activeGenre, puzzleDate]);
 
-  const feedbackOpen = gameCount >= FEEDBACK_THRESHOLD && feedbackDismissed !== "1";
+  // Gated on hydration: before localStorage is read the flag reads as unset,
+  // which would flash the survey at everyone who already answered it.
+  const feedbackOpen =
+    feedbackHydrated &&
+    gameCount >= FEEDBACK_MIN_GAMES &&
+    feedbackSubmitted !== "1";
 
   // Active genre state for footer controls
   const gameStatus = useGameStore(activeGenre, (s) => s.gameStatus);
@@ -220,7 +225,10 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
         <HowToPlayBanner />
       </div>
 
-      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackDismissed("1")} />
+      <FeedbackModal
+        isOpen={feedbackOpen}
+        onSubmitted={() => setFeedbackSubmitted("1")}
+      />
     </div>
   );
 }
