@@ -1,70 +1,138 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 
 const { submitFeedbackMock } = vi.hoisted(() => ({ submitFeedbackMock: vi.fn() }));
 
-vi.mock('../../../services/analytics/submitFeedback', () => ({
+vi.mock('../../../services/feedback/submitFeedback', () => ({
   submitFeedback: submitFeedbackMock,
 }));
 
-import { FeedbackModal, FEEDBACK_STORAGE_KEY } from '../FeedbackModal';
+import { FeedbackModal } from '../FeedbackModal';
+import { SURVEY_QUESTIONS, IMPROVEMENT_PROMPT } from '../../../services/feedback/survey';
+
+function answerAll() {
+  for (const q of SURVEY_QUESTIONS) {
+    const group = screen.getByRole('radiogroup', { name: q.prompt });
+    fireEvent.click(within(group).getByRole('radio', { name: q.options[0].label }));
+  }
+}
 
 describe('FeedbackModal', () => {
   beforeEach(() => {
-    localStorage.clear();
     submitFeedbackMock.mockReset();
-    submitFeedbackMock.mockResolvedValue(undefined);
+    submitFeedbackMock.mockResolvedValue(true);
   });
 
-  it('renders five star buttons and a comment textarea when open', () => {
-    render(<FeedbackModal isOpen onClose={vi.fn()} />);
-    const stars = screen.getAllByRole('radio');
-    expect(stars).toHaveLength(5);
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  it('renders every survey question with all of its options', () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+
+    for (const q of SURVEY_QUESTIONS) {
+      const group = screen.getByRole('radiogroup', { name: q.prompt });
+      expect(within(group).getAllByRole('radio')).toHaveLength(q.options.length);
+    }
+  });
+
+  it('renders the optional free-text question', () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+    expect(screen.getByRole('textbox', { name: IMPROVEMENT_PROMPT })).toBeInTheDocument();
   });
 
   it('does not render content when closed', () => {
-    render(<FeedbackModal isOpen={false} onClose={vi.fn()} />);
+    render(<FeedbackModal isOpen={false} onSubmitted={vi.fn()} />);
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
-  it('submitting calls submitFeedback with rating + comment and sets the flag', () => {
-    const onClose = vi.fn();
-    render(<FeedbackModal isOpen onClose={onClose} />);
+  it('offers no way to dismiss the survey', () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: /skip|close|not now|no thanks/i })).toBeNull();
+  });
 
-    const stars = screen.getAllByRole('radio');
-    fireEvent.click(stars[3]); // 4 stars (index 3 = 4th)
+  it('ignores Escape', () => {
+    const onSubmitted = vi.fn();
+    render(<FeedbackModal isOpen onSubmitted={onSubmitted} />);
 
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'nice puzzle' } });
+    fireEvent.keyDown(document.body, { key: 'Escape', code: 'Escape' });
+
+    expect(onSubmitted).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox', { name: IMPROVEMENT_PROMPT })).toBeInTheDocument();
+  });
+
+  it('disables submit until every choice question is answered', () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+    const submit = screen.getByRole('button', { name: /submit/i });
+    expect(submit).toBeDisabled();
+
+    for (const q of SURVEY_QUESTIONS.slice(0, -1)) {
+      const group = screen.getByRole('radiogroup', { name: q.prompt });
+      fireEvent.click(within(group).getByRole('radio', { name: q.options[0].label }));
+    }
+    expect(submit).toBeDisabled();
+
+    const last = SURVEY_QUESTIONS[SURVEY_QUESTIONS.length - 1];
+    const lastGroup = screen.getByRole('radiogroup', { name: last.prompt });
+    fireEvent.click(within(lastGroup).getByRole('radio', { name: last.options[0].label }));
+    expect(submit).toBeEnabled();
+  });
+
+  it('does not require the free text to submit', async () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+    answerAll();
     fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
-    expect(submitFeedbackMock).toHaveBeenCalledWith({ rating: 4, comment: 'nice puzzle' });
-    expect(localStorage.getItem(FEEDBACK_STORAGE_KEY)).toBe('1');
-    expect(onClose).toHaveBeenCalled();
+    await waitFor(() => expect(submitFeedbackMock).toHaveBeenCalled());
+    expect(submitFeedbackMock.mock.calls[0][0].improvement).toBe('');
   });
 
-  it('skip sets the flag without submitting feedback', () => {
-    const onClose = vi.fn();
-    render(<FeedbackModal isOpen onClose={onClose} />);
-
-    fireEvent.click(screen.getByRole('button', { name: /skip|no thanks/i }));
-
-    expect(submitFeedbackMock).not.toHaveBeenCalled();
-    expect(localStorage.getItem(FEEDBACK_STORAGE_KEY)).toBe('1');
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it('disables submit when no rating is selected', () => {
-    render(<FeedbackModal isOpen onClose={vi.fn()} />);
-    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
-  });
-
-  it('omits the comment field from submission when empty', () => {
-    render(<FeedbackModal isOpen onClose={vi.fn()} />);
-
-    fireEvent.click(screen.getAllByRole('radio')[4]); // 5 stars
+  it('submits every answer and the free text', async () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} />);
+    answerAll();
+    fireEvent.change(screen.getByRole('textbox', { name: IMPROVEMENT_PROMPT }), {
+      target: { value: 'more music' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
-    expect(submitFeedbackMock).toHaveBeenCalledWith({ rating: 5, comment: null });
+    await waitFor(() =>
+      expect(submitFeedbackMock).toHaveBeenCalledWith(
+        {
+          frequency: SURVEY_QUESTIONS[0].options[0].value,
+          difficulty: SURVEY_QUESTIONS[1].options[0].value,
+          favorite_genre: SURVEY_QUESTIONS[2].options[0].value,
+          pmf: SURVEY_QUESTIONS[3].options[0].value,
+          improvement: 'more music',
+        },
+        undefined,
+      ),
+    );
+  });
+
+  it('passes the user id through when signed in', async () => {
+    render(<FeedbackModal isOpen onSubmitted={vi.fn()} userId="user-1" />);
+    answerAll();
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() =>
+      expect(submitFeedbackMock).toHaveBeenCalledWith(expect.anything(), 'user-1'),
+    );
+  });
+
+  it('reports submission only after the write succeeds', async () => {
+    const onSubmitted = vi.fn();
+    render(<FeedbackModal isOpen onSubmitted={onSubmitted} />);
+    answerAll();
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() => expect(onSubmitted).toHaveBeenCalled());
+  });
+
+  it('stays open and shows an error when the write fails', async () => {
+    submitFeedbackMock.mockResolvedValue(false);
+    const onSubmitted = vi.fn();
+    render(<FeedbackModal isOpen onSubmitted={onSubmitted} />);
+    answerAll();
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
+    expect(onSubmitted).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeEnabled();
   });
 });

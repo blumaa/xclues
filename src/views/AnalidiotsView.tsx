@@ -1,21 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import type { AggregatedEvents, DailyBucket, GenreAggregations, SourceBucket, WeeklyBucket } from "../services/analytics/aggregateEvents";
 import { paginate } from "../utils/paginate";
+import {
+  aggregateSurvey,
+  type SurveyResponseRow,
+} from "../services/feedback/aggregateSurvey";
 import "./AnalidiotsView.css";
-
-export interface FeedbackRow {
-  id: number;
-  rating: number;
-  comment: string | null;
-  created_at: string;
-}
 
 interface AnalidiotsViewProps {
   data: GenreAggregations;
   bySource: SourceBucket[];
-  feedback: FeedbackRow[];
+  feedback: SurveyResponseRow[];
 }
 
 const PAGE_SIZE = 10;
@@ -28,10 +25,6 @@ const GENRE_TABS = [
 ] as const;
 
 type GenreTabKey = (typeof GENRE_TABS)[number]['key'];
-
-function ratingStars(n: number): string {
-  return "★".repeat(n) + "☆".repeat(5 - n);
-}
 
 function formatTimestamp(iso: string): string {
   const d = new Date(iso);
@@ -193,12 +186,8 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
   const [activeTab, setActiveTab] = useState<GenreTabKey>('all');
   const [feedbackPage, setFeedbackPage] = useState(1);
 
-  const avgRating =
-    feedback.length > 0
-      ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(2)
-      : "—";
-
-  const feedbackPaginated = paginate(feedback, feedbackPage, PAGE_SIZE);
+  const survey = aggregateSurvey(feedback);
+  const improvementsPaginated = paginate(survey.improvements, feedbackPage, PAGE_SIZE);
 
   return (
     <div className="analidiots">
@@ -262,47 +251,87 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
 
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">
-          Feedback
+          Survey
           <span className="analidiots__section-meta">
-            {feedback.length} submission{feedback.length === 1 ? "" : "s"} &middot; avg {avgRating}
+            {survey.total} response{survey.total === 1 ? "" : "s"}
+            {survey.pmfScore !== null && (
+              <> &middot; PMF {survey.pmfScore.toFixed(0)}%</>
+            )}
           </span>
         </h2>
-        {feedback.length === 0 ? (
-          <p className="analidiots__empty">No feedback yet.</p>
+        {survey.total === 0 ? (
+          <p className="analidiots__empty">No responses yet.</p>
+        ) : (
+          <div className="analidiots__distributions">
+            {survey.questions.map((question) => (
+              <div key={question.id} className="analidiots__distribution">
+                <h3 className="analidiots__distribution-title">
+                  {question.prompt}
+                  <span className="analidiots__section-meta">n={question.total}</span>
+                </h3>
+                {question.buckets.map((bucket) => (
+                  <div key={bucket.value} className="analidiots__bar-row">
+                    <span className="analidiots__bar-label">{bucket.label}</span>
+                    <span className="analidiots__bar-track">
+                      {/* Width is data-driven, so it comes in as a custom
+                          property; every visual rule stays in the CSS file. */}
+                      <span
+                        className="analidiots__bar-fill"
+                        style={{ "--pct": `${bucket.pct}%` } as CSSProperties}
+                      />
+                    </span>
+                    <span className="analidiots__bar-value">
+                      {bucket.pct.toFixed(0)}% ({bucket.count})
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="analidiots__section">
+        <h2 className="analidiots__section-title">
+          What would make it better
+          <span className="analidiots__section-meta">
+            {survey.improvements.length} written answer
+            {survey.improvements.length === 1 ? "" : "s"}
+          </span>
+        </h2>
+        {survey.improvements.length === 0 ? (
+          <p className="analidiots__empty">No written answers yet.</p>
         ) : (
           <>
             <table className="analidiots__table">
               <thead>
                 <tr>
                   <th className="analidiots__cell analidiots__cell--label">When</th>
-                  <th className="analidiots__cell analidiots__cell--num">Rating</th>
-                  <th className="analidiots__cell">Comment</th>
+                  <th className="analidiots__cell">Answer</th>
                 </tr>
               </thead>
               <tbody>
-                {feedbackPaginated.items.map((f) => (
-                  <tr key={f.id} className="analidiots__row">
+                {improvementsPaginated.items.map((row) => (
+                  <tr key={row.id} className="analidiots__row">
                     <td className="analidiots__cell analidiots__cell--label">
-                      {formatTimestamp(f.created_at)}
-                    </td>
-                    <td className="analidiots__cell analidiots__cell--num analidiots__rating">
-                      <span aria-label={`${f.rating} out of 5`}>{ratingStars(f.rating)}</span>
+                      {formatTimestamp(row.created_at)}
                     </td>
                     <td className="analidiots__cell analidiots__comment">
-                      {f.comment ?? <span className="analidiots__muted">&mdash;</span>}
+                      {row.improvement}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <Pagination
-              page={feedbackPaginated.page}
-              totalPages={feedbackPaginated.totalPages}
+              page={improvementsPaginated.page}
+              totalPages={improvementsPaginated.totalPages}
               onChange={setFeedbackPage}
             />
           </>
         )}
       </section>
+
     </div>
   );
 }

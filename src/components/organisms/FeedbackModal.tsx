@@ -3,110 +3,144 @@
 import { useState } from "react";
 import { XModal } from "../atoms/XModal";
 import { XButton, XText, XHeading } from "../atoms";
-import { submitFeedback } from "../../services/analytics/submitFeedback";
+import { submitFeedback } from "../../services/feedback/submitFeedback";
+import {
+  IMPROVEMENT_PROMPT,
+  SURVEY_QUESTIONS,
+  isSurveyComplete,
+  type SurveyAnswers,
+  type SurveyQuestion,
+} from "../../services/feedback/survey";
 import "./FeedbackModal.css";
-
-export const FEEDBACK_STORAGE_KEY = "xclues-feedback-shown";
 
 interface FeedbackModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  /** Called once the response has actually been written. */
+  onSubmitted: () => void;
   userId?: string | null;
 }
 
-function StarRow({
+function ChoiceRow({
+  question,
   value,
   onChange,
 }: {
-  value: number;
-  onChange: (n: number) => void;
+  question: SurveyQuestion;
+  value: string | undefined;
+  onChange: (value: string) => void;
 }) {
   return (
-    <div className="feedback-modal__stars" role="radiogroup" aria-label="Rating">
-      {[1, 2, 3, 4, 5].map((n) => {
-        const selected = value >= n;
-        return (
+    <fieldset className="feedback-modal__question">
+      <legend className="feedback-modal__prompt">{question.prompt}</legend>
+      <div
+        className="feedback-modal__options"
+        role="radiogroup"
+        aria-label={question.prompt}
+      >
+        {question.options.map((option) => (
           <button
-            key={n}
+            key={option.value}
             type="button"
             role="radio"
-            aria-checked={value === n}
-            aria-label={`${n} star${n > 1 ? "s" : ""}`}
+            aria-checked={value === option.value}
             className={
-              "feedback-modal__star" +
-              (selected ? " feedback-modal__star--selected" : "")
+              "feedback-modal__option" +
+              (value === option.value
+                ? " feedback-modal__option--selected"
+                : "")
             }
-            onClick={() => onChange(n)}
+            onClick={() => onChange(option.value)}
           >
-            {selected ? "★" : "☆"}
+            {option.label}
           </button>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 
-function setShownFlag() {
-  try {
-    localStorage.setItem(FEEDBACK_STORAGE_KEY, "1");
-  } catch {
-    // localStorage unavailable — swallow.
-  }
-}
+export function FeedbackModal({
+  isOpen,
+  onSubmitted,
+  userId,
+}: FeedbackModalProps) {
+  const [answers, setAnswers] = useState<SurveyAnswers>({ improvement: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-export function FeedbackModal({ isOpen, onClose, userId }: FeedbackModalProps) {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const handleSubmit = async () => {
+    if (!isSurveyComplete(answers) || submitting) return;
+    setSubmitting(true);
+    setFailed(false);
 
-  const handleSubmit = () => {
-    if (rating === 0) return;
-    const trimmed = comment.trim();
-    void submitFeedback({
-      rating,
-      comment: trimmed.length > 0 ? trimmed : null,
-      userId,
-    });
-    setShownFlag();
-    onClose();
-  };
+    const saved = await submitFeedback(answers, userId);
 
-  const handleSkip = () => {
-    setShownFlag();
-    onClose();
+    setSubmitting(false);
+    // Only hand control back on a successful write: the caller burns a
+    // one-time flag on this callback, so a silent failure would cost us the
+    // response forever.
+    if (saved) onSubmitted();
+    else setFailed(true);
   };
 
   return (
-    <XModal isOpen={isOpen} onClose={handleSkip} title="Rate today's puzzle">
+    // Not dismissable by design — this survey is answered, not skipped.
+    <XModal
+      isOpen={isOpen}
+      onClose={() => {}}
+      dismissable={false}
+      title="Quick questions about xClues"
+    >
       <div className="feedback-modal">
         <XHeading level={2} responsive>
-          How was it?
+          Quick questions
         </XHeading>
         <XText size="sm">
-          Tap a star to rate, and leave a comment if you want.
+          Four taps and you are back to the puzzle. It helps us more than you
+          would think.
         </XText>
 
-        <StarRow value={rating} onChange={setRating} />
+        {SURVEY_QUESTIONS.map((question) => (
+          <ChoiceRow
+            key={question.id}
+            question={question}
+            value={answers[question.id]}
+            onChange={(value) =>
+              setAnswers((prev) => ({ ...prev, [question.id]: value }))
+            }
+          />
+        ))}
 
-        <textarea
-          className="feedback-modal__comment"
-          placeholder="Optional comment"
-          aria-label="Optional comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows={3}
-        />
+        <fieldset className="feedback-modal__question">
+          <legend className="feedback-modal__prompt">
+            {IMPROVEMENT_PROMPT}
+          </legend>
+          <textarea
+            className="feedback-modal__comment"
+            placeholder="Optional"
+            aria-label={IMPROVEMENT_PROMPT}
+            value={answers.improvement ?? ""}
+            onChange={(e) =>
+              setAnswers((prev) => ({ ...prev, improvement: e.target.value }))
+            }
+            rows={3}
+          />
+        </fieldset>
+
+        {failed && (
+          <XText size="sm" role="alert">
+            That did not save. Check your connection and try again.
+          </XText>
+        )}
 
         <div className="feedback-modal__actions">
-          <XButton variant="ghost" size="sm" onClick={handleSkip}>
-            Skip
-          </XButton>
           <XButton
             variant="primary"
             size="sm"
-            onClick={handleSubmit}
-            disabled={rating === 0}
+            onClick={() => void handleSubmit()}
+            disabled={!isSurveyComplete(answers) || submitting}
           >
-            Submit
+            {submitting ? "Sending…" : "Submit"}
           </XButton>
         </div>
       </div>

@@ -5,6 +5,11 @@ import type { ZodType } from 'zod';
  * SSR-safe hook for accessing localStorage.
  * Initial state is the provided initialValue, then it hydrates from localStorage on mount.
  *
+ * Returns `[value, setValue, hydrated]`. `hydrated` is false until localStorage
+ * has actually been read: the value is `initialValue` on the first render
+ * whether or not anything is stored, so any one-time UI gated on the stored
+ * value must wait for this flag or it flashes to people who already saw it.
+ *
  * Pass an optional Zod `schema` to validate persisted data at this boundary:
  * localStorage is external, untyped input (it may be stale, tampered, or from an
  * older app version). When validation fails the stored value is ignored and the
@@ -16,6 +21,10 @@ export function useLocalStorage<T>(
   schema?: ZodType<T>,
 ) {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
+  // Which key has been read, not a boolean: a key change re-arms hydration
+  // by comparison alone, so the effect body never has to reset state.
+  const [hydratedKey, setHydratedKey] = useState<string | null>(null);
+  const hydrated = hydratedKey === key;
 
   // Hydrate from localStorage when the key changes. We intentionally do NOT
   // depend on storedValue: object/array values fail reference equality on every
@@ -24,39 +33,47 @@ export function useLocalStorage<T>(
   // value is unchanged, avoiding needless downstream re-renders.
   useEffect(() => {
     let rafId: number | undefined;
-    try {
-      const item = window.localStorage.getItem(key);
-      if (item !== null) {
-        const raw = JSON.parse(item) as unknown;
-        let value: T | undefined;
-        if (schema) {
-          const result = schema.safeParse(raw);
-          if (result.success) {
-            value = result.data;
-          } else {
-            console.error(
-              `Invalid localStorage value for key "${key}", ignoring:`,
-              result.error,
-            );
-          }
-        } else {
-          value = raw as T;
-        }
-        if (value !== undefined) {
-          const next = value;
-          // Defer via rAF (not a synchronous setState in the effect body) and use
-          // a functional update that keeps the previous reference when the
-          // serialized value is unchanged — object/array values would otherwise
-          // fail reference equality and loop forever.
-          rafId = requestAnimationFrame(() =>
-            setStoredValue((prev) =>
-              JSON.stringify(prev) === JSON.stringify(next) ? prev : next,
-            ),
+    // Deferred to the same rAF as the value so callers never observe
+    // hydrated=true alongside a value that has not landed yet.
+    const finish = (next?: T) => {
+      rafId = requestAnimationFrame(() => {
+        if (next !== undefined) {
+          setStoredValue((prev) =>
+            JSON.stringify(prev) === JSON.stringify(next) ? prev : next,
           );
         }
+        setHydratedKey(key);
+      });
+    };
+
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item === null) {
+        finish();
+        return () => {
+          if (rafId !== undefined) window.cancelAnimationFrame(rafId);
+        };
       }
+
+      const raw = JSON.parse(item) as unknown;
+      let value: T | undefined;
+      if (schema) {
+        const result = schema.safeParse(raw);
+        if (result.success) {
+          value = result.data;
+        } else {
+          console.error(
+            `Invalid localStorage value for key "${key}", ignoring:`,
+            result.error,
+          );
+        }
+      } else {
+        value = raw as T;
+      }
+      finish(value);
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
+      finish();
     }
     return () => {
       if (rafId !== undefined) window.cancelAnimationFrame(rafId);
@@ -75,5 +92,5 @@ export function useLocalStorage<T>(
     }
   };
 
-  return [storedValue, setValue] as const;
+  return [storedValue, setValue, hydrated] as const;
 }

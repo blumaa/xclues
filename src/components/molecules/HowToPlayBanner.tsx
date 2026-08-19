@@ -5,9 +5,11 @@ import "./HowToPlayBanner.css";
 const STORAGE_KEY = "xclues-how-to-play-seen";
 
 export function HowToPlayBanner() {
-  const [seen, setSeen] = useLocalStorage(STORAGE_KEY, "0");
+  const [seen, setSeen, hydrated] = useLocalStorage(STORAGE_KEY, "0");
 
-  if (seen !== "0") return null;
+  // Wait for the read: until then `seen` is the default, so returning players
+  // would see the banner flash back in on every load.
+  if (!hydrated || seen !== "0") return null;
 
   return (
     <div className="how-to-play-banner">

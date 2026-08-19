@@ -4,13 +4,19 @@ import { HowToPlayBanner } from '../HowToPlayBanner';
 
 // Mock useLocalStorage
 let mockStoredValue = '0';
+let mockHydrated = true;
 vi.mock('../../../hooks/useLocalStorage', () => ({
-  useLocalStorage: () => [mockStoredValue, vi.fn((val: string) => { mockStoredValue = val; })],
+  useLocalStorage: () => [
+    mockStoredValue,
+    vi.fn((val: string) => { mockStoredValue = val; }),
+    mockHydrated,
+  ],
 }));
 
 describe('HowToPlayBanner', () => {
   beforeEach(() => {
     mockStoredValue = '0';
+    mockHydrated = true;
   });
 
   it('renders banner text when not dismissed', () => {
@@ -28,6 +34,12 @@ describe('HowToPlayBanner', () => {
     const { container } = render(<HowToPlayBanner />);
     expect(container.querySelector('.xmodal__overlay')).toBeNull();
     expect(container.querySelector('[role="dialog"]')).toBeNull();
+  });
+
+  it('renders nothing until localStorage has been read', () => {
+    mockHydrated = false;
+    const { container } = render(<HowToPlayBanner />);
+    expect(container.innerHTML).toBe('');
   });
 
   it('has a dismiss button', () => {

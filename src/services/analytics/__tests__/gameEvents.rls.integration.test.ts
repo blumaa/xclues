@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
+import { SURVEY_VERSION } from '../../feedback/survey';
 
 function loadEnvLocal(): Record<string, string> {
   try {
@@ -41,7 +42,7 @@ async function cleanup(table: 'game_events' | 'feedback', column: string, value:
 describeIf('Supabase anon INSERT grants (integration)', () => {
   afterAll(async () => {
     await cleanup('game_events', 'genre', TEST_GENRE);
-    await cleanup('feedback', 'comment', TEST_GENRE);
+    await cleanup('feedback', 'improvement', TEST_GENRE);
   });
 
   it('anon role can insert into game_events', async () => {
@@ -74,8 +75,12 @@ describeIf('Supabase anon INSERT grants (integration)', () => {
         Prefer: 'return=minimal',
       },
       body: JSON.stringify({
-        rating: 5,
-        comment: TEST_GENRE,
+        survey_version: SURVEY_VERSION,
+        frequency: 'daily',
+        difficulty: 'just_right',
+        favorite_genre: 'films',
+        pmf: 'very_disappointed',
+        improvement: TEST_GENRE,
         user_id: null,
       }),
     });

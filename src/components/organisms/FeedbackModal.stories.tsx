@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useState } from "react";
 import { FeedbackModal } from "./FeedbackModal";
-import { XButton } from "../atoms";
 
 const meta: Meta<typeof FeedbackModal> = {
   title: "Organisms/FeedbackModal",
@@ -14,31 +12,20 @@ const meta: Meta<typeof FeedbackModal> = {
 export default meta;
 type Story = StoryObj<typeof FeedbackModal>;
 
+/**
+ * The survey as a player meets it: no close control, Escape and outside
+ * clicks ignored, Submit disabled until all four questions are answered.
+ */
 export const Open: Story = {
   args: {
     isOpen: true,
+    onSubmitted: () => {},
   },
 };
 
 export const Closed: Story = {
   args: {
     isOpen: false,
-  },
-};
-
-export const Interactive: Story = {
-  render: () => {
-    function Wrapper() {
-      const [open, setOpen] = useState(true);
-      return (
-        <div style={{ padding: "2rem", textAlign: "center" }}>
-          <XButton variant="primary" size="sm" onClick={() => setOpen(true)}>
-            Open feedback modal
-          </XButton>
-          <FeedbackModal isOpen={open} onClose={() => setOpen(false)} />
-        </div>
-      );
-    }
-    return <Wrapper />;
+    onSubmitted: () => {},
   },
 };

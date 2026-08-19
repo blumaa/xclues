@@ -3,34 +3,57 @@
   display: flex;
   flex-direction: column;
   gap: var(--xclues-spacing-4);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-.feedback-modal__stars {
+.feedback-modal__question {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feedback-modal__prompt {
+  padding: 0;
+  margin-bottom: var(--xclues-spacing-2);
+  font-size: var(--xclues-font-size-sm);
+  font-weight: var(--xclues-font-weight-bold);
+  color: var(--xclues-text-primary);
+}
+
+.feedback-modal__options {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: var(--xclues-spacing-2);
 }
 
-.feedback-modal__star {
-  font-size: 2rem;
-  line-height: 1;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--xclues-text-tertiary);
-  padding: var(--xclues-spacing-1);
-  min-width: 44px;
+.feedback-modal__option {
+  font-family: inherit;
+  font-size: var(--xclues-font-size-sm);
+  padding: var(--xclues-spacing-2) var(--xclues-spacing-3);
   min-height: 44px;
-  transition: color var(--xclues-duration-fast) ease,
-    transform var(--xclues-duration-fast) ease;
+  border-radius: var(--xclues-border-radius-sm);
+  border: 1px solid var(--xclues-header-border);
+  background: var(--xclues-card-bg);
+  color: var(--xclues-text-secondary);
+  cursor: pointer;
+  transition: background var(--xclues-duration-fast) ease,
+    color var(--xclues-duration-fast) ease;
 }
 
-.feedback-modal__star:hover {
-  transform: scale(1.1);
+.feedback-modal__option:hover {
+  color: var(--xclues-text-primary);
 }
 
-.feedback-modal__star--selected {
-  color: var(--xclues-yellow);
+.feedback-modal__option:focus-visible {
+  outline: var(--xclues-focus-ring-style) var(--xclues-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.feedback-modal__option--selected {
+  background: var(--xclues-yellow);
+  border-color: var(--xclues-yellow);
+  color: var(--xclues-group-text);
 }
 
 .feedback-modal__comment {

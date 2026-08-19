@@ -142,22 +142,40 @@ export type Database = {
         Row: {
           comment: string | null
           created_at: string
+          difficulty: string | null
+          favorite_genre: string | null
+          frequency: string | null
           id: number
-          rating: number
+          improvement: string | null
+          pmf: string | null
+          rating: number | null
+          survey_version: number
           user_id: string | null
         }
         Insert: {
           comment?: string | null
           created_at?: string
+          difficulty?: string | null
+          favorite_genre?: string | null
+          frequency?: string | null
           id?: never
-          rating: number
+          improvement?: string | null
+          pmf?: string | null
+          rating?: number | null
+          survey_version?: number
           user_id?: string | null
         }
         Update: {
           comment?: string | null
           created_at?: string
+          difficulty?: string | null
+          favorite_genre?: string | null
+          frequency?: string | null
           id?: never
-          rating?: number
+          improvement?: string | null
+          pmf?: string | null
+          rating?: number | null
+          survey_version?: number
           user_id?: string | null
         }
         Relationships: []
