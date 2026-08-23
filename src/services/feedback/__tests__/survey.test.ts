@@ -4,6 +4,9 @@ import {
   SURVEY_QUESTIONS,
   IMPROVEMENT_PROMPT,
   isSurveyComplete,
+  shouldShowSurvey,
+  FEEDBACK_SURVEY_ACTIVE,
+  FEEDBACK_MIN_GAMES,
   type SurveyAnswers,
 } from '../survey';
 
@@ -78,5 +81,34 @@ describe('isSurveyComplete', () => {
     const partial = { ...full };
     delete partial[id as keyof SurveyAnswers];
     expect(isSurveyComplete(partial)).toBe(false);
+  });
+});
+
+describe('shouldShowSurvey', () => {
+  const eligible = {
+    hydrated: true,
+    gamesPlayed: FEEDBACK_MIN_GAMES,
+    alreadyAnswered: false,
+  };
+
+  it('is paused right now, so an otherwise eligible player is not asked', () => {
+    expect(FEEDBACK_SURVEY_ACTIVE).toBe(false);
+    expect(shouldShowSurvey(eligible)).toBe(false);
+  });
+
+  it('asks an eligible player once collection is switched back on', () => {
+    expect(shouldShowSurvey(eligible, true)).toBe(true);
+  });
+
+  it('waits for hydration, so the survey cannot flash at a past responder', () => {
+    expect(shouldShowSurvey({ ...eligible, hydrated: false }, true)).toBe(false);
+  });
+
+  it('waits until the player has finished a puzzle', () => {
+    expect(shouldShowSurvey({ ...eligible, gamesPlayed: 0 }, true)).toBe(false);
+  });
+
+  it('does not ask someone who has already answered', () => {
+    expect(shouldShowSurvey({ ...eligible, alreadyAnswered: true }, true)).toBe(false);
   });
 });

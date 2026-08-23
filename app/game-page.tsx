@@ -17,7 +17,7 @@ import { trackGameEvent } from "../src/services/analytics/gameEvents";
 import { FeedbackModal } from "../src/components/organisms/FeedbackModal";
 import {
   FEEDBACK_STORAGE_KEY,
-  FEEDBACK_MIN_GAMES,
+  shouldShowSurvey,
 } from "../src/services/feedback/survey";
 import { useLocalStorage } from "../src/hooks/useLocalStorage";
 
@@ -169,12 +169,12 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
     void trackGameEvent('started', { genre: activeGenre, puzzleDate });
   }, [initialized, activeGenre, puzzleDate]);
 
-  // Gated on hydration: before localStorage is read the flag reads as unset,
-  // which would flash the survey at everyone who already answered it.
-  const feedbackOpen =
-    feedbackHydrated &&
-    gameCount >= FEEDBACK_MIN_GAMES &&
-    feedbackSubmitted !== "1";
+  // Paused during the difficulty-skew trial; survey.ts owns the switch.
+  const feedbackOpen = shouldShowSurvey({
+    hydrated: feedbackHydrated,
+    gamesPlayed: gameCount,
+    alreadyAnswered: feedbackSubmitted === "1",
+  });
 
   // Active genre state for footer controls
   const gameStatus = useGameStore(activeGenre, (s) => s.gameStatus);

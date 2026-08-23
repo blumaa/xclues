@@ -6,13 +6,9 @@ import { resetStatsStore } from '../../src/store/statsStore';
 import { resetAllStores } from '../../src/store/gameStore';
 import { FEEDBACK_STORAGE_KEY } from '../../src/services/feedback/survey';
 
-const { submittedSpy } = vi.hoisted(() => ({ submittedSpy: vi.fn() }));
-
 vi.mock('../../src/components/organisms/FeedbackModal', () => ({
-  FeedbackModal: ({ isOpen, onSubmitted }: { isOpen: boolean; onSubmitted: () => void }) => {
-    submittedSpy.mockImplementation(onSubmitted);
-    return isOpen ? <div data-testid="feedback-modal">survey</div> : null;
-  },
+  FeedbackModal: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div data-testid="feedback-modal">survey</div> : null,
 }));
 
 vi.mock('../../src/components/organisms/GameBoard', () => ({
@@ -60,7 +56,13 @@ function renderGamePage() {
   );
 }
 
-describe('GamePage feedback survey', () => {
+/**
+ * The survey nudge is paused for the difficulty-skew trial, so the only thing
+ * this page can assert is that nothing is put in front of the player. The
+ * eligibility rules the nudge will use when it returns are covered by
+ * shouldShowSurvey in services/feedback/__tests__/survey.test.ts.
+ */
+describe('GamePage feedback survey (paused)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -76,42 +78,28 @@ describe('GamePage feedback survey', () => {
     expect(screen.queryByTestId('feedback-modal')).toBeNull();
   });
 
-  it('surveys on arrival once a single puzzle has been completed', async () => {
+  it('does not survey a player who would otherwise be eligible', async () => {
     seedGamesPlayed(1);
-    renderGamePage();
-
-    await waitFor(() => expect(screen.getByTestId('feedback-modal')).toBeInTheDocument());
-  });
-
-  it('does not survey again once the response has been stored', async () => {
-    seedGamesPlayed(5);
-    localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify('1'));
     renderGamePage();
 
     await waitFor(() => expect(screen.getAllByTestId('game-board').length).toBeGreaterThan(0));
     expect(screen.queryByTestId('feedback-modal')).toBeNull();
   });
 
-  it('records the one-time flag only when the modal reports a successful submit', async () => {
-    seedGamesPlayed(2);
+  it('leaves the one-time flag unburned, so a paused player is still asked later', async () => {
+    seedGamesPlayed(5);
     renderGamePage();
 
-    await waitFor(() => expect(screen.getByTestId('feedback-modal')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByTestId('game-board').length).toBeGreaterThan(0));
     expect(localStorage.getItem(FEEDBACK_STORAGE_KEY)).toBeNull();
-
-    submittedSpy();
-
-    await waitFor(() =>
-      expect(localStorage.getItem(FEEDBACK_STORAGE_KEY)).toBe(JSON.stringify('1')),
-    );
-    expect(screen.queryByTestId('feedback-modal')).toBeNull();
   });
 
-  it('ignores the retired v1 star-rating flag so past raters see the new survey', async () => {
-    seedGamesPlayed(3);
-    localStorage.setItem('xclues-feedback-shown', '1');
+  it('does not survey someone who already answered before the pause', async () => {
+    seedGamesPlayed(5);
+    localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify('1'));
     renderGamePage();
 
-    await waitFor(() => expect(screen.getByTestId('feedback-modal')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByTestId('game-board').length).toBeGreaterThan(0));
+    expect(screen.queryByTestId('feedback-modal')).toBeNull();
   });
 });

@@ -103,3 +103,41 @@ export const FEEDBACK_STORAGE_KEY = 'xclues-feedback-v2';
  * burns permanently — so we spend the one shot on someone who has played.
  */
 export const FEEDBACK_MIN_GAMES = 1;
+
+/**
+ * Whether the survey is currently collecting.
+ *
+ * Paused for the difficulty-skew trial: the puzzles are being authored easier
+ * for a month, so answers gathered mid-change would mix two curves and read as
+ * neither. The modal, its submission path and this config all stay wired —
+ * flipping this to true reinstates the nudge and starts a comparable round.
+ *
+ * The one-time storage flag is per user and is only burned on a real submit, so
+ * pausing loses nobody: someone who never saw the survey is still asked when it
+ * comes back.
+ */
+export const FEEDBACK_SURVEY_ACTIVE = false;
+
+export interface SurveyEligibility {
+  /** Whether localStorage has been read yet. */
+  hydrated: boolean;
+  gamesPlayed: number;
+  alreadyAnswered: boolean;
+}
+
+/**
+ * Whether to put the survey in front of this player.
+ *
+ * `active` is a parameter rather than a direct read of the constant so the
+ * eligibility rules stay under test while collection is paused — they are the
+ * behaviour we intend to restore, not dead code.
+ */
+export function shouldShowSurvey(
+  { hydrated, gamesPlayed, alreadyAnswered }: SurveyEligibility,
+  active: boolean = FEEDBACK_SURVEY_ACTIVE,
+): boolean {
+  if (!active) return false;
+  // Gated on hydration: before localStorage is read the flag reads as unset,
+  // which would flash the survey at everyone who already answered it.
+  return hydrated && gamesPlayed >= FEEDBACK_MIN_GAMES && !alreadyAnswered;
+}
