@@ -5,6 +5,11 @@ import { ArchiveHub, buildArchiveMetadata } from "../../ArchiveHub";
 
 export const revalidate = 3600;
 
+// Pages render on first visit, then serve from cache (ISR).
+export async function generateStaticParams() {
+  return [];
+}
+
 function parsePage(n: string): number | null {
   const page = Number(n);
   return Number.isInteger(page) && page >= 1 ? page : null;

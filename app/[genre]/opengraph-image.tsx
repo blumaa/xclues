@@ -5,6 +5,11 @@ export const alt = "xClues - Daily Connection Puzzles";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Image depends only on the genre. Metadata image routes don't inherit the
+// layout's params, so prerender each genre explicitly.
+export const revalidate = 86400;
+export { generateStaticParams } from "./layout";
+
 const GENRE_COLORS: Record<string, { bg: string; accent: string; emoji: string }> = {
   films: { bg: "#1a1028", accent: "#e84393", emoji: "🎬" },
   music: { bg: "#0d1520", accent: "#6c5ce7", emoji: "🎵" },

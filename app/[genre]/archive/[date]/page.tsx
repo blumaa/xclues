@@ -17,6 +17,14 @@ import { Breadcrumbs } from "../../../../src/components/molecules/Breadcrumbs";
 import { ArchiveDateNav } from "../../../../src/components/molecules/ArchiveDateNav";
 import "./archive-date.css";
 
+// Past puzzles never change. No dates prerendered at build; each renders on its
+// first visit and is served from cache after that.
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  return [];
+}
+
 interface ArchiveParams {
   genre: string;
   date: string;

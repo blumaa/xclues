@@ -17,21 +17,14 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-async function getSiteUrl(): Promise<string> {
-  const { headers } = await import("next/headers");
-  const headersList = await headers();
-  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
-  if (host) {
-    const protocol = host.includes("localhost") ? "http" : "https";
-    return `${protocol}://${host}`;
-  }
-  return "https://filmclues.space";
-}
+// Fixed default. A request API here (headers/cookies) would force every route
+// dynamic and uncacheable. Genre routes override this per domain in
+// app/[genre]/layout.tsx.
+const DEFAULT_SITE_URL = "https://filmclues.space";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteUrl = await getSiteUrl();
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(DEFAULT_SITE_URL),
     title: {
       default: "xClues - Daily Connection Puzzles",
       template: "%s | xClues",
@@ -44,16 +37,12 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "xClues - Daily Connection Puzzles",
       description:
         "Daily connection puzzle games for films, books, and music. Group 16 items into 4 hidden categories.",
-      url: siteUrl,
     },
     twitter: {
       card: "summary_large_image",
       title: "xClues - Daily Connection Puzzles",
       description:
         "Daily connection puzzle games for films, books, and music.",
-    },
-    alternates: {
-      canonical: siteUrl,
     },
   };
 }

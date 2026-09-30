@@ -13,7 +13,7 @@ export { VALID_GENRES as GENRES, DEFAULT_GENRE };
 /**
  * Domain to genre mapping
  */
-const DOMAIN_TO_GENRE: Record<string, Genre> = {
+export const DOMAIN_TO_GENRE: Record<string, Genre> = {
   // Production domains
   'filmecules.space': 'films',
   'www.filmecules.space': 'films',
