@@ -6,6 +6,13 @@ export const alt = "xClues Puzzle Archive";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Image depends only on params. Render once per date on first request, then cache.
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  return [];
+}
+
 const GENRE_COLORS: Record<string, { bg: string; accent: string; emoji: string }> = {
   films: { bg: "#1a1028", accent: "#e84393", emoji: "🎬" },
   music: { bg: "#0d1520", accent: "#6c5ce7", emoji: "🎵" },

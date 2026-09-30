@@ -1,4 +1,6 @@
+import type { NextConfig } from 'next';
 import bundleAnalyzer from '@next/bundle-analyzer';
+import { buildRedirects } from './src/config/redirects';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -37,12 +39,11 @@ const securityHeaders = [
   { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
 ];
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Static export only for Capacitor/iOS builds; web builds use SSR.
-  // `headers()` is a server feature and is ignored under `output: 'export'`,
-  // so it is only attached for web builds.
+  // `headers()` and `redirects()` are server features ignored under
+  // `output: 'export'`, so they are only attached for web builds.
   ...(process.env.CAPACITOR
     ? {
         output: 'export',
@@ -53,6 +54,7 @@ const nextConfig = {
         async headers() {
           return [{ source: '/(.*)', headers: securityHeaders }];
         },
+        redirects: async () => buildRedirects(),
       }),
 };
 

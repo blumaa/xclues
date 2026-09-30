@@ -33,9 +33,6 @@ Thumbs.db
 firebase-debug.log
 firebase-debug.*.log
 
-# Bun
-bun.lockb
-
 # Storybook
 storybook-static/
 

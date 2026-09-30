@@ -5,9 +5,10 @@ import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/
 import { fetchPuzzleByDate } from "../../src/lib/supabase/puzzleQueries";
 import { getTodayDate } from "../../src/utils/index";
 
-export async function generateStaticParams() {
-  return VALID_GENRES.map((genre) => ({ genre }));
-}
+// Today's puzzle is keyed by UTC date. Re-render at most once a minute so the
+// new day's puzzle goes live within ~60s of midnight; every other request is a
+// CDN cache hit.
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
