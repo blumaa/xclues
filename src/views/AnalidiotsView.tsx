@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import type { AggregatedEvents, DailyBucket, GenreAggregations, SourceBucket, WeeklyBucket } from "../services/analytics/aggregateEvents";
+import {
+  dropOff,
+  type AggregatedEvents,
+  type DailyBucket,
+  type GenreAggregations,
+  type SourceBucket,
+  type WeeklyBucket,
+} from "../services/analytics/aggregateEvents";
 import { paginate } from "../utils/paginate";
 import {
   aggregateSurvey,
@@ -91,6 +98,7 @@ function BucketRow({ label, bucket }: { label: string; bucket: DailyBucket | Wee
       <td className="analidiots__cell analidiots__cell--num">{bucket.started}</td>
       <td className="analidiots__cell analidiots__cell--num">{bucket.won}</td>
       <td className="analidiots__cell analidiots__cell--num">{bucket.lost}</td>
+      <td className="analidiots__cell analidiots__cell--num">{dropOff(bucket)}</td>
       <td className="analidiots__cell analidiots__cell--num">{winRate}%</td>
     </tr>
   );
@@ -126,6 +134,10 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
             <div className="analidiots__total-num">{dailyTotals.lost}</div>
             <div className="analidiots__total-label">Lost</div>
           </div>
+          <div className="analidiots__total">
+            <div className="analidiots__total-num">{dropOff(dailyTotals)}</div>
+            <div className="analidiots__total-label">Dropped</div>
+          </div>
         </div>
       </section>
 
@@ -138,6 +150,7 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
               <th className="analidiots__cell analidiots__cell--num">Started</th>
               <th className="analidiots__cell analidiots__cell--num">Won</th>
               <th className="analidiots__cell analidiots__cell--num">Lost</th>
+              <th className="analidiots__cell analidiots__cell--num">Dropped</th>
               <th className="analidiots__cell analidiots__cell--num">Win %</th>
             </tr>
           </thead>
@@ -163,6 +176,7 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
               <th className="analidiots__cell analidiots__cell--num">Started</th>
               <th className="analidiots__cell analidiots__cell--num">Won</th>
               <th className="analidiots__cell analidiots__cell--num">Lost</th>
+              <th className="analidiots__cell analidiots__cell--num">Dropped</th>
               <th className="analidiots__cell analidiots__cell--num">Win %</th>
             </tr>
           </thead>
@@ -194,7 +208,7 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
       <header className="analidiots__header">
         <h1 className="analidiots__title">analidiots</h1>
         <p className="analidiots__subtitle">
-          Games started / won / lost. Times in UTC.
+          Games started / won / lost. Dropped = started minus finished. Times in UTC.
         </p>
       </header>
 
@@ -230,6 +244,7 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
                 <th className="analidiots__cell analidiots__cell--label">Source</th>
                 <th className="analidiots__cell analidiots__cell--num">Started</th>
                 <th className="analidiots__cell analidiots__cell--num">Won</th>
+                <th className="analidiots__cell analidiots__cell--num">Dropped</th>
                 <th className="analidiots__cell analidiots__cell--num">Win rate</th>
               </tr>
             </thead>
@@ -239,6 +254,7 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
                   <td className="analidiots__cell analidiots__cell--label">{s.source}</td>
                   <td className="analidiots__cell analidiots__cell--num">{s.started}</td>
                   <td className="analidiots__cell analidiots__cell--num">{s.won}</td>
+                  <td className="analidiots__cell analidiots__cell--num">{dropOff(s)}</td>
                   <td className="analidiots__cell analidiots__cell--num">
                     {s.started > 0 ? `${Math.round((s.won / s.started) * 100)}%` : "—"}
                   </td>

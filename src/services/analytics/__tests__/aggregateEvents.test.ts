@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aggregateEvents, aggregateEventsByGenre, aggregateBySource, type GameEventRow } from '../aggregateEvents';
+import { aggregateEvents, aggregateEventsByGenre, aggregateBySource, dropOff, type GameEventRow } from '../aggregateEvents';
 
 function row(event_type: 'started' | 'won' | 'lost', created_at: string, genre = 'films'): GameEventRow {
   return { event_type, created_at, genre };
@@ -172,5 +172,20 @@ describe('aggregateBySource', () => {
     const result = aggregateBySource(rows, now, 30);
 
     expect(result).toEqual([{ source: 'reddit', started: 1, won: 0, lost: 0 }]);
+  });
+});
+
+describe('dropOff', () => {
+  it('counts started games that never reached won or lost', () => {
+    expect(dropOff({ started: 10, won: 4, lost: 2 })).toBe(4);
+  });
+
+  it('is zero when every started game finished', () => {
+    expect(dropOff({ started: 3, won: 2, lost: 1 })).toBe(0);
+  });
+
+  it('floors at zero when finishes outnumber starts in a bucket', () => {
+    // A game started before midnight and finished after lands in two buckets.
+    expect(dropOff({ started: 1, won: 2, lost: 1 })).toBe(0);
   });
 });

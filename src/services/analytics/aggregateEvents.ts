@@ -28,6 +28,15 @@ export interface WeeklyBucket {
   lost: number;
 }
 
+type Counts = Record<EventType, number>;
+
+// Started games that never reached won/lost. No per-game id exists, so this is
+// a bucket-level difference; floored because a game started before a bucket
+// boundary and finished after it counts its finish in the later bucket.
+export function dropOff({ started, won, lost }: Counts): number {
+  return Math.max(0, started - won - lost);
+}
+
 export interface AggregatedEvents {
   daily: DailyBucket[];
   weekly: WeeklyBucket[];
