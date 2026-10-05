@@ -5,36 +5,27 @@ export interface GameEventRow {
   created_at: string;
   genre?: string;
   source?: string | null;
+  game_id?: string | null;
 }
 
-export interface SourceBucket {
+export interface Counts {
+  started: number;
+  won: number;
+  lost: number;
+  /** Started games that never reached won/lost. */
+  dropped: number;
+}
+
+export interface SourceBucket extends Counts {
   source: string;
-  started: number;
-  won: number;
-  lost: number;
 }
 
-export interface DailyBucket {
+export interface DailyBucket extends Counts {
   date: string;
-  started: number;
-  won: number;
-  lost: number;
 }
 
-export interface WeeklyBucket {
+export interface WeeklyBucket extends Counts {
   isoWeek: string;
-  started: number;
-  won: number;
-  lost: number;
-}
-
-type Counts = Record<EventType, number>;
-
-// Started games that never reached won/lost. No per-game id exists, so this is
-// a bucket-level difference; floored because a game started before a bucket
-// boundary and finished after it counts its finish in the later bucket.
-export function dropOff({ started, won, lost }: Counts): number {
-  return Math.max(0, started - won - lost);
 }
 
 export interface AggregatedEvents {
@@ -67,32 +58,68 @@ function isoWeekKey(d: Date): string {
   return `${tmp.getUTCFullYear()}-W${String(weekNum).padStart(2, '0')}`;
 }
 
-export function aggregateEvents(rows: GameEventRow[], now: Date = new Date()): AggregatedEvents {
-  const daily: DailyBucket[] = [];
-  const dailyIndex = new Map<string, DailyBucket>();
-  for (let i = 0; i < DAILY_WINDOW; i++) {
-    const date = utcDateKey(addUTCDays(now, -i));
-    const bucket: DailyBucket = { date, started: 0, won: 0, lost: 0 };
-    daily.push(bucket);
-    dailyIndex.set(date, bucket);
+function finishedGameIds(rows: GameEventRow[]): Set<string> {
+  const ids = new Set<string>();
+  for (const row of rows) {
+    if (row.event_type !== 'started' && row.game_id) ids.add(row.game_id);
   }
+  return ids;
+}
 
-  const weekly: WeeklyBucket[] = [];
-  const weeklyIndex = new Map<string, WeeklyBucket>();
-  for (let i = 0; i < WEEKLY_WINDOW; i++) {
-    const isoWeek = isoWeekKey(addUTCDays(now, -i * 7));
-    if (weeklyIndex.has(isoWeek)) continue;
-    const bucket: WeeklyBucket = { isoWeek, started: 0, won: 0, lost: 0 };
-    weekly.push(bucket);
-    weeklyIndex.set(isoWeek, bucket);
-  }
+// Counts one bucket's rows. Rows with a game_id give an exact drop-off: a
+// started id with no finish anywhere in the data, charged to the bucket where
+// it started. Rows from before game_id existed fall back to started minus
+// finished, floored because a game finished after a bucket boundary counts
+// its finish in the later bucket.
+function tally(rows: GameEventRow[], finished: Set<string>): Counts {
+  const counts: Counts = { started: 0, won: 0, lost: 0, dropped: 0 };
+  let legacyStarted = 0;
+  let legacyFinished = 0;
 
   for (const row of rows) {
-    const d = new Date(row.created_at);
-    const dayBucket = dailyIndex.get(utcDateKey(d));
-    if (dayBucket) dayBucket[row.event_type] += 1;
-    const weekBucket = weeklyIndex.get(isoWeekKey(d));
-    if (weekBucket) weekBucket[row.event_type] += 1;
+    counts[row.event_type] += 1;
+    if (row.game_id) {
+      if (row.event_type === 'started' && !finished.has(row.game_id)) counts.dropped += 1;
+    } else if (row.event_type === 'started') {
+      legacyStarted += 1;
+    } else {
+      legacyFinished += 1;
+    }
+  }
+
+  counts.dropped += Math.max(0, legacyStarted - legacyFinished);
+  return counts;
+}
+
+function groupBy(rows: GameEventRow[], keyOf: (row: GameEventRow) => string): Map<string, GameEventRow[]> {
+  const groups = new Map<string, GameEventRow[]>();
+  for (const row of rows) {
+    const key = keyOf(row);
+    const group = groups.get(key);
+    if (group) group.push(row);
+    else groups.set(key, [row]);
+  }
+  return groups;
+}
+
+export function aggregateEvents(rows: GameEventRow[], now: Date = new Date()): AggregatedEvents {
+  const finished = finishedGameIds(rows);
+
+  const byDay = groupBy(rows, (row) => utcDateKey(new Date(row.created_at)));
+  const daily: DailyBucket[] = [];
+  for (let i = 0; i < DAILY_WINDOW; i++) {
+    const date = utcDateKey(addUTCDays(now, -i));
+    daily.push({ date, ...tally(byDay.get(date) ?? [], finished) });
+  }
+
+  const byWeek = groupBy(rows, (row) => isoWeekKey(new Date(row.created_at)));
+  const weekly: WeeklyBucket[] = [];
+  const seenWeeks = new Set<string>();
+  for (let i = 0; i < WEEKLY_WINDOW; i++) {
+    const isoWeek = isoWeekKey(addUTCDays(now, -i * 7));
+    if (seenWeeks.has(isoWeek)) continue;
+    seenWeeks.add(isoWeek);
+    weekly.push({ isoWeek, ...tally(byWeek.get(isoWeek) ?? [], finished) });
   }
 
   return { daily, weekly };
@@ -109,20 +136,13 @@ export function aggregateBySource(
   windowDays: number = SOURCE_WINDOW_DAYS,
 ): SourceBucket[] {
   const cutoff = addUTCDays(now, -windowDays).getTime();
-  const index = new Map<string, SourceBucket>();
+  const finished = finishedGameIds(rows);
+  const inWindow = rows.filter((row) => new Date(row.created_at).getTime() >= cutoff);
+  const bySource = groupBy(inWindow, (row) => row.source ?? 'organic');
 
-  for (const row of rows) {
-    if (new Date(row.created_at).getTime() < cutoff) continue;
-    const source = row.source ?? 'organic';
-    let bucket = index.get(source);
-    if (!bucket) {
-      bucket = { source, started: 0, won: 0, lost: 0 };
-      index.set(source, bucket);
-    }
-    bucket[row.event_type] += 1;
-  }
-
-  return [...index.values()].sort((a, b) => b.started - a.started);
+  return [...bySource]
+    .map(([source, group]) => ({ source, ...tally(group, finished) }))
+    .sort((a, b) => b.started - a.started);
 }
 
 export type GenreAggregations = Record<'films' | 'books' | 'music' | 'all', AggregatedEvents>;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GameBoard } from "../src/components/organisms/GameBoard";
 import { GameControls } from "../src/components/organisms/GameControls";
 import { HowToPlayBanner } from "../src/components/molecules/HowToPlayBanner";
@@ -14,6 +14,7 @@ import { guessesToColorHistory } from "../src/utils/guessHistory";
 import { VALID_GENRES, type Genre } from "../src/config/seoConfig";
 import type { SavedPuzzle } from "../src/types";
 import { trackGameEvent } from "../src/services/analytics/gameEvents";
+import { clearGameId, getGameId, startGameId } from "../src/services/analytics/gameId";
 import { FeedbackModal } from "../src/components/organisms/FeedbackModal";
 import {
   FEEDBACK_STORAGE_KEY,
@@ -110,7 +111,12 @@ function GenrePanel({ genre, puzzle, puzzleDate }: {
       completedAt: Date.now(),
     });
 
-    void trackGameEvent(gameStatus === "won" ? "won" : "lost", { genre, puzzleDate });
+    void trackGameEvent(gameStatus === "won" ? "won" : "lost", {
+      genre,
+      puzzleDate,
+      gameId: getGameId(genre, puzzleDate),
+    });
+    clearGameId(genre);
   }, [gameStatus, genre, puzzleDate, mistakes, previousGuesses, groups, isGameOver]);
 
   return (
@@ -142,7 +148,6 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
   const [feedbackSubmitted, setFeedbackSubmitted, feedbackHydrated] =
     useLocalStorage<string>(FEEDBACK_STORAGE_KEY, "");
 
-  const startedGenres = useRef(new Set<string>());
   const initialized = useAppStore((s) => s.initialized);
 
   // Initialize stores once
@@ -159,14 +164,15 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
   }, [initialGenre, puzzleDate, puzzles]);
 
   // Fire started for activeGenre — gated on initialized to prevent
-  // the store's default 'films' from leaking a spurious event
+  // the store's default 'films' from leaking a spurious event. The stored
+  // game id dedupes tab switches and reloads: only a new game logs a start.
   useEffect(() => {
     if (!initialized) return;
-    if (startedGenres.current.has(activeGenre)) return;
     const statsStore = getStatsStore();
     if (statsStore.getState().getCompletedGame(activeGenre, puzzleDate)) return;
-    startedGenres.current.add(activeGenre);
-    void trackGameEvent('started', { genre: activeGenre, puzzleDate });
+    const { id, isNew } = startGameId(activeGenre, puzzleDate);
+    if (!isNew) return;
+    void trackGameEvent('started', { genre: activeGenre, puzzleDate, gameId: id });
   }, [initialized, activeGenre, puzzleDate]);
 
   // Paused during the difficulty-skew trial; survey.ts owns the switch.

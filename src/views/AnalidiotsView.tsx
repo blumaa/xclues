@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import {
-  dropOff,
-  type AggregatedEvents,
-  type DailyBucket,
-  type GenreAggregations,
-  type SourceBucket,
-  type WeeklyBucket,
-} from "../services/analytics/aggregateEvents";
+import type { AggregatedEvents, DailyBucket, GenreAggregations, SourceBucket, WeeklyBucket } from "../services/analytics/aggregateEvents";
 import { paginate } from "../utils/paginate";
 import {
   aggregateSurvey,
@@ -98,24 +91,56 @@ function BucketRow({ label, bucket }: { label: string; bucket: DailyBucket | Wee
       <td className="analidiots__cell analidiots__cell--num">{bucket.started}</td>
       <td className="analidiots__cell analidiots__cell--num">{bucket.won}</td>
       <td className="analidiots__cell analidiots__cell--num">{bucket.lost}</td>
-      <td className="analidiots__cell analidiots__cell--num">{dropOff(bucket)}</td>
+      <td className="analidiots__cell analidiots__cell--num">{bucket.dropped}</td>
       <td className="analidiots__cell analidiots__cell--num">{winRate}%</td>
     </tr>
   );
 }
 
-function GenreSection({ data }: { data: AggregatedEvents }) {
-  const [dailyPage, setDailyPage] = useState(1);
-  const [weeklyPage, setWeeklyPage] = useState(1);
+function BucketSection({
+  title,
+  labelHeader,
+  rows,
+}: {
+  title: string;
+  labelHeader: string;
+  rows: { label: string; bucket: DailyBucket | WeeklyBucket }[];
+}) {
+  const [page, setPage] = useState(1);
+  const paginated = paginate(rows, page, PAGE_SIZE);
 
+  return (
+    <section className="analidiots__section">
+      <h2 className="analidiots__section-title">{title}</h2>
+      <table className="analidiots__table">
+        <thead>
+          <tr>
+            <th className="analidiots__cell analidiots__cell--label">{labelHeader}</th>
+            <th className="analidiots__cell analidiots__cell--num">Started</th>
+            <th className="analidiots__cell analidiots__cell--num">Won</th>
+            <th className="analidiots__cell analidiots__cell--num">Lost</th>
+            <th className="analidiots__cell analidiots__cell--num">Dropped</th>
+            <th className="analidiots__cell analidiots__cell--num">Win %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginated.items.map((r) => (
+            <BucketRow key={r.label} label={r.label} bucket={r.bucket} />
+          ))}
+        </tbody>
+      </table>
+      <Pagination page={paginated.page} totalPages={paginated.totalPages} onChange={setPage} />
+    </section>
+  );
+}
+
+function GenreSection({ data }: { data: AggregatedEvents }) {
   const dailyTotals = {
     started: sum(data.daily, "started"),
     won: sum(data.daily, "won"),
     lost: sum(data.daily, "lost"),
+    dropped: sum(data.daily, "dropped"),
   };
-
-  const dailyPaginated = paginate(data.daily, dailyPage, PAGE_SIZE);
-  const weeklyPaginated = paginate(data.weekly, weeklyPage, PAGE_SIZE);
 
   return (
     <>
@@ -135,63 +160,23 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
             <div className="analidiots__total-label">Lost</div>
           </div>
           <div className="analidiots__total">
-            <div className="analidiots__total-num">{dropOff(dailyTotals)}</div>
+            <div className="analidiots__total-num">{dailyTotals.dropped}</div>
             <div className="analidiots__total-label">Dropped</div>
           </div>
         </div>
       </section>
 
-      <section className="analidiots__section">
-        <h2 className="analidiots__section-title">Per day</h2>
-        <table className="analidiots__table">
-          <thead>
-            <tr>
-              <th className="analidiots__cell analidiots__cell--label">Date</th>
-              <th className="analidiots__cell analidiots__cell--num">Started</th>
-              <th className="analidiots__cell analidiots__cell--num">Won</th>
-              <th className="analidiots__cell analidiots__cell--num">Lost</th>
-              <th className="analidiots__cell analidiots__cell--num">Dropped</th>
-              <th className="analidiots__cell analidiots__cell--num">Win %</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dailyPaginated.items.map((d) => (
-              <BucketRow key={d.date} label={d.date} bucket={d} />
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          page={dailyPaginated.page}
-          totalPages={dailyPaginated.totalPages}
-          onChange={setDailyPage}
-        />
-      </section>
+      <BucketSection
+        title="Per day"
+        labelHeader="Date"
+        rows={data.daily.map((d) => ({ label: d.date, bucket: d }))}
+      />
 
-      <section className="analidiots__section">
-        <h2 className="analidiots__section-title">Per week</h2>
-        <table className="analidiots__table">
-          <thead>
-            <tr>
-              <th className="analidiots__cell analidiots__cell--label">Week</th>
-              <th className="analidiots__cell analidiots__cell--num">Started</th>
-              <th className="analidiots__cell analidiots__cell--num">Won</th>
-              <th className="analidiots__cell analidiots__cell--num">Lost</th>
-              <th className="analidiots__cell analidiots__cell--num">Dropped</th>
-              <th className="analidiots__cell analidiots__cell--num">Win %</th>
-            </tr>
-          </thead>
-          <tbody>
-            {weeklyPaginated.items.map((w) => (
-              <BucketRow key={w.isoWeek} label={w.isoWeek} bucket={w} />
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          page={weeklyPaginated.page}
-          totalPages={weeklyPaginated.totalPages}
-          onChange={setWeeklyPage}
-        />
-      </section>
+      <BucketSection
+        title="Per week"
+        labelHeader="Week"
+        rows={data.weekly.map((w) => ({ label: w.isoWeek, bucket: w }))}
+      />
     </>
   );
 }
@@ -208,7 +193,7 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
       <header className="analidiots__header">
         <h1 className="analidiots__title">analidiots</h1>
         <p className="analidiots__subtitle">
-          Games started / won / lost. Dropped = started minus finished. Times in UTC.
+          Games started / won / lost. Dropped = started, never finished. Times in UTC.
         </p>
       </header>
 
@@ -254,7 +239,7 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
                   <td className="analidiots__cell analidiots__cell--label">{s.source}</td>
                   <td className="analidiots__cell analidiots__cell--num">{s.started}</td>
                   <td className="analidiots__cell analidiots__cell--num">{s.won}</td>
-                  <td className="analidiots__cell analidiots__cell--num">{dropOff(s)}</td>
+                  <td className="analidiots__cell analidiots__cell--num">{s.dropped}</td>
                   <td className="analidiots__cell analidiots__cell--num">
                     {s.started > 0 ? `${Math.round((s.won / s.started) * 100)}%` : "—"}
                   </td>

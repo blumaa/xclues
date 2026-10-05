@@ -27,6 +27,14 @@ export function PrivacyPage() {
           <li><XText size="sm">Genre of the puzzle (films, music, books)</XText></li>
           <li><XText size="sm">Date of the puzzle</XText></li>
           <li><XText size="sm">Timestamp</XText></li>
+          <li><XText size="sm">The site that sent you here, if known (for example, Reddit)</XText></li>
+          <li>
+            <XText size="sm">
+              A random id for that one game, so we can tell how many games are started but not finished.
+              It is created when you start a puzzle, is not linked to you or your other games, and is
+              deleted from your browser once the game ends.
+            </XText>
+          </li>
         </ul>
 
         <div className="privacy-section-heading">

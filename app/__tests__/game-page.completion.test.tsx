@@ -162,6 +162,70 @@ describe('GamePage completion → trackGameEvent', () => {
   });
 });
 
+describe('GamePage per-game analytics id', () => {
+  beforeEach(() => {
+    trackGameEventMock.mockReset();
+    localStorage.clear();
+    resetAppStore();
+    resetStatsStore();
+    resetAllStores();
+  });
+
+  async function waitForStart() {
+    await waitFor(() => {
+      expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
+    });
+    return trackGameEventMock.mock.calls.find((c) => c[0] === 'started')![1];
+  }
+
+  it('sends the same gameId with started and the finishing event', async () => {
+    renderFresh();
+    const started = await waitForStart();
+    expect(started.gameId).toEqual(expect.any(String));
+
+    await act(async () => {
+      getGameStore('films').setState({ gameStatus: 'won', mistakes: 0 });
+    });
+
+    await waitFor(() => {
+      const won = trackGameEventMock.mock.calls.find((c) => c[0] === 'won');
+      expect(won?.[1]).toMatchObject({ genre: 'films', gameId: started.gameId });
+    });
+  });
+
+  it('does not log a second start when the page reloads mid-game', async () => {
+    const first = renderFresh();
+    await waitForStart();
+    first.unmount();
+
+    // Reload: in-memory stores reset, localStorage survives.
+    resetAppStore();
+    resetStatsStore();
+    resetAllStores();
+    trackGameEventMock.mockClear();
+
+    renderFresh();
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(trackGameEventMock.mock.calls.filter((c) => c[0] === 'started')).toHaveLength(0);
+  });
+
+  it('clears the stored id once the game ends', async () => {
+    renderFresh();
+    await waitForStart();
+    expect(localStorage.getItem('xclues-game-id-films')).not.toBeNull();
+
+    await act(async () => {
+      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+    });
+
+    await waitFor(() => {
+      expect(localStorage.getItem('xclues-game-id-films')).toBeNull();
+    });
+  });
+});
+
 describe('GamePage footer fade', () => {
   beforeEach(() => {
     localStorage.clear();

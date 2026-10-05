@@ -19,7 +19,7 @@ function renderView() {
   render(
     <AnalidiotsView
       data={aggregateEventsByGenre(rows(), now)}
-      bySource={[{ source: "reddit", started: 3, won: 1, lost: 0 }]}
+      bySource={[{ source: "reddit", started: 3, won: 1, lost: 0, dropped: 2 }]}
       feedback={[]}
     />,
   );

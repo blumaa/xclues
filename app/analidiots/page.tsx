@@ -31,7 +31,7 @@ async function fetchAllEvents(supabase: SupabaseClient, since: string): Promise<
   while (true) {
     const { data } = await supabase
       .from("game_events")
-      .select("event_type, created_at, genre, source")
+      .select("event_type, created_at, genre, source, game_id")
       .gte("created_at", since)
       .range(from, from + PAGE_SIZE - 1);
 

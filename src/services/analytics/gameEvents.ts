@@ -10,6 +10,8 @@ interface GameEventMeta {
   userId?: string | null;
   /** Overrides the session-captured attribution source; defaults to it. */
   source?: string | null;
+  /** Per-game id (see gameId.ts); null for games started before it existed. */
+  gameId?: string | null;
 }
 
 export async function trackGameEvent(type: EventType, meta: GameEventMeta): Promise<void> {
@@ -31,6 +33,7 @@ export async function trackGameEvent(type: EventType, meta: GameEventMeta): Prom
         puzzle_date: meta.puzzleDate,
         user_id: meta.userId ?? null,
         source: meta.source ?? getAttributionSource(),
+        game_id: meta.gameId ?? null,
       }),
       keepalive: true,
     });

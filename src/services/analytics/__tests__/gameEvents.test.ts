@@ -16,6 +16,13 @@ afterEach(() => {
 });
 
 describe('trackGameEvent', () => {
+  it('sends the per-game id when given', async () => {
+    await trackGameEvent('lost', { genre: 'books', puzzleDate: '2026-10-05', gameId: 'g-1' });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.game_id).toBe('g-1');
+  });
+
   it('POSTs a started event to the PostgREST endpoint with keepalive', async () => {
     await trackGameEvent('started', { genre: 'films', puzzleDate: '2026-04-19' });
 
@@ -30,6 +37,7 @@ describe('trackGameEvent', () => {
           puzzle_date: '2026-04-19',
           user_id: null,
           source: null,
+          game_id: null,
         }),
       }),
     );
@@ -59,6 +67,7 @@ describe('trackGameEvent', () => {
       puzzle_date: '2026-04-19',
       user_id: 'user-123',
       source: null,
+      game_id: null,
     });
   });
 

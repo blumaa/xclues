@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aggregateEvents, aggregateEventsByGenre, aggregateBySource, dropOff, type GameEventRow } from '../aggregateEvents';
+import { aggregateEvents, aggregateEventsByGenre, aggregateBySource, type GameEventRow } from '../aggregateEvents';
 
 function row(event_type: 'started' | 'won' | 'lost', created_at: string, genre = 'films'): GameEventRow {
   return { event_type, created_at, genre };
@@ -50,8 +50,8 @@ describe('aggregateEvents', () => {
     ];
     const result = aggregateEvents(rows, now);
 
-    expect(result.daily[0]).toEqual({ date: '2026-04-19', started: 2, won: 1, lost: 0 });
-    expect(result.daily[1]).toEqual({ date: '2026-04-18', started: 0, won: 0, lost: 1 });
+    expect(result.daily[0]).toEqual({ date: '2026-04-19', started: 2, won: 1, lost: 0, dropped: 1 });
+    expect(result.daily[1]).toEqual({ date: '2026-04-18', started: 0, won: 0, lost: 1, dropped: 0 });
   });
 
   it('rolls events into weekly buckets by ISO week', () => {
@@ -147,8 +147,8 @@ describe('aggregateBySource', () => {
     const result = aggregateBySource(rows, now);
 
     expect(result).toEqual([
-      { source: 'reddit', started: 2, won: 1, lost: 0 },
-      { source: 'bluesky', started: 1, won: 0, lost: 0 },
+      { source: 'reddit', started: 2, won: 1, lost: 0, dropped: 1 },
+      { source: 'bluesky', started: 1, won: 0, lost: 0, dropped: 1 },
     ]);
   });
 
@@ -160,7 +160,7 @@ describe('aggregateBySource', () => {
 
     const result = aggregateBySource(rows, now);
 
-    expect(result).toEqual([{ source: 'organic', started: 2, won: 0, lost: 0 }]);
+    expect(result).toEqual([{ source: 'organic', started: 2, won: 0, lost: 0, dropped: 2 }]);
   });
 
   it('excludes rows outside the trailing window', () => {
@@ -171,21 +171,64 @@ describe('aggregateBySource', () => {
 
     const result = aggregateBySource(rows, now, 30);
 
-    expect(result).toEqual([{ source: 'reddit', started: 1, won: 0, lost: 0 }]);
+    expect(result).toEqual([{ source: 'reddit', started: 1, won: 0, lost: 0, dropped: 1 }]);
   });
 });
 
-describe('dropOff', () => {
-  it('counts started games that never reached won or lost', () => {
-    expect(dropOff({ started: 10, won: 4, lost: 2 })).toBe(4);
+describe('dropped', () => {
+  const now = new Date('2026-04-19T12:00:00Z');
+
+  function game(event_type: 'started' | 'won' | 'lost', created_at: string, game_id: string): GameEventRow {
+    return { event_type, created_at, genre: 'films', game_id };
+  }
+
+  it('counts started game ids that never finished', () => {
+    const rows = [
+      game('started', '2026-04-19T09:00:00Z', 'a'),
+      game('started', '2026-04-19T09:00:00Z', 'b'),
+      game('started', '2026-04-19T09:00:00Z', 'c'),
+      game('won', '2026-04-19T09:10:00Z', 'a'),
+      game('lost', '2026-04-19T09:10:00Z', 'b'),
+    ];
+    expect(aggregateEvents(rows, now).daily[0].dropped).toBe(1);
   });
 
-  it('is zero when every started game finished', () => {
-    expect(dropOff({ started: 3, won: 2, lost: 1 })).toBe(0);
+  it('charges the drop to the day the game started, not the day it finished', () => {
+    const rows = [
+      game('started', '2026-04-18T23:59:00Z', 'a'),
+      game('won', '2026-04-19T00:05:00Z', 'a'),
+      game('started', '2026-04-19T10:00:00Z', 'b'),
+    ];
+    const { daily, weekly } = aggregateEvents(rows, now);
+    expect(daily[0].dropped).toBe(1); // b
+    expect(daily[1].dropped).toBe(0); // a finished after midnight
+    expect(weekly[0].dropped).toBe(1);
   });
 
-  it('floors at zero when finishes outnumber starts in a bucket', () => {
-    // A game started before midnight and finished after lands in two buckets.
-    expect(dropOff({ started: 1, won: 2, lost: 1 })).toBe(0);
+  it('falls back to started minus finished for rows without a game id', () => {
+    const rows = [
+      row('started', '2026-04-19T09:00:00Z'),
+      row('started', '2026-04-19T09:00:00Z'),
+      row('started', '2026-04-19T09:00:00Z'),
+      row('won', '2026-04-19T09:10:00Z'),
+      game('started', '2026-04-19T09:00:00Z', 'c'),
+    ];
+    expect(aggregateEvents(rows, now).daily[0].dropped).toBe(3); // 2 legacy + c
+  });
+
+  it('floors the legacy fallback at zero when finishes outnumber starts', () => {
+    const rows = [row('started', '2026-04-19T09:00:00Z'), row('won', '2026-04-19T09:00:00Z'), row('lost', '2026-04-19T09:00:00Z')];
+    expect(aggregateEvents(rows, now).daily[0].dropped).toBe(0);
+  });
+
+  it('counts exact drop-off per traffic source', () => {
+    const rows: GameEventRow[] = [
+      { ...game('started', '2026-04-19T09:00:00Z', 'a'), source: 'reddit' },
+      { ...game('started', '2026-04-19T09:00:00Z', 'b'), source: 'reddit' },
+      { ...game('won', '2026-04-19T09:10:00Z', 'a'), source: 'reddit' },
+    ];
+    expect(aggregateBySource(rows, now)).toEqual([
+      { source: 'reddit', started: 2, won: 1, lost: 0, dropped: 1 },
+    ]);
   });
 });
