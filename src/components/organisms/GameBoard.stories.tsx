@@ -49,6 +49,7 @@ const meta: Meta<typeof GameBoard> = {
   },
   tags: ["autodocs"],
   decorators: [withProviders],
+  args: { puzzleDate: "2026-04-15" },
 };
 
 export default meta;

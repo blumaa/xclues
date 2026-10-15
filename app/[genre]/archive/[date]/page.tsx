@@ -9,7 +9,7 @@ import {
   isPastDate,
   formatDateForDisplay,
 } from "../../../../src/utils/dateValidation";
-import { getAdjacentDates } from "../../../../src/utils/archiveDates";
+import { archiveDateUrl, getAdjacentDates } from "../../../../src/utils/archiveDates";
 import { type Genre, getSeoConfig, isValidGenre } from "../../../../src/config/seoConfig";
 import { buildBreadcrumbJsonLd } from "../../../../src/lib/seo/breadcrumbJsonLd";
 import { PuzzleReveal } from "../../../../src/components/organisms/PuzzleReveal";
@@ -50,14 +50,14 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://${config.domain}/${genre}/archive/${date}`,
+      url: archiveDateUrl(genre, date),
     },
     twitter: {
       title,
       description,
     },
     alternates: {
-      canonical: `https://${config.domain}/${genre}/archive/${date}`,
+      canonical: archiveDateUrl(genre, date),
     },
   };
 }
@@ -89,7 +89,7 @@ export default async function ArchivePage({
     "@type": "WebPage",
     name: `${config.siteName} Puzzle - ${displayDate}`,
     datePublished: date,
-    url: `https://${config.domain}/${genre}/archive/${date}`,
+    url: archiveDateUrl(genre, date),
     isPartOf: {
       "@type": "WebApplication",
       name: config.siteName,

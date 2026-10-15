@@ -10,6 +10,7 @@ import "./GameBoard.css";
 
 interface GameBoardProps {
   genre: string;
+  puzzleDate: string;
   isLoading?: boolean;
   hasNoPuzzle?: boolean;
   guessHistory?: GuessColor[][] | null;
@@ -19,6 +20,7 @@ interface GameBoardProps {
 
 export function GameBoard({
   genre,
+  puzzleDate,
   isLoading,
   hasNoPuzzle,
   guessHistory,
@@ -58,6 +60,7 @@ export function GameBoard({
           mistakes={mistakes}
           genre={genre}
           guessHistory={guessHistory || null}
+          puzzleDate={puzzleDate}
           onViewPuzzle={onViewPuzzle}
         />
       </div>

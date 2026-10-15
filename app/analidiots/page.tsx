@@ -10,6 +10,7 @@ import {
 import { AnalidiotsView } from "../../src/views/AnalidiotsView";
 import type { SurveyResponseRow } from "../../src/services/feedback/aggregateSurvey";
 import { SURVEY_VERSION } from "../../src/services/feedback/survey";
+import type { PuzzleFeedbackRow } from "../../src/services/feedback/puzzleFeedback";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -63,9 +64,10 @@ export default async function AnalidiotsPage({
 
   let events: GameEventRow[] = [];
   let feedback: SurveyResponseRow[] = [];
+  let puzzleFeedback: PuzzleFeedbackRow[] = [];
 
   if (supabase) {
-    const [fetchedEvents, feedbackResult] = await Promise.all([
+    const [fetchedEvents, feedbackResult, puzzleFeedbackResult] = await Promise.all([
       fetchAllEvents(supabase, since),
       supabase
         .from("feedback")
@@ -75,16 +77,24 @@ export default async function AnalidiotsPage({
         .eq("survey_version", SURVEY_VERSION)
         .order("created_at", { ascending: false })
         .limit(500),
+      supabase
+        .from("puzzle_feedback")
+        .select("id, created_at, genre, puzzle_date, rating, comment")
+        .order("created_at", { ascending: false })
+        .limit(500),
     ]);
 
     events = fetchedEvents;
     if (feedbackResult.data) {
       feedback = feedbackResult.data as SurveyResponseRow[];
     }
+    if (puzzleFeedbackResult.data) {
+      puzzleFeedback = puzzleFeedbackResult.data;
+    }
   }
 
   const data = aggregateEventsByGenre(events);
   const bySource = aggregateBySource(events);
 
-  return <AnalidiotsView data={data} bySource={bySource} feedback={feedback} />;
+  return <AnalidiotsView data={data} bySource={bySource} feedback={feedback} puzzleFeedback={puzzleFeedback} />;
 }

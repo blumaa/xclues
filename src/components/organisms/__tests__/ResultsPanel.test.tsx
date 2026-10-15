@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ResultsPanel } from '../ResultsPanel';
 import type { GuessColor } from '../../../types/stats';
 
@@ -37,6 +37,7 @@ describe('ResultsPanel', () => {
       ['green', 'green', 'green', 'green'],
     ] as GuessColor[][],
     onViewPuzzle: vi.fn(),
+    puzzleDate: '2026-10-15',
   };
 
   it('renders the share button', () => {
@@ -72,6 +73,18 @@ describe('ResultsPanel', () => {
   it('renders View Puzzle button', () => {
     render(<ResultsPanel {...defaultProps} />);
     expect(screen.getByText('View Puzzle')).toBeInTheDocument();
+  });
+
+  it('renders a Send Feedback button', () => {
+    render(<ResultsPanel {...defaultProps} />);
+    expect(screen.getByRole('button', { name: 'Send Feedback' })).toBeInTheDocument();
+  });
+
+  it('opens the feedback form for this puzzle on click', () => {
+    render(<ResultsPanel {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Send Feedback' }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: "Rate this puzzle" })).toBeInTheDocument();
   });
 
   it('does NOT render any modal overlay', () => {

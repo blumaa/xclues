@@ -21,17 +21,17 @@ vi.mock('../../../store/gameStore', () => ({
 
 describe('GameBoard', () => {
   it('renders skeleton when isLoading is true', () => {
-    render(<GameBoard genre="films" isLoading />);
+    render(<GameBoard genre="films" puzzleDate="2026-10-15" isLoading />);
     expect(screen.getByRole('status', { name: 'Loading puzzle' })).toBeInTheDocument();
   });
 
   it('does not render skeleton when isLoading is false', () => {
-    render(<GameBoard genre="films" isLoading={false} />);
+    render(<GameBoard genre="films" puzzleDate="2026-10-15" isLoading={false} />);
     expect(screen.queryByRole('status', { name: 'Loading puzzle' })).not.toBeInTheDocument();
   });
 
   it('shows no puzzle message when hasNoPuzzle is true', () => {
-    render(<GameBoard genre="films" hasNoPuzzle />);
+    render(<GameBoard genre="films" puzzleDate="2026-10-15" hasNoPuzzle />);
     expect(screen.getByText('No puzzle available for today')).toBeInTheDocument();
   });
 });

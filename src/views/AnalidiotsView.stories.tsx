@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalidiotsView } from "./AnalidiotsView";
 import type { SurveyResponseRow } from "../services/feedback/aggregateSurvey";
+import type { PuzzleFeedbackRow } from "../services/feedback/puzzleFeedback";
+
+const PUZZLE_FEEDBACK_SAMPLE: PuzzleFeedbackRow[] = [
+  { id: 3, created_at: "2026-04-18T21:10:00Z", genre: "music", puzzle_date: "2026-04-18", rating: 5, comment: "Loved the hidden-word group." },
+  { id: 2, created_at: "2026-04-17T12:40:00Z", genre: "books", puzzle_date: "2026-04-17", rating: 2, comment: "Purple felt like a stretch — two of those could fit yellow too." },
+  { id: 1, created_at: "2026-04-16T08:05:00Z", genre: "films", puzzle_date: "2026-04-16", rating: 4, comment: null },
+];
 import { aggregateBySource, aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
 
 const meta: Meta<typeof AnalidiotsView> = {
@@ -112,6 +119,7 @@ export const Realistic: Story = {
     data: aggregateEventsByGenre(REALISTIC_ROWS, NOW),
     bySource: aggregateBySource(REALISTIC_ROWS, NOW),
     feedback: FEEDBACK_SAMPLE,
+    puzzleFeedback: PUZZLE_FEEDBACK_SAMPLE,
   },
 };
 
@@ -120,6 +128,7 @@ export const Empty: Story = {
     data: aggregateEventsByGenre([], NOW),
     bySource: aggregateBySource([], NOW),
     feedback: [],
+    puzzleFeedback: [],
   },
 };
 
@@ -138,5 +147,6 @@ export const SparseEarlyDays: Story = {
         improvement: "Just found this — so good!",
       },
     ],
+    puzzleFeedback: PUZZLE_FEEDBACK_SAMPLE.slice(0, 1),
   },
 };

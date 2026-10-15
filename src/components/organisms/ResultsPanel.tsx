@@ -10,6 +10,7 @@ import { getTodayDate } from "../../utils/index";
 import { isValidGenre } from "../../config/seoConfig";
 import { getStatsStore } from "../../store/statsStore";
 import type { GuessColor } from "../../types/stats";
+import { PuzzleFeedbackModal } from "./PuzzleFeedbackModal";
 
 import "./ResultsPanel.css";
 
@@ -18,6 +19,7 @@ interface ResultsPanelProps {
   mistakes: number;
   genre: string;
   guessHistory: GuessColor[][] | null;
+  puzzleDate: string;
   onViewPuzzle?: () => void;
 }
 
@@ -26,12 +28,14 @@ export function ResultsPanel({
   mistakes,
   genre,
   guessHistory,
+  puzzleDate,
   onViewPuzzle,
 }: ResultsPanelProps) {
   const context = useSite();
   const siteName = context?.siteName || "xClues";
   const domain = context?.domain || "xclues.space";
   const [copied, setCopied] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   // Read stats synchronously from the stats store (SSOT)
   const genreStats = getStatsStore().getState().getGenreStats(genre);
@@ -92,11 +96,26 @@ export function ResultsPanel({
         <CountdownTimer />
       </div>
 
-      {onViewPuzzle && (
-        <XButton variant="ghost" size="sm" onClick={onViewPuzzle}>
-          View Puzzle
-        </XButton>
-      )}
+      <div className="results-panel__links">
+        {onViewPuzzle && (
+          <XButton variant="ghost" size="sm" onClick={onViewPuzzle}>
+            View Puzzle
+          </XButton>
+        )}
+        {isValidGenre(genre) && (
+          <>
+            <XButton variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)}>
+              Send Feedback
+            </XButton>
+            <PuzzleFeedbackModal
+              isOpen={feedbackOpen}
+              onClose={() => setFeedbackOpen(false)}
+              genre={genre}
+              puzzleDate={puzzleDate}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

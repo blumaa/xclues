@@ -3,7 +3,7 @@ import { XHeading, XText, XCard, XCardBody } from "../components/atoms";
 import { Breadcrumbs } from "../components/molecules/Breadcrumbs";
 import type { Genre } from "../config/seoConfig";
 import { formatDateForDisplay } from "../utils/dateValidation";
-import { archivePagePath } from "../utils/archiveDates";
+import { archiveDatePath, archivePagePath } from "../utils/archiveDates";
 import "./ArchiveIndexView.css";
 
 export interface ArchiveIndexViewProps {
@@ -48,7 +48,7 @@ export function ArchiveIndexView({
           {dates.map((date) => (
             <li key={date} className="archive-index__cell">
               <Link
-                href={`/${genre}/archive/${date}`}
+                href={archiveDatePath(genre, date)}
                 className="archive-index__card-link"
                 aria-label={`${siteName} puzzle — ${formatDateForDisplay(date)}`}
               >

@@ -123,6 +123,7 @@ function GenrePanel({ genre, puzzle, puzzleDate }: {
     <>
       <GameBoard
         genre={genre}
+        puzzleDate={puzzleDate}
         isLoading={!storePopulated && !!puzzle}
         hasNoPuzzle={!puzzle}
         guessHistory={currentGuessHistory}

@@ -29,6 +29,12 @@
   gap: var(--xclues-spacing-3);
 }
 
+.results-panel__links {
+  display: flex;
+  align-items: center;
+  gap: var(--xclues-spacing-2);
+}
+
 .results-panel__share-btn-content {
   display: flex;
   align-items: center;

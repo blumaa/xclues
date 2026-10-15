@@ -1,4 +1,5 @@
-import type { Genre } from "../config/seoConfig";
+import { type Genre, getSeoConfig } from "../config/seoConfig";
+import { isPastDate } from "./dateValidation";
 
 /** Dates listed per archive hub page. */
 export const ARCHIVE_PAGE_SIZE = 30;
@@ -33,4 +34,22 @@ export function getAdjacentDates(dates: string[], date: string): AdjacentDates {
     newer: i > 0 ? dates[i - 1] : null,
     older: i < dates.length - 1 ? dates[i + 1] : null,
   };
+}
+
+/** Path of one archived puzzle. */
+export function archiveDatePath(genre: Genre, date: string): string {
+  return `/${genre}/archive/${date}`;
+}
+
+/** Absolute URL of one archived puzzle, on the genre's own domain. */
+export function archiveDateUrl(genre: Genre, date: string): string {
+  return `https://${getSeoConfig(genre).domain}${archiveDatePath(genre, date)}`;
+}
+
+/**
+ * Where to view a puzzle. Only past dates are archived (the archive route 404s
+ * today and later), so today's puzzle links to the live game instead.
+ */
+export function puzzleUrl(genre: Genre, date: string): string {
+  return isPastDate(date) ? archiveDateUrl(genre, date) : `https://${getSeoConfig(genre).domain}`;
 }

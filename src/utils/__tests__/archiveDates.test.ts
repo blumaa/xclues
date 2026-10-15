@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { archivePagePath, getAdjacentDates } from "../archiveDates";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { archiveDateUrl, archivePagePath, getAdjacentDates, puzzleUrl } from "../archiveDates";
 
 describe("archivePagePath", () => {
   it("returns the bare archive path for page 1", () => {
@@ -54,5 +54,36 @@ describe("getAdjacentDates", () => {
       newer: null,
       older: null,
     });
+  });
+});
+
+describe("archiveDateUrl", () => {
+  it("returns the absolute archive URL on the genre's own domain", () => {
+    expect(archiveDateUrl("films", "2026-10-14")).toBe(
+      "https://filmclues.space/films/archive/2026-10-14",
+    );
+    expect(archiveDateUrl("books", "2026-10-14")).toBe(
+      "https://litclues.space/books/archive/2026-10-14",
+    );
+  });
+});
+
+describe("puzzleUrl", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("links a past puzzle to its archive page", () => {
+    expect(puzzleUrl("films", "2026-10-14")).toBe(
+      "https://filmclues.space/films/archive/2026-10-14",
+    );
+  });
+
+  it("links today's puzzle to the live game, since the archive 404s until tomorrow", () => {
+    expect(puzzleUrl("music", "2026-10-15")).toBe("https://musiclues.space");
   });
 });

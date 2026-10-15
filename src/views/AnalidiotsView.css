@@ -152,6 +152,11 @@
   word-break: break-word;
 }
 
+.analidiots__link {
+  color: var(--xclues-primary);
+  text-underline-offset: 2px;
+}
+
 .analidiots__muted {
   color: var(--xclues-text-tertiary);
 }

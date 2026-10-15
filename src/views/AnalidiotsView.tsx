@@ -7,12 +7,16 @@ import {
   aggregateSurvey,
   type SurveyResponseRow,
 } from "../services/feedback/aggregateSurvey";
+import type { PuzzleFeedbackRow } from "../services/feedback/puzzleFeedback";
+import { isValidGenre } from "../config/seoConfig";
+import { puzzleUrl } from "../utils/archiveDates";
 import "./AnalidiotsView.css";
 
 interface AnalidiotsViewProps {
   data: GenreAggregations;
   bySource: SourceBucket[];
   feedback: SurveyResponseRow[];
+  puzzleFeedback: PuzzleFeedbackRow[];
 }
 
 const PAGE_SIZE = 10;
@@ -134,6 +138,63 @@ function BucketSection({
   );
 }
 
+function PuzzleFeedbackSection({ rows }: { rows: PuzzleFeedbackRow[] }) {
+  const [page, setPage] = useState(1);
+  const newestFirst = [...rows].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  const paginated = paginate(newestFirst, page, PAGE_SIZE);
+
+  return (
+    <section className="analidiots__section">
+      <h2 className="analidiots__section-title">
+        Puzzle feedback
+        <span className="analidiots__section-meta">
+          {rows.length} response{rows.length === 1 ? "" : "s"}
+        </span>
+      </h2>
+      {rows.length === 0 ? (
+        <p className="analidiots__empty">No puzzle feedback yet.</p>
+      ) : (
+        <>
+          <table className="analidiots__table">
+            <thead>
+              <tr>
+                <th className="analidiots__cell analidiots__cell--label">Puzzle date</th>
+                <th className="analidiots__cell analidiots__cell--label">Genre</th>
+                <th className="analidiots__cell analidiots__cell--num">Rating</th>
+                <th className="analidiots__cell">Feedback</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.items.map((row) => (
+                <tr key={row.id} className="analidiots__row">
+                  <td className="analidiots__cell analidiots__cell--label">
+                    {isValidGenre(row.genre) ? (
+                      <a
+                        className="analidiots__link"
+                        href={puzzleUrl(row.genre, row.puzzle_date)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {row.puzzle_date}
+                      </a>
+                    ) : (
+                      row.puzzle_date
+                    )}
+                  </td>
+                  <td className="analidiots__cell analidiots__cell--label">{row.genre}</td>
+                  <td className="analidiots__cell analidiots__cell--num">{row.rating}/5</td>
+                  <td className="analidiots__cell analidiots__comment">{row.comment ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pagination page={paginated.page} totalPages={paginated.totalPages} onChange={setPage} />
+        </>
+      )}
+    </section>
+  );
+}
+
 function GenreSection({ data }: { data: AggregatedEvents }) {
   const dailyTotals = {
     started: sum(data.daily, "started"),
@@ -181,7 +242,7 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
   );
 }
 
-export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps) {
+export function AnalidiotsView({ data, bySource, feedback, puzzleFeedback }: AnalidiotsViewProps) {
   const [activeTab, setActiveTab] = useState<GenreTabKey>('all');
   const [feedbackPage, setFeedbackPage] = useState(1);
 
@@ -249,6 +310,8 @@ export function AnalidiotsView({ data, bySource, feedback }: AnalidiotsViewProps
           </table>
         )}
       </section>
+
+      <PuzzleFeedbackSection rows={puzzleFeedback} />
 
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">
