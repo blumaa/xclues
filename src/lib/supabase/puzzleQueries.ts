@@ -5,6 +5,7 @@ import { RawPuzzleRowSchema } from "../schemas/puzzle";
 import { withRetry, isTransientDbError } from "../retry";
 import type { Genre } from "../../config/seoConfig";
 import { isPastDate } from "../../utils/dateValidation";
+import { getTodayDate, secondsUntilNextUtcDay } from "../../utils/index";
 import type {
   SavedPuzzle,
   Group,
@@ -15,6 +16,17 @@ import type {
 
 // One hour: puzzles are published per-day and never change once live.
 const PUZZLE_REVALIDATE_SECONDS = 60 * 60;
+
+/**
+ * Data cache lifetime for one date's puzzle. Next lowers the ISR lifetime of
+ * the rendering page to this value, so today's puzzle expires exactly at the
+ * next UTC midnight and the page re-renders once per day, not on a short timer.
+ */
+export function puzzleRevalidateSeconds(date: string, now: Date = new Date()): number {
+  return date === getTodayDate(now)
+    ? secondsUntilNextUtcDay(now)
+    : PUZZLE_REVALIDATE_SECONDS;
+}
 
 export function parsePuzzleRow(data: Record<string, unknown>): SavedPuzzle {
   const row = RawPuzzleRowSchema.parse(data);
@@ -88,7 +100,7 @@ export async function fetchPuzzleByDate(
     () => fetchPuzzleUncached(genre, date),
     ["puzzle-by-date", genre, date],
     {
-      revalidate: PUZZLE_REVALIDATE_SECONDS,
+      revalidate: puzzleRevalidateSeconds(date),
       tags: ["puzzles", `puzzle:${genre}:${date}`],
     },
   )();

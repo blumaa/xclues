@@ -9,6 +9,7 @@ import {
   shuffleArray,
   getTextLengthProps,
   addSoftHyphens,
+  secondsUntilNextUtcDay,
 } from '../index';
 
 describe('getTodayDate', () => {
@@ -193,5 +194,19 @@ describe('addSoftHyphens', () => {
   it('handles absurd words', () => {
     const result = addSoftHyphens('Supercalifragilisticexpialidocious');
     expect(result).toContain(SHY);
+  });
+});
+
+describe('secondsUntilNextUtcDay', () => {
+  it('returns a full day at UTC midnight', () => {
+    expect(secondsUntilNextUtcDay(new Date('2026-11-21T00:00:00.000Z'))).toBe(86_400);
+  });
+
+  it('returns the seconds left before the next UTC midnight', () => {
+    expect(secondsUntilNextUtcDay(new Date('2026-11-21T23:59:30.000Z'))).toBe(30);
+  });
+
+  it('rounds a partial second up so the result is never 0', () => {
+    expect(secondsUntilNextUtcDay(new Date('2026-11-21T23:59:59.500Z'))).toBe(1);
   });
 });

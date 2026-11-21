@@ -4,6 +4,7 @@ import {
   fetchPuzzleByDate,
   fetchAllPublishedDates,
   fetchPublishedDatesForGenre,
+  puzzleRevalidateSeconds,
 } from "../puzzleQueries";
 
 vi.mock("../server", () => ({
@@ -332,5 +333,21 @@ describe("fetchPublishedDatesForGenre", () => {
     const result = await fetchPublishedDatesForGenre("films");
 
     expect(result).toEqual([]);
+  });
+});
+
+// The data cache lifetime also caps the ISR lifetime of the page that reads it,
+// so today's puzzle page re-renders once at the UTC day change instead of on a
+// fixed short timer.
+describe("puzzleRevalidateSeconds", () => {
+  const now = new Date("2026-11-21T18:00:00.000Z");
+
+  it("caches today's puzzle until the next UTC midnight", () => {
+    expect(puzzleRevalidateSeconds("2026-11-21", now)).toBe(6 * 60 * 60);
+  });
+
+  it("caches other dates for one hour", () => {
+    expect(puzzleRevalidateSeconds("2026-11-20", now)).toBe(60 * 60);
+    expect(puzzleRevalidateSeconds("2026-11-22", now)).toBe(60 * 60);
   });
 });

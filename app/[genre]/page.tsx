@@ -5,10 +5,11 @@ import { type Genre, getSeoConfig, isValidGenre, VALID_GENRES } from "../../src/
 import { fetchPuzzleByDate } from "../../src/lib/supabase/puzzleQueries";
 import { getTodayDate } from "../../src/utils/index";
 
-// Today's puzzle is keyed by UTC date. Re-render at most once a minute so the
-// new day's puzzle goes live within ~60s of midnight; every other request is a
-// CDN cache hit.
-export const revalidate = 60;
+// Upper bound only. The real ISR lifetime is set at render time by today's
+// puzzle data cache (fetchPuzzleByDate), which expires at the next UTC
+// midnight. The page re-renders once per day when the new puzzle goes live;
+// every other request is a CDN cache hit.
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,
