@@ -62,9 +62,12 @@ describe("[genre] layout", () => {
 });
 
 describe("ISR config on public content routes", () => {
-  it("today's puzzle refreshes within a minute of the UTC day change", () => {
-    expect(genrePage.revalidate).toBeGreaterThan(0);
-    expect(genrePage.revalidate).toBeLessThanOrEqual(60);
+  // The page's real ISR lifetime is set at render time by today's puzzle data
+  // cache (seconds until the next UTC midnight; see puzzleRevalidateSeconds).
+  // The segment value is only the upper bound. A short fixed value here made
+  // Vercel re-render the page every minute and blew the Hobby Active CPU quota.
+  it("today's puzzle page caps ISR at one day, not a short timer", () => {
+    expect(genrePage.revalidate).toBe(86_400);
   });
 
   it.each([

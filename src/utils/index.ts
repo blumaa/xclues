@@ -10,12 +10,24 @@
  *
  * @returns Date string (YYYY-MM-DD)
  */
-export function getTodayDate(): string {
-  const now = new Date();
+export function getTodayDate(now: Date = new Date()): string {
   const year = now.getUTCFullYear();
   const month = String(now.getUTCMonth() + 1).padStart(2, '0');
   const day = String(now.getUTCDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+/**
+ * Seconds from `now` until the next UTC midnight, rounded up (minimum 1).
+ * Used as the cache lifetime for today's puzzle so it expires at the day change.
+ */
+export function secondsUntilNextUtcDay(now: Date = new Date()): number {
+  const nextMidnight = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + 1,
+  );
+  return Math.max(1, Math.ceil((nextMidnight - now.getTime()) / 1000));
 }
 
 /** Day of the year (1-based, UTC). Used to rotate daily content. */
