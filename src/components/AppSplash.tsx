@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isNativePlatform } from "../lib/native";
 import { Logo } from "./organisms/Logo";
 import "./AppSplash.css";
 
+/** Splash only when launched as an installed PWA, never in a browser tab. */
 function shouldShowSplash(): boolean {
   if (typeof window === "undefined") return false;
-  if (isNativePlatform()) return true;
-  if (window.matchMedia("(display-mode: standalone)").matches) return true;
-  return false;
+  return window.matchMedia("(display-mode: standalone)").matches;
 }
 
 export function AppSplash() {

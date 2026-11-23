@@ -41,21 +41,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // Static export only for Capacitor/iOS builds; web builds use SSR.
-  // `headers()` and `redirects()` are server features ignored under
-  // `output: 'export'`, so they are only attached for web builds.
-  ...(process.env.CAPACITOR
-    ? {
-        output: 'export',
-        // Exclude SEO routes that require server runtime
-        excludeDefaultMomentLocales: true,
-      }
-    : {
-        async headers() {
-          return [{ source: '/(.*)', headers: securityHeaders }];
-        },
-        redirects: async () => buildRedirects(),
-      }),
+  async headers() {
+    return [{ source: '/(.*)', headers: securityHeaders }];
+  },
+  redirects: async () => buildRedirects(),
 };
 
 export default withBundleAnalyzer(nextConfig);
