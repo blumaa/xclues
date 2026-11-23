@@ -8,7 +8,7 @@ import {
   groupDatesByMonth,
   monthLabel,
 } from "../../../src/utils/archiveDates";
-import { ArchiveIndexLive } from "../../../src/views/ArchiveIndexLive";
+import { ArchiveIndexView } from "../../../src/views/ArchiveIndexView";
 
 /** Shared metadata for the hub (newest month, `month` null) and /month/[month]. */
 export function buildArchiveMetadata(genre: Genre, month: string | null): Metadata {
@@ -43,5 +43,5 @@ export async function ArchiveHub({ genre, month }: { genre: string; month: strin
   if (month !== null && !archive) notFound();
 
   // No breadcrumbs: one level deep, header logo links home.
-  return <ArchiveIndexLive genre={genre} siteName={config.siteName} archive={archive} />;
+  return <ArchiveIndexView genre={genre} siteName={config.siteName} archive={archive} />;
 }

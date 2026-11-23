@@ -10,6 +10,11 @@ import {
   type ArchiveMonth,
 } from "../utils/archiveDates";
 import type { ArchiveResult } from "../utils/archiveResults";
+import {
+  ArchiveDayTile,
+  ArchiveProgress,
+  ArchiveResultsProvider,
+} from "./ArchiveResults";
 import "./ArchiveIndexView.css";
 
 export interface ArchiveIndexViewProps {
@@ -17,66 +22,28 @@ export interface ArchiveIndexViewProps {
   siteName: string;
   /** The month shown and its neighbours; null when nothing is published. */
   archive: ArchiveMonth | null;
-  /** This device's finished games by date. Absent on the server render. */
+  /** Fixed results (stories, tests). Omitted on the live page: this device's saved history is used. */
   results?: Record<string, ArchiveResult>;
 }
 
-type Status = "solved" | "lost" | "unplayed";
-
-function statusOf(result: ArchiveResult | undefined): Status {
-  if (!result) return "unplayed";
-  return result.won ? "solved" : "lost";
-}
-
-// Text + symbol carry the status; color only reinforces it.
-const STATUS_TEXT: Record<
-  Status,
-  { symbol: string; label: string; statLabel: string }
-> = {
-  solved: { symbol: "✓", label: "Solved", statLabel: "Solved" },
-  lost: { symbol: "✗", label: "Lost", statLabel: "Lost" },
-  unplayed: { symbol: "→", label: "Play", statLabel: "Unplayed" },
-};
-
-const STATUS_ORDER: Status[] = ["solved", "lost", "unplayed"];
-
-function spokenStatus(
-  status: Status,
-  result: ArchiveResult | undefined,
-): string {
-  if (status === "unplayed") return "not played";
-  if (status === "lost") return "lost";
-  const n = result!.mistakes;
-  return `solved, ${n} ${n === 1 ? "mistake" : "mistakes"}`;
-}
-
+/** Server half of a day tile: link target and name; status fills in client-side. */
 function DateTile({
   genre,
   siteName,
   date,
-  result,
 }: {
   genre: Genre;
   siteName: string;
   date: string;
-  result: ArchiveResult | undefined;
 }) {
   const { weekday, day } = dateParts(date);
-  const status = statusOf(result);
-  const { symbol, label } = STATUS_TEXT[status];
-
   return (
-    <Link
+    <ArchiveDayTile
       href={archiveDatePath(genre, date)}
-      className={`archive-tile archive-tile--${status}`}
-      aria-label={`${siteName} puzzle, ${weekday}, ${formatDateForDisplay(date)}: ${spokenStatus(status, result)}`}
-    >
-      <span className="archive-tile__day">{day}</span>
-      <span className="archive-tile__status">
-        <span aria-hidden="true">{symbol}</span>
-        <span className="archive-tile__label"> {label}</span>
-      </span>
-    </Link>
+      date={date}
+      day={day}
+      name={`${siteName} puzzle, ${weekday}, ${formatDateForDisplay(date)}`}
+    />
   );
 }
 
@@ -97,14 +64,12 @@ function MonthCalendarTable({
   monthKey,
   headingId,
   playable,
-  results,
 }: {
   genre: Genre;
   siteName: string;
   monthKey: string;
   headingId: string;
   playable: Set<string>;
-  results: Record<string, ArchiveResult>;
 }) {
   const { leadingBlanks, days } = monthCalendar(monthKey);
   const cells: (string | null)[] = [
@@ -138,12 +103,7 @@ function MonthCalendarTable({
             {week.map((date, d) => (
               <td key={date ?? `blank-${w}-${d}`} className="archive-cal__cell">
                 {date && playable.has(date) ? (
-                  <DateTile
-                    genre={genre}
-                    siteName={siteName}
-                    date={date}
-                    result={results[date]}
-                  />
+                  <DateTile genre={genre} siteName={siteName} date={date} />
                 ) : date ? (
                   <span className="archive-cal__off">
                     {dateParts(date).day}
@@ -155,32 +115,6 @@ function MonthCalendarTable({
         ))}
       </tbody>
     </table>
-  );
-}
-
-/** Solved / Lost / Unplayed counts; doubles as the calendar's color key. */
-function ProgressSummary({
-  dates,
-  results,
-}: {
-  dates: string[];
-  results: Record<string, ArchiveResult>;
-}) {
-  const counts: Record<Status, number> = { solved: 0, lost: 0, unplayed: 0 };
-  for (const date of dates) counts[statusOf(results[date])]++;
-  if (counts.solved + counts.lost === 0) return null;
-
-  return (
-    <ul className="archive-stats" aria-label="Your progress this month">
-      {STATUS_ORDER.map((status) => (
-        <li key={status} className={`archive-stat archive-stat--${status}`}>
-          <span className="archive-stat__value">{counts[status]}</span>{" "}
-          <span className="archive-stat__label">
-            {STATUS_TEXT[status].statLabel}
-          </span>
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -236,14 +170,14 @@ function MonthSwitcher({
 
 /**
  * Archive hub presenter: one calendar month of past puzzles, a switcher to the
- * neighbouring months, and each puzzle day's result on this device. Pure/presentational — the route
- * supplies the dates (and a client wrapper the results).
+ * neighbouring months, and each puzzle day's result on this device. Server
+ * component; only the result pieces (ArchiveResults) run in the browser.
  */
 export function ArchiveIndexView({
   genre,
   siteName,
   archive,
-  results = {},
+  results,
 }: ArchiveIndexViewProps) {
   const headingId = "archive-month-heading";
   return (
@@ -253,29 +187,35 @@ export function ArchiveIndexView({
       </XHeading>
 
       {archive ? (
-        <section className="archive-index__month" aria-labelledby={headingId}>
-          <MonthSwitcher
-            genre={genre}
-            archive={archive}
-            headingId={headingId}
-          />
-          <MonthCalendarTable
-            genre={genre}
-            siteName={siteName}
-            monthKey={archive.month.key}
-            headingId={headingId}
-            playable={new Set(archive.month.dates)}
-            results={results}
-          />
-          <ProgressSummary dates={archive.month.dates} results={results} />
-        </section>
+        <ArchiveResultsProvider genre={genre} results={results}>
+          <section className="archive-index__month" aria-labelledby={headingId}>
+            <MonthSwitcher
+              genre={genre}
+              archive={archive}
+              headingId={headingId}
+            />
+            <MonthCalendarTable
+              genre={genre}
+              siteName={siteName}
+              monthKey={archive.month.key}
+              headingId={headingId}
+              playable={new Set(archive.month.dates)}
+            />
+            <ArchiveProgress dates={archive.month.dates} />
+          </section>
+        </ArchiveResultsProvider>
       ) : (
         <p className="archive-index__empty">
           <XText semantic="secondary">No puzzles published yet.</XText>
         </p>
       )}
 
-      <XText as="p" size="sm" semantic="secondary" className="archive-index__note">
+      <XText
+        as="p"
+        size="sm"
+        semantic="secondary"
+        className="archive-index__note"
+      >
         Play any past {siteName} puzzle. Archive games count toward your stats
         but never change your streak.
       </XText>
