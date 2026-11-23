@@ -1,16 +1,25 @@
 import { type Genre, getSeoConfig } from "../config/seoConfig";
 import { isPastDate } from "./dateValidation";
 
-/** Dates listed per archive hub page. */
-export const ARCHIVE_PAGE_SIZE = 30;
+/** Dates per page of the retired /archive/page/N hub. Only maps old URLs. */
+const LEGACY_PAGE_SIZE = 30;
 
 /**
- * URL for a given archive page. Page 1 is the bare `/[genre]/archive` hub so it
- * carries the clean canonical; deeper pages use path segments (better for SEO
- * than a `?page=` query param — distinct, crawlable, self-canonical URLs).
+ * URL for one archive month. The newest month (null) is the bare
+ * `/[genre]/archive` hub so it carries the clean canonical.
  */
-export function archivePagePath(genre: Genre, page: number): string {
-  return page <= 1 ? `/${genre}/archive` : `/${genre}/archive/page/${page}`;
+export function archiveMonthPath(genre: Genre, month: string | null): string {
+  return month ? `/${genre}/archive/month/${month}` : `/${genre}/archive`;
+}
+
+/** YYYY-MM with a real month number. */
+export function isValidMonthKey(key: string): boolean {
+  return /^\d{4}-(0[1-9]|1[0-2])$/.test(key);
+}
+
+/** Month a retired /archive/page/N started on, or null past the end. */
+export function legacyPageMonth(dates: string[], page: number): string | null {
+  return dates[(page - 1) * LEGACY_PAGE_SIZE]?.slice(0, 7) ?? null;
 }
 
 export interface AdjacentDates {
@@ -52,4 +61,97 @@ export function archiveDateUrl(genre: Genre, date: string): string {
  */
 export function puzzleUrl(genre: Genre, date: string): string {
   return isPastDate(date) ? archiveDateUrl(genre, date) : `https://${getSeoConfig(genre).domain}`;
+}
+
+function utcDate(date: string): Date {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+export interface MonthGroup {
+  /** YYYY-MM */
+  key: string;
+  /** e.g. "June 2026" */
+  label: string;
+  dates: string[];
+}
+
+/** "2026-06" -> "June 2026". */
+export function monthLabel(key: string): string {
+  return utcDate(`${key}-01`).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** Buckets dates (any order) by calendar month, preserving input order. */
+export function groupDatesByMonth(dates: string[]): MonthGroup[] {
+  const groups: MonthGroup[] = [];
+  for (const date of dates) {
+    const key = date.slice(0, 7);
+    let group = groups.find((g) => g.key === key);
+    if (!group) {
+      group = { key, label: monthLabel(key), dates: [] };
+      groups.push(group);
+    }
+    group.dates.push(date);
+  }
+  return groups;
+}
+
+export interface DateParts {
+  weekdayShort: string;
+  weekday: string;
+  day: number;
+}
+
+/** Calendar-tile pieces of a YYYY-MM-DD date, in UTC like the puzzle schedule. */
+export function dateParts(date: string): DateParts {
+  const d = utcDate(date);
+  const weekday = (style: "short" | "long") =>
+    d.toLocaleDateString("en-US", { weekday: style, timeZone: "UTC" });
+  return { weekdayShort: weekday("short"), weekday: weekday("long"), day: d.getUTCDate() };
+}
+
+export interface MonthCalendar {
+  /** Empty cells before day 1 in a Sunday-first week. */
+  leadingBlanks: number;
+  /** Every date of the month, YYYY-MM-DD, ascending. */
+  days: string[];
+}
+
+/** Full calendar month for a YYYY-MM key, in UTC. */
+export function monthCalendar(key: string): MonthCalendar {
+  const [year, month] = key.split("-").map(Number);
+  const first = new Date(Date.UTC(year, month - 1, 1));
+  const length = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const days = Array.from({ length }, (_, i) => `${key}-${String(i + 1).padStart(2, "0")}`);
+  return { leadingBlanks: first.getUTCDay(), days };
+}
+
+export interface ArchiveMonth {
+  month: MonthGroup;
+  /** Next month with puzzles, later in time. */
+  newer: MonthGroup | null;
+  /** Previous month with puzzles, earlier in time. */
+  older: MonthGroup | null;
+  /** `newer` is the newest month, which lives at the bare hub URL. */
+  newerIsLatest: boolean;
+}
+
+/**
+ * One month of a newest-first month list plus its neighbours. `key` null means
+ * the newest month. Null when that month has no puzzles.
+ */
+export function findArchiveMonth(months: MonthGroup[], key: string | null): ArchiveMonth | null {
+  const index = key === null ? 0 : months.findIndex((m) => m.key === key);
+  const month = months[index];
+  if (!month) return null;
+  return {
+    month,
+    newer: months[index - 1] ?? null,
+    older: months[index + 1] ?? null,
+    newerIsLatest: index === 1,
+  };
 }

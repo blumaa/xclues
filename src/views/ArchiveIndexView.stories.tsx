@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ArchiveIndexView } from "./ArchiveIndexView";
+import type { ArchiveResult } from "../utils/archiveResults";
+import { findArchiveMonth, groupDatesByMonth } from "../utils/archiveDates";
 
 const meta: Meta<typeof ArchiveIndexView> = {
   title: "Views/ArchiveIndexView",
@@ -21,42 +23,45 @@ function datesEndingAt(end: string, count: number): string[] {
   return out;
 }
 
-export const FirstPage: Story = {
-  args: {
-    genre: "films",
-    siteName: "Filmclues",
-    dates: datesEndingAt("2026-06-30", 30),
-    page: 1,
-    totalPages: 8,
-  },
+/** Results map: every `step`-th date played, mixing solved and lost. */
+function someResults(dates: string[], step: number): Record<string, ArchiveResult> {
+  const out: Record<string, ArchiveResult> = {};
+  dates.forEach((date, i) => {
+    if (i % step !== 0) return;
+    out[date] = { won: i % (step * 3) !== 0, mistakes: i % 4 };
+  });
+  return out;
+}
+
+// Archive launched mid-April; today is Nov 23, so November is still filling in.
+const DATES = datesEndingAt("2026-11-22", 221);
+const MONTHS = groupDatesByMonth(DATES);
+
+/** Newest month: partly filled, only an earlier-month arrow. */
+export const LatestMonth: Story = {
+  args: { genre: "films", siteName: "Filmclues", archive: findArchiveMonth(MONTHS, null) },
 };
 
-export const MiddlePage: Story = {
-  args: {
-    genre: "films",
-    siteName: "Filmclues",
-    dates: datesEndingAt("2026-05-31", 30),
-    page: 4,
-    totalPages: 8,
-  },
+/** A full month with both arrows. */
+export const MiddleMonth: Story = {
+  args: { ...LatestMonth.args, archive: findArchiveMonth(MONTHS, "2026-06") },
 };
 
-export const SinglePage: Story = {
-  args: {
-    genre: "books",
-    siteName: "Litclues",
-    dates: datesEndingAt("2026-06-30", 5),
-    page: 1,
-    totalPages: 1,
-  },
+/** Launch month: starts mid-month, only a later-month arrow. */
+export const FirstMonth: Story = {
+  args: { ...LatestMonth.args, archive: findArchiveMonth(MONTHS, "2026-04") },
+};
+
+/** Returning player: mix of solved, lost and unplayed days. */
+export const SomePlayed: Story = {
+  args: { ...MiddleMonth.args, results: someResults(DATES, 2) },
+};
+
+/** Every puzzle this month finished. */
+export const AllPlayed: Story = {
+  args: { ...MiddleMonth.args, results: someResults(DATES, 1) },
 };
 
 export const Empty: Story = {
-  args: {
-    genre: "music",
-    siteName: "Musiclues",
-    dates: [],
-    page: 1,
-    totalPages: 0,
-  },
+  args: { genre: "music", siteName: "Musiclues", archive: null },
 };

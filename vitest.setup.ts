@@ -25,8 +25,10 @@ class ResizeObserverStub {
 }
 window.ResizeObserver = window.ResizeObserver ?? ResizeObserverStub;
 
-// Mock next/navigation for tests
-vi.mock('next/navigation', () => ({
+// Mock next/navigation client hooks for tests. Server helpers (notFound,
+// redirect, permanentRedirect) stay real so route tests see their throws.
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/navigation')>()),
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
