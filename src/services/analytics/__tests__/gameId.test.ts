@@ -57,3 +57,23 @@ describe('clearGameId', () => {
     expect(getGameId('films', '2026-10-05')).toBeNull();
   });
 });
+
+describe('archive mode', () => {
+  it('keeps an archive game separate from the daily game of the same genre', () => {
+    const daily = startGameId('films', '2026-11-23');
+    const archive = startGameId('films', '2026-10-01', 'archive');
+
+    expect(archive.isNew).toBe(true);
+    expect(getGameId('films', '2026-11-23')).toBe(daily.id);
+    expect(getGameId('films', '2026-10-01', 'archive')).toBe(archive.id);
+  });
+
+  it('clearing the archive id leaves the daily id intact', () => {
+    const daily = startGameId('films', '2026-11-23');
+    startGameId('films', '2026-10-01', 'archive');
+    clearGameId('films', 'archive');
+
+    expect(getGameId('films', '2026-10-01', 'archive')).toBeNull();
+    expect(getGameId('films', '2026-11-23')).toBe(daily.id);
+  });
+});

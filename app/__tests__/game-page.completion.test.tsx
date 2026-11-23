@@ -3,7 +3,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import { GamePage } from '../game-page';
 import { resetAppStore, getAppStore } from '../../src/store/appStore';
 import { resetStatsStore } from '../../src/store/statsStore';
-import { resetAllStores, getGameStore } from '../../src/store/gameStore';
+import { resetAllStores, getGameStore, boardKey } from '../../src/store/gameStore';
 import type { SavedPuzzle } from '../../src/types';
 
 const trackGameEventMock = vi.fn();
@@ -83,7 +83,7 @@ describe('GamePage completion → trackGameEvent', () => {
     });
 
     await act(async () => {
-      const filmsStore = getGameStore('films');
+      const filmsStore = getGameStore(boardKey('films', DATE));
       filmsStore.setState({ gameStatus: 'lost', mistakes: 4 });
     });
 
@@ -150,7 +150,7 @@ describe('GamePage completion → trackGameEvent', () => {
     });
 
     await act(async () => {
-      const booksStore = getGameStore('books');
+      const booksStore = getGameStore(boardKey('books', DATE));
       booksStore.setState({ gameStatus: 'won', mistakes: 1 });
     });
 
@@ -184,7 +184,7 @@ describe('GamePage per-game analytics id', () => {
     expect(started.gameId).toEqual(expect.any(String));
 
     await act(async () => {
-      getGameStore('films').setState({ gameStatus: 'won', mistakes: 0 });
+      getGameStore(boardKey('films', DATE)).setState({ gameStatus: 'won', mistakes: 0 });
     });
 
     await waitFor(() => {
@@ -217,7 +217,7 @@ describe('GamePage per-game analytics id', () => {
     expect(localStorage.getItem('xclues-game-id-films')).not.toBeNull();
 
     await act(async () => {
-      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+      getGameStore(boardKey('films', DATE)).setState({ gameStatus: 'lost', mistakes: 4 });
     });
 
     await waitFor(() => {
@@ -241,7 +241,7 @@ describe('GamePage footer fade', () => {
     expect(container.querySelector('.game-footer--hidden')).toBeNull();
 
     await act(async () => {
-      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+      getGameStore(boardKey('films', DATE)).setState({ gameStatus: 'lost', mistakes: 4 });
     });
 
     await waitFor(() =>

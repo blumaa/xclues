@@ -232,3 +232,46 @@ describe('dropped', () => {
     ]);
   });
 });
+
+describe('archive plays', () => {
+  const now = new Date('2026-04-19T12:00:00Z');
+
+  it('are left out of the daily funnel', () => {
+    const rows: GameEventRow[] = [
+      row('started', '2026-04-19T10:00:00Z'),
+      { ...row('started', '2026-04-19T11:00:00Z'), mode: 'archive' },
+      { ...row('won', '2026-04-19T11:05:00Z'), mode: 'archive' },
+    ];
+    const today = aggregateEvents(rows, now).daily[0];
+    expect(today.started).toBe(1);
+    expect(today.won).toBe(0);
+  });
+
+  it('are left out of traffic sources', () => {
+    const rows: GameEventRow[] = [
+      { ...row('started', '2026-04-19T10:00:00Z'), source: 'reddit', mode: 'archive' },
+    ];
+    expect(aggregateBySource(rows, now)).toEqual([]);
+  });
+
+  it('get their own funnel in archive mode', () => {
+    const rows: GameEventRow[] = [
+      row('started', '2026-04-19T10:00:00Z'),
+      { ...row('started', '2026-04-19T11:00:00Z'), mode: 'archive', game_id: 'a1' },
+      { ...row('won', '2026-04-19T11:05:00Z'), mode: 'archive', game_id: 'a1' },
+    ];
+    const today = aggregateEvents(rows, now, 'archive').daily[0];
+    expect(today).toMatchObject({ started: 1, won: 1, lost: 0, dropped: 0 });
+  });
+
+  it('split by genre in archive mode', () => {
+    const rows: GameEventRow[] = [
+      { ...row('started', '2026-04-19T10:00:00Z', 'books'), mode: 'archive' },
+      { ...row('started', '2026-04-19T10:00:00Z', 'films'), mode: 'daily' },
+    ];
+    const byGenre = aggregateEventsByGenre(rows, now, 'archive');
+    expect(byGenre.books.daily[0].started).toBe(1);
+    expect(byGenre.films.daily[0].started).toBe(0);
+    expect(byGenre.all.daily[0].started).toBe(1);
+  });
+});

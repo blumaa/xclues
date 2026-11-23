@@ -53,4 +53,4 @@ export interface SavedPuzzle {
 }
 
 // Re-export stats types
-export type { GameResult, UserStats, IStatsStorage } from './stats';
+export type { GameResult, UserStats, IStatsStorage, PlayMode } from './stats';

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getGameStore, resetAllStores } from '../gameStore';
+import { boardKey, getGameStore, resetAllStores } from '../gameStore';
 import type { Item, Group } from '../../types';
 
 function makeGroup(id: string, itemIds: number[]): Group {
@@ -15,6 +15,22 @@ function makeGroup(id: string, itemIds: number[]): Group {
 describe('genre-keyed game stores', () => {
   beforeEach(() => {
     resetAllStores();
+  });
+
+  it('same genre on different dates gets separate boards', () => {
+    const today = getGameStore(boardKey('films', '2026-11-23'));
+    const archive = getGameStore(boardKey('films', '2026-10-01'));
+
+    today.getState().initializeGame([{ id: 1, title: 'Today' }], []);
+
+    expect(archive).not.toBe(today);
+    expect(archive.getState().items).toEqual([]);
+  });
+
+  it('boardKey is stable for the same genre and date', () => {
+    expect(getGameStore(boardKey('books', '2026-10-01'))).toBe(
+      getGameStore(boardKey('books', '2026-10-01')),
+    );
   });
 
   it('each genre gets its own isolated store', () => {

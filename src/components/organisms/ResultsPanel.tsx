@@ -6,10 +6,9 @@ import { GameResultDisplay } from "../molecules/GameResultDisplay";
 import { CountdownTimer } from "../molecules/CountdownTimer";
 import { generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
-import { getTodayDate } from "../../utils/index";
 import { isValidGenre } from "../../config/seoConfig";
 import { getStatsStore } from "../../store/statsStore";
-import type { GuessColor } from "../../types/stats";
+import type { GuessColor, PlayMode } from "../../types/stats";
 import { PuzzleFeedbackModal } from "./PuzzleFeedbackModal";
 
 import "./ResultsPanel.css";
@@ -20,6 +19,7 @@ interface ResultsPanelProps {
   genre: string;
   guessHistory: GuessColor[][] | null;
   puzzleDate: string;
+  mode?: PlayMode;
   onViewPuzzle?: () => void;
 }
 
@@ -29,6 +29,7 @@ export function ResultsPanel({
   genre,
   guessHistory,
   puzzleDate,
+  mode = "daily",
   onViewPuzzle,
 }: ResultsPanelProps) {
   const context = useSite();
@@ -45,7 +46,7 @@ export function ResultsPanel({
 
     const shareText = generateShareText({
       siteName,
-      puzzleDate: getTodayDate(),
+      puzzleDate,
       guessHistory,
       domain,
       genre: isValidGenre(genre) ? genre : undefined,
@@ -93,7 +94,13 @@ export function ResultsPanel({
             </div>
           </XButton>
         )}
-        <CountdownTimer />
+        {mode === "archive" ? (
+          <a href={`/${genre}`} className="xbtn xbtn--outline xbtn--sm">
+            Play today&apos;s puzzle
+          </a>
+        ) : (
+          <CountdownTimer />
+        )}
       </div>
 
       <div className="results-panel__links">

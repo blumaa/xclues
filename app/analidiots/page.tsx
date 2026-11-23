@@ -32,7 +32,7 @@ async function fetchAllEvents(supabase: SupabaseClient, since: string): Promise<
   while (true) {
     const { data } = await supabase
       .from("game_events")
-      .select("event_type, created_at, genre, source, game_id")
+      .select("event_type, created_at, genre, source, game_id, mode")
       .gte("created_at", since)
       .range(from, from + PAGE_SIZE - 1);
 
@@ -94,7 +94,8 @@ export default async function AnalidiotsPage({
   }
 
   const data = aggregateEventsByGenre(events);
+  const archive = aggregateEventsByGenre(events, new Date(), "archive");
   const bySource = aggregateBySource(events);
 
-  return <AnalidiotsView data={data} bySource={bySource} feedback={feedback} puzzleFeedback={puzzleFeedback} />;
+  return <AnalidiotsView data={data} archive={archive} bySource={bySource} feedback={feedback} puzzleFeedback={puzzleFeedback} />;
 }

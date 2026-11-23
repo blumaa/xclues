@@ -16,6 +16,13 @@ afterEach(() => {
 });
 
 describe('trackGameEvent', () => {
+  it('tags archive plays with mode archive', async () => {
+    await trackGameEvent('won', { genre: 'films', puzzleDate: '2026-10-01', mode: 'archive' });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.mode).toBe('archive');
+  });
+
   it('sends the per-game id when given', async () => {
     await trackGameEvent('lost', { genre: 'books', puzzleDate: '2026-10-05', gameId: 'g-1' });
 
@@ -38,6 +45,7 @@ describe('trackGameEvent', () => {
           user_id: null,
           source: null,
           game_id: null,
+          mode: 'daily',
         }),
       }),
     );
@@ -68,6 +76,7 @@ describe('trackGameEvent', () => {
       user_id: 'user-123',
       source: null,
       game_id: null,
+      mode: 'daily',
     });
   });
 

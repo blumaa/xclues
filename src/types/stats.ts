@@ -4,6 +4,9 @@
  * Type definitions for user stats and game results.
  */
 
+/** Daily = today's live puzzle. Archive = a past date replayed. */
+export type PlayMode = 'daily' | 'archive';
+
 /** Difficulty colors for guess history display */
 export type GuessColor = 'yellow' | 'green' | 'blue' | 'purple';
 
@@ -23,6 +26,8 @@ export interface GameResult {
   completedAt: number;
   /** History of guesses as colors (for share/display) */
   guessHistory?: GuessColor[][];
+  /** Played from the archive (past date). Excluded from streaks. */
+  archive?: boolean;
 }
 
 /**

@@ -268,25 +268,30 @@ function createGameStoreInstance(): StoreApi<GameStore> {
   }));
 }
 
-// Per-genre store instances — each genre gets its own isolated game state
+// One store per board. A board is one genre's puzzle on one date, so today's
+// game and an archive date of the same genre never share state.
+export function boardKey(genre: string, puzzleDate: string): string {
+  return `${genre}:${puzzleDate}`;
+}
+
 const storeMap = new Map<string, StoreApi<GameStore>>();
 
 /**
- * Get or create a store instance for a specific genre.
+ * Get or create the store for a board. Key with boardKey(genre, puzzleDate).
  */
-export function getGameStore(genre: string): StoreApi<GameStore> {
-  if (!storeMap.has(genre)) {
-    storeMap.set(genre, createGameStoreInstance());
+export function getGameStore(key: string): StoreApi<GameStore> {
+  if (!storeMap.has(key)) {
+    storeMap.set(key, createGameStoreInstance());
   }
-  return storeMap.get(genre)!;
+  return storeMap.get(key)!;
 }
 
 /**
- * React hook for genre-scoped game state.
- * Usage: const gameStatus = useGameStore('films', s => s.gameStatus);
+ * React hook for one board's game state.
+ * Usage: const gameStatus = useGameStore(boardKey('films', date), s => s.gameStatus);
  */
-export function useGameStore<T>(genre: string, selector: (state: GameStore) => T): T {
-  return useStore(getGameStore(genre), selector);
+export function useGameStore<T>(key: string, selector: (state: GameStore) => T): T {
+  return useStore(getGameStore(key), selector);
 }
 
 /**

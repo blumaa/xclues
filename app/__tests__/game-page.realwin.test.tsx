@@ -3,7 +3,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import { GamePage } from '../game-page';
 import { resetAppStore } from '../../src/store/appStore';
 import { resetStatsStore } from '../../src/store/statsStore';
-import { resetAllStores, getGameStore } from '../../src/store/gameStore';
+import { resetAllStores, getGameStore, boardKey } from '../../src/store/gameStore';
 import type { SavedPuzzle, Item, Group } from '../../src/types';
 
 const fetchMock = vi.fn();
@@ -83,7 +83,7 @@ describe('GamePage → submitGuess correct 4x → fetch insert won', () => {
 
     fetchMock.mockClear();
 
-    const store = getGameStore('films');
+    const store = getGameStore(boardKey('films', DATE));
 
     const correctGuesses = [
       [1, 2, 3, 4],

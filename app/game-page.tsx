@@ -1,30 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { GameBoard } from "../src/components/organisms/GameBoard";
-import { GameControls } from "../src/components/organisms/GameControls";
-import { HowToPlayBanner } from "../src/components/molecules/HowToPlayBanner";
-import { MistakesIndicator } from "../src/components/molecules/MistakesIndicator";
-import { XButton } from "../src/components/atoms";
-import { useGameStore, getGameStore } from "../src/store/gameStore";
+import { useEffect } from "react";
+import { GenrePanel, initBoard } from "../src/components/organisms/GenrePanel";
+import { GameFooter } from "../src/components/organisms/GameFooter";
 import { useAppStore, getAppStore } from "../src/store/appStore";
-import { getStatsStore, useStatsStore } from "../src/store/statsStore";
-import { useToast } from "../src/providers/useToast";
-import { guessesToColorHistory } from "../src/utils/guessHistory";
+import { getStatsStore, useStatsStore, STATS_STORAGE_KEY } from "../src/store/statsStore";
 import { VALID_GENRES, type Genre } from "../src/config/seoConfig";
 import type { SavedPuzzle } from "../src/types";
-import { trackGameEvent } from "../src/services/analytics/gameEvents";
-import { clearGameId, getGameId, startGameId } from "../src/services/analytics/gameId";
 import { FeedbackModal } from "../src/components/organisms/FeedbackModal";
 import {
   FEEDBACK_STORAGE_KEY,
   shouldShowSurvey,
 } from "../src/services/feedback/survey";
 import { useLocalStorage } from "../src/hooks/useLocalStorage";
-
-const STATS_STORAGE_KEY = "xclues-stats";
-const MAX_MISTAKES = 4;
-const MAX_SELECTIONS = 4;
+import { useTrackGameStart } from "../src/hooks/useTrackGameStart";
 
 interface GamePageProps {
   initialGenre: Genre;
@@ -32,119 +21,8 @@ interface GamePageProps {
   puzzles: Record<Genre, SavedPuzzle | null>;
 }
 
-function initGenre(genre: Genre, puzzle: SavedPuzzle, puzzleDate: string) {
-  const appStore = getAppStore();
-  if (appStore.getState().puzzlesReady[genre]) return;
-
-  const statsStore = getStatsStore();
-  const completed = statsStore.getState().getCompletedGame(genre, puzzleDate);
-  const gameStore = getGameStore(genre);
-
-  if (completed) {
-    gameStore.getState().restoreCompletedGame(puzzle.groups, completed.won, completed.mistakes);
-  } else {
-    gameStore.getState().initializeGame(puzzle.items, puzzle.groups, puzzleDate, genre);
-  }
-
-  appStore.getState().markPuzzleReady(genre);
-}
-
-/**
- * One genre's board + results logic. Self-contained so each carousel
- * panel manages its own showResults/viewingPuzzle state independently.
- */
-function GenrePanel({ genre, puzzle, puzzleDate }: {
-  genre: Genre;
-  puzzle: SavedPuzzle | null;
-  puzzleDate: string;
-}) {
-  const gameStatus = useGameStore(genre, (s) => s.gameStatus);
-  const groups = useGameStore(genre, (s) => s.groups);
-  const previousGuesses = useGameStore(genre, (s) => s.previousGuesses);
-  const mistakes = useGameStore(genre, (s) => s.mistakes);
-
-  const storePopulated = groups.length > 0;
-  const isGameOver = gameStatus === "won" || gameStatus === "lost";
-
-  const [resultsReady, setResultsReady] = useState(false);
-  const [viewingPuzzle, setViewingPuzzle] = useState(false);
-
-  useEffect(() => {
-    if (!isGameOver) return;
-    const timer = setTimeout(() => setResultsReady(true), 2000);
-    return () => clearTimeout(timer);
-  }, [isGameOver]);
-
-  const showResults = isGameOver && resultsReady;
-
-  const liveGuessHistory = useMemo(() => {
-    if (previousGuesses.length > 0 && groups.length > 0) {
-      return guessesToColorHistory(previousGuesses, groups);
-    }
-    return null;
-  }, [previousGuesses, groups]);
-
-  const storedGuessHistory = useStatsStore((s) => {
-    const completed = s.getCompletedGame(genre, puzzleDate);
-    return completed?.guessHistory || null;
-  });
-
-  const currentGuessHistory = liveGuessHistory || storedGuessHistory;
-  const isShowingResults = showResults && !viewingPuzzle;
-
-  // Record completion
-  useEffect(() => {
-    if (!isGameOver) return;
-    const statsStore = getStatsStore();
-    if (statsStore.getState().getCompletedGame(genre, puzzleDate)) return;
-
-    const guessHistory = previousGuesses.length > 0 && groups.length > 0
-      ? guessesToColorHistory(previousGuesses, groups)
-      : [];
-
-    statsStore.getState().recordCompletion({
-      date: puzzleDate,
-      genre,
-      won: gameStatus === "won",
-      mistakes,
-      guessHistory,
-      completedAt: Date.now(),
-    });
-
-    void trackGameEvent(gameStatus === "won" ? "won" : "lost", {
-      genre,
-      puzzleDate,
-      gameId: getGameId(genre, puzzleDate),
-    });
-    clearGameId(genre);
-  }, [gameStatus, genre, puzzleDate, mistakes, previousGuesses, groups, isGameOver]);
-
-  return (
-    <>
-      <GameBoard
-        genre={genre}
-        puzzleDate={puzzleDate}
-        isLoading={!storePopulated && !!puzzle}
-        hasNoPuzzle={!puzzle}
-        guessHistory={currentGuessHistory}
-        showResults={isShowingResults}
-        onViewPuzzle={() => setViewingPuzzle(true)}
-      />
-      {/* View Results button when viewing puzzle post-game */}
-      {isGameOver && viewingPuzzle && (
-        <div className="game-footer__view-results">
-          <XButton variant="ghost" size="sm" onClick={() => setViewingPuzzle(false)}>
-            View Results
-          </XButton>
-        </div>
-      )}
-    </>
-  );
-}
-
 export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
   const activeGenre = useAppStore((s) => s.activeGenre);
-  const { showInfo } = useToast();
   const gameCount = useStatsStore((s) => s.gameHistory.length);
   const [feedbackSubmitted, setFeedbackSubmitted, feedbackHydrated] =
     useLocalStorage<string>(FEEDBACK_STORAGE_KEY, "");
@@ -159,22 +37,14 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
     for (const g of VALID_GENRES) {
       const puzzle = puzzles[g];
       if (puzzle) {
-        initGenre(g, puzzle, puzzleDate);
+        initBoard(g, puzzle, puzzleDate);
       }
     }
   }, [initialGenre, puzzleDate, puzzles]);
 
-  // Fire started for activeGenre — gated on initialized to prevent
-  // the store's default 'films' from leaking a spurious event. The stored
-  // game id dedupes tab switches and reloads: only a new game logs a start.
-  useEffect(() => {
-    if (!initialized) return;
-    const statsStore = getStatsStore();
-    if (statsStore.getState().getCompletedGame(activeGenre, puzzleDate)) return;
-    const { id, isNew } = startGameId(activeGenre, puzzleDate);
-    if (!isNew) return;
-    void trackGameEvent('started', { genre: activeGenre, puzzleDate, gameId: id });
-  }, [initialized, activeGenre, puzzleDate]);
+  // Gated on initialized so the store's default 'films' can't leak a
+  // spurious start before the real genre is set.
+  useTrackGameStart(activeGenre, puzzleDate, "daily", initialized);
 
   // Paused during the difficulty-skew trial; survey.ts owns the switch.
   const feedbackOpen = shouldShowSurvey({
@@ -182,19 +52,6 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
     gamesPlayed: gameCount,
     alreadyAnswered: feedbackSubmitted === "1",
   });
-
-  // Active genre state for footer controls
-  const gameStatus = useGameStore(activeGenre, (s) => s.gameStatus);
-  const mistakes = useGameStore(activeGenre, (s) => s.mistakes);
-  const selectedItemIds = useGameStore(activeGenre, (s) => s.selectedItemIds);
-  const notification = useGameStore(activeGenre, (s) => s.notification);
-  const submitGuess = useGameStore(activeGenre, (s) => s.submitGuess);
-  const shuffleItems = useGameStore(activeGenre, (s) => s.shuffleItems);
-  const deselectAll = useGameStore(activeGenre, (s) => s.deselectAll);
-
-  useEffect(() => {
-    if (notification) showInfo(notification);
-  }, [notification, showInfo]);
 
   // Carousel: slide to the active genre's panel
   const activeIndex = VALID_GENRES.indexOf(activeGenre);
@@ -210,27 +67,14 @@ export function GamePage({ initialGenre, puzzleDate, puzzles }: GamePageProps) {
         >
           {VALID_GENRES.map((genre) => (
             <div key={genre} className="carousel-panel">
-              <GenrePanel genre={genre} puzzle={puzzles[genre]} puzzleDate={puzzleDate} />
+              <GenrePanel genre={genre} puzzle={puzzles[genre]} puzzleDate={puzzleDate} mode="daily" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Footer — outside carousel, shows controls for active genre.
-          Stays mounted and fades so genre switches don't jerk the layout. */}
-      <div
-        className={`game-footer${gameStatus === "playing" ? "" : " game-footer--hidden"}`}
-      >
-        <MistakesIndicator mistakes={mistakes} maxMistakes={MAX_MISTAKES} />
-        <GameControls
-          onSubmit={submitGuess}
-          onShuffle={shuffleItems}
-          onDeselect={deselectAll}
-          hasSelection={selectedItemIds.length > 0}
-          canSubmit={selectedItemIds.length === MAX_SELECTIONS}
-        />
-        <HowToPlayBanner />
-      </div>
+      {/* Footer — outside carousel, shows controls for active genre */}
+      <GameFooter genre={activeGenre} puzzleDate={puzzleDate} />
 
       <FeedbackModal
         isOpen={feedbackOpen}

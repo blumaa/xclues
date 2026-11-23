@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { mockPuzzle } from "../../src/__mocks__/puzzleData";
 import ArchivePage from "../[genre]/archive/[date]/page";
+import { ToastProvider } from "../../src/providers/ToastProvider";
 
 vi.mock("../../src/lib/supabase/puzzleQueries", () => ({
   fetchPuzzleByDate: vi.fn(async () => mockPuzzle),
@@ -16,29 +17,36 @@ async function renderPage() {
   const ui = await ArchivePage({
     params: Promise.resolve({ genre: "films", date: "2026-07-01" }),
   });
-  return render(ui);
+  // Root layout supplies ToastProvider in the app.
+  return render(<ToastProvider>{ui}</ToastProvider>);
 }
 
 describe("archive date page", () => {
-  it("renders breadcrumbs on top, then the board, then the date nav", async () => {
+  it("renders breadcrumbs, title, then the playable game, then the date nav", async () => {
     const { container } = await renderPage();
 
     const wrap = container.querySelector(".archive-date");
     const children = [...(wrap?.children ?? [])].map((c) => c.className);
     const crumbsIdx = children.findIndex((c) => c.includes("breadcrumbs"));
-    const boardIdx = children.findIndex((c) => c.includes("puzzle-reveal"));
+    const titleIdx = children.findIndex((c) => c.includes("archive-date__title"));
+    const gameIdx = children.findIndex((c) => c.includes("homepage-game"));
     const navIdx = children.findIndex((c) => c.includes("archive-date-nav"));
 
     expect(crumbsIdx).toBeGreaterThan(-1);
-    expect(crumbsIdx).toBeLessThan(boardIdx);
-    expect(boardIdx).toBeLessThan(navIdx);
+    expect(crumbsIdx).toBeLessThan(titleIdx);
+    expect(titleIdx).toBeLessThan(gameIdx);
+    expect(gameIdx).toBeLessThan(navIdx);
   });
 
-  it("renders the group cards in the shared game grid", async () => {
-    const { container } = await renderPage();
-    expect(
-      container.querySelectorAll(".game-grid > .group-card")
-    ).toHaveLength(4);
+  it("keeps an h1 naming the puzzle and date", async () => {
+    const { getByRole } = await renderPage();
+    expect(getByRole("heading", { level: 1 }).textContent).toMatch(/July 1, 2026/);
+  });
+
+  it("does not reveal the answers before the game is played", async () => {
+    const { container, queryByText } = await renderPage();
+    expect(container.querySelectorAll(".group-card")).toHaveLength(0);
+    expect(queryByText(mockPuzzle.groups[0].connection)).toBeNull();
   });
 
   it("404s today's live puzzle so its answers aren't revealed in the archive", async () => {
@@ -53,5 +61,16 @@ describe("archive date page", () => {
     ).rejects.toThrow();
 
     vi.useRealTimers();
+  });
+});
+
+describe("archive date metadata", () => {
+  it("invites play instead of promising revealed answers", async () => {
+    const { generateMetadata } = await import("../[genre]/archive/[date]/page");
+    const meta = await generateMetadata({
+      params: Promise.resolve({ genre: "films", date: "2026-07-01" }),
+    });
+    expect(meta.description).toMatch(/^Play /);
+    expect(meta.description).not.toMatch(/revealed/i);
   });
 });
