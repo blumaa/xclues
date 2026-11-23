@@ -12,7 +12,8 @@ import {
 import { archiveDateUrl, getAdjacentDates } from "../../../../src/utils/archiveDates";
 import { type Genre, getSeoConfig, isValidGenre } from "../../../../src/config/seoConfig";
 import { buildBreadcrumbJsonLd } from "../../../../src/lib/seo/breadcrumbJsonLd";
-import { PuzzleReveal } from "../../../../src/components/organisms/PuzzleReveal";
+import { ArchiveGameView } from "../../../../src/views/ArchiveGameView";
+import { XHeading } from "../../../../src/components/atoms";
 import { Breadcrumbs } from "../../../../src/components/molecules/Breadcrumbs";
 import { ArchiveDateNav } from "../../../../src/components/molecules/ArchiveDateNav";
 import "./archive-date.css";
@@ -42,7 +43,7 @@ export async function generateMetadata({
   const config = getSeoConfig(genre);
   const displayDate = formatDateForDisplay(date);
   const title = `${config.siteName} Puzzle - ${displayDate} | Archive`;
-  const description = `See the ${config.siteName} puzzle from ${displayDate}. All 4 categories revealed with their connections.`;
+  const description = `Play the ${config.siteName} puzzle from ${displayDate}. Find the 4 hidden connections.`;
 
   return {
     title: { absolute: title },
@@ -71,8 +72,8 @@ export default async function ArchivePage({
 
   if (!isValidGenre(genre)) notFound();
   if (!isValidDateFormat(date)) notFound();
-  // Only past puzzles are archived; today's live puzzle and future dates 404 so
-  // players can't read the answers early.
+  // Only past puzzles are archived; today's live puzzle and future dates 404.
+  // Today's game lives on the home page, where it counts toward streaks.
   if (!isPastDate(date)) notFound();
 
   const puzzle = await fetchPuzzleByDate(genre, date);
@@ -121,7 +122,11 @@ export default async function ArchivePage({
             { label: displayDate },
           ]}
         />
-        <PuzzleReveal puzzle={puzzle} genre={genre as Genre} date={date} />
+        {/* h1 kept for SEO; sized down so the board stays the hero */}
+        <XHeading level={1} size="md" align="center" className="archive-date__title">
+          {config.siteName} &mdash; {displayDate}
+        </XHeading>
+        <ArchiveGameView genre={genre as Genre} puzzleDate={date} puzzle={puzzle} />
         <ArchiveDateNav genre={genre} older={older} newer={newer} />
       </div>
     </>

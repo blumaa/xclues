@@ -12,7 +12,7 @@ export function Header() {
 
   return (
     <header className="app-header">
-      <Link href="/" className="app-header-brand" aria-label="xClues home">
+      <Link href={`/${genre}`} className="app-header-brand" aria-label="xClues home">
         <span className="app-header-logo">
           <Logo genre={genre} />
         </span>

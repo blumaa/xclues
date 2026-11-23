@@ -13,7 +13,10 @@ import { puzzleUrl } from "../utils/archiveDates";
 import "./AnalidiotsView.css";
 
 interface AnalidiotsViewProps {
+  /** Today's puzzle funnel. */
   data: GenreAggregations;
+  /** Archive replays funnel. */
+  archive: GenreAggregations;
   bySource: SourceBucket[];
   feedback: SurveyResponseRow[];
   puzzleFeedback: PuzzleFeedbackRow[];
@@ -29,6 +32,41 @@ const GENRE_TABS = [
 ] as const;
 
 type GenreTabKey = (typeof GENRE_TABS)[number]['key'];
+
+const MODE_TABS = [
+  { key: 'daily', label: 'Today' },
+  { key: 'archive', label: 'Archive' },
+] as const;
+
+type ModeTabKey = (typeof MODE_TABS)[number]['key'];
+
+function TabNav<K extends string>({
+  label,
+  tabs,
+  active,
+  onChange,
+}: {
+  label: string;
+  tabs: readonly { key: K; label: string }[];
+  active: K;
+  onChange: (key: K) => void;
+}) {
+  return (
+    <nav className="analidiots__tabs" aria-label={label}>
+      {tabs.map((tab) => (
+        <button
+          key={tab.key}
+          type="button"
+          className={`analidiots__tab${active === tab.key ? ' analidiots__tab--active' : ''}`}
+          onClick={() => onChange(tab.key)}
+          aria-pressed={active === tab.key}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
 
 function formatTimestamp(iso: string): string {
   const d = new Date(iso);
@@ -242,8 +280,10 @@ function GenreSection({ data }: { data: AggregatedEvents }) {
   );
 }
 
-export function AnalidiotsView({ data, bySource, feedback, puzzleFeedback }: AnalidiotsViewProps) {
+export function AnalidiotsView({ data, archive, bySource, feedback, puzzleFeedback }: AnalidiotsViewProps) {
   const [activeTab, setActiveTab] = useState<GenreTabKey>('all');
+  const [activeMode, setActiveMode] = useState<ModeTabKey>('daily');
+  const funnel = activeMode === 'archive' ? archive : data;
   const [feedbackPage, setFeedbackPage] = useState(1);
 
   const survey = aggregateSurvey(feedback);
@@ -258,21 +298,10 @@ export function AnalidiotsView({ data, bySource, feedback, puzzleFeedback }: Ana
         </p>
       </header>
 
-      <nav className="analidiots__tabs" aria-label="Genre filter">
-        {GENRE_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`analidiots__tab${activeTab === tab.key ? ' analidiots__tab--active' : ''}`}
-            onClick={() => setActiveTab(tab.key)}
-            aria-pressed={activeTab === tab.key}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <TabNav label="Genre filter" tabs={GENRE_TABS} active={activeTab} onChange={setActiveTab} />
+      <TabNav label="Puzzle filter" tabs={MODE_TABS} active={activeMode} onChange={setActiveMode} />
 
-      <GenreSection data={data[activeTab]} />
+      <GenreSection data={funnel[activeTab]} />
 
       <section className="analidiots__section">
         <h2 className="analidiots__section-title">

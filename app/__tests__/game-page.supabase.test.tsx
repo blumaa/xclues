@@ -3,7 +3,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import { GamePage } from '../game-page';
 import { resetAppStore } from '../../src/store/appStore';
 import { resetStatsStore } from '../../src/store/statsStore';
-import { resetAllStores, getGameStore } from '../../src/store/gameStore';
+import { resetAllStores, getGameStore, boardKey } from '../../src/store/gameStore';
 import type { SavedPuzzle } from '../../src/types';
 
 const fetchMock = vi.fn();
@@ -78,7 +78,7 @@ describe('GamePage → fetch insert', () => {
     fetchMock.mockClear();
 
     await act(async () => {
-      getGameStore('films').setState({ gameStatus: 'lost', mistakes: 4 });
+      getGameStore(boardKey('films', DATE)).setState({ gameStatus: 'lost', mistakes: 4 });
     });
 
     await waitFor(() => {

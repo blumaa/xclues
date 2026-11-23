@@ -2,6 +2,9 @@ import { createStore, type StoreApi } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import type { GameResult, UserStats } from '../types/stats';
 
+/** localStorage key for game history. Shared by every page that plays. */
+export const STATS_STORAGE_KEY = 'xclues-stats';
+
 interface StatsStoreState {
   gameHistory: GameResult[];
   storageKey: string | null;
@@ -26,7 +29,9 @@ function computeGenreStats(gameHistory: GameResult[], genre: string): UserStats 
   let streak = 0;
   let lastDate: string | null = null;
 
-  for (const game of genreGames) {
+  // Archive plays never touch streaks: streaks measure daily habit.
+  const dailyGames = genreGames.filter((g) => !g.archive);
+  for (const game of dailyGames) {
     if (!game.won) {
       streak = 0;
     } else if (!lastDate) {

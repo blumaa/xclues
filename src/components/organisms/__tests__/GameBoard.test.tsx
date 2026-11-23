@@ -15,6 +15,7 @@ const defaultStoreState: Record<string, unknown> = {
 };
 
 vi.mock('../../../store/gameStore', () => ({
+  boardKey: (genre: string, date: string) => `${genre}:${date}`,
   useGameStore: (_genre: string, selector: (s: Record<string, unknown>) => unknown) =>
     selector(defaultStoreState),
 }));

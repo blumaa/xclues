@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, within } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { AnalidiotsView } from "./AnalidiotsView";
 import { aggregateEventsByGenre, type GameEventRow } from "../services/analytics/aggregateEvents";
 import type { PuzzleFeedbackRow } from "../services/feedback/puzzleFeedback";
@@ -36,10 +37,21 @@ const PUZZLE_FEEDBACK: PuzzleFeedbackRow[] = [
   },
 ];
 
+const ARCHIVE_ROWS: GameEventRow[] = [
+  { event_type: "started", created_at: today, genre: "books", mode: "archive", game_id: "a1" },
+  { event_type: "lost", created_at: today, genre: "books", mode: "archive", game_id: "a1" },
+];
+
+function totalFor(label: string): string | null {
+  const totals = screen.getByRole("heading", { name: "30-day totals" }).closest("section")!;
+  return within(totals).getByText(label).previousElementSibling!.textContent;
+}
+
 function renderView() {
   render(
     <AnalidiotsView
       data={aggregateEventsByGenre(rows(), now)}
+      archive={aggregateEventsByGenre(ARCHIVE_ROWS, now, "archive")}
       bySource={[{ source: "reddit", started: 3, won: 1, lost: 0, dropped: 2 }]}
       feedback={[]}
       puzzleFeedback={PUZZLE_FEEDBACK}
@@ -105,5 +117,19 @@ describe("AnalidiotsView puzzle feedback", () => {
     renderView();
     const link = within(feedbackTable()).getByRole("link", { name: "2026-10-14" });
     expect(link).toHaveAttribute("href", puzzleUrl("books", "2026-10-14"));
+  });
+});
+
+describe("AnalidiotsView archive plays", () => {
+  it("shows today's puzzle numbers by default", () => {
+    renderView();
+    expect(totalFor("Started")).toBe("3");
+  });
+
+  it("switches the funnel to archive plays", async () => {
+    renderView();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Archive" }));
+    expect(totalFor("Started")).toBe("1");
+    expect(totalFor("Lost")).toBe("1");
   });
 });

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "../../store/appStore";
-import type { Genre } from "../../config/seoConfig";
+import { isValidGenre, type Genre } from "../../config/seoConfig";
 import "./GenreSwitch.css";
 
 const GENRE_OPTIONS: { genre: Genre; label: string }[] = [
@@ -9,7 +10,14 @@ const GENRE_OPTIONS: { genre: Genre; label: string }[] = [
   { genre: "music", label: "Music" },
 ];
 
+/** Pages that hold today's three boards: "/" and "/films" etc. */
+function isGameHome(pathname: string | null): boolean {
+  return pathname === "/" || isValidGenre(pathname?.slice(1));
+}
+
 export function GenreSwitch() {
+  const pathname = usePathname();
+  const router = useRouter();
   const activeGenre = useAppStore((s) => s.activeGenre);
   const setActiveGenre = useAppStore((s) => s.setActiveGenre);
 
@@ -18,7 +26,14 @@ export function GenreSwitch() {
   const buttonRefs = useRef<Map<Genre, HTMLButtonElement>>(new Map());
 
   const handleClick = (genre: Genre) => {
+    // Elsewhere (archive, how-to-play) the switch takes you to today's game.
+    if (!isGameHome(pathname)) {
+      setActiveGenre(genre);
+      router.push(`/${genre}`);
+      return;
+    }
     if (genre === activeGenre) return;
+    // On the game home all boards are mounted: swap in place, no navigation.
     setActiveGenre(genre);
     window.history.replaceState(null, "", `/${genre}`);
   };

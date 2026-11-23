@@ -1,16 +1,17 @@
-import { useGameStore } from "../../store/gameStore";
+import { boardKey, useGameStore } from "../../store/gameStore";
 import { GroupCard } from "../molecules/GroupCard";
 import { ItemTile } from "../molecules/ItemTile";
 import { ResultsPanel } from "./ResultsPanel";
 import { GameSkeleton } from "../molecules/GameSkeleton";
 import { WinCelebration } from "../molecules/WinCelebration";
 import { XText } from "../atoms";
-import type { GuessColor } from "../../types/stats";
+import type { GuessColor, PlayMode } from "../../types/stats";
 import "./GameBoard.css";
 
 interface GameBoardProps {
   genre: string;
   puzzleDate: string;
+  mode?: PlayMode;
   isLoading?: boolean;
   hasNoPuzzle?: boolean;
   guessHistory?: GuessColor[][] | null;
@@ -21,21 +22,23 @@ interface GameBoardProps {
 export function GameBoard({
   genre,
   puzzleDate,
+  mode = "daily",
   isLoading,
   hasNoPuzzle,
   guessHistory,
   showResults,
   onViewPuzzle,
 }: GameBoardProps) {
-  const items = useGameStore(genre, (s) => s.items);
-  const foundGroups = useGameStore(genre, (s) => s.foundGroups);
-  const selectedItemIds = useGameStore(genre, (s) => s.selectedItemIds);
-  const gameStatus = useGameStore(genre, (s) => s.gameStatus);
-  const isShaking = useGameStore(genre, (s) => s.isShaking);
-  const jumpingItemIds = useGameStore(genre, (s) => s.jumpingItemIds);
-  const rejectedItemId = useGameStore(genre, (s) => s.rejectedItemId);
-  const selectItem = useGameStore(genre, (s) => s.selectItem);
-  const mistakes = useGameStore(genre, (s) => s.mistakes);
+  const key = boardKey(genre, puzzleDate);
+  const items = useGameStore(key, (s) => s.items);
+  const foundGroups = useGameStore(key, (s) => s.foundGroups);
+  const selectedItemIds = useGameStore(key, (s) => s.selectedItemIds);
+  const gameStatus = useGameStore(key, (s) => s.gameStatus);
+  const isShaking = useGameStore(key, (s) => s.isShaking);
+  const jumpingItemIds = useGameStore(key, (s) => s.jumpingItemIds);
+  const rejectedItemId = useGameStore(key, (s) => s.rejectedItemId);
+  const selectItem = useGameStore(key, (s) => s.selectItem);
+  const mistakes = useGameStore(key, (s) => s.mistakes);
 
   if (isLoading) {
     return <div className="game-board"><GameSkeleton /></div>;
@@ -61,6 +64,7 @@ export function GameBoard({
           genre={genre}
           guessHistory={guessHistory || null}
           puzzleDate={puzzleDate}
+          mode={mode}
           onViewPuzzle={onViewPuzzle}
         />
       </div>

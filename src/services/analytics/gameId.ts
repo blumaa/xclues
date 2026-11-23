@@ -5,17 +5,24 @@
 // counted exactly (started ids with no finish). Persisted so a reload resumes
 // the same game instead of logging a second start. One key per genre: a new
 // puzzle date overwrites the previous id, so storage never grows. Not tied to
-// a person and cleared once the game ends.
+// a person and cleared once the game ends. Archive plays use their own slot,
+// so replaying a past date never clobbers an unfinished daily game.
+
+import type { PlayMode } from '../../types/stats';
 
 const KEY_PREFIX = 'xclues-game-id-';
+
+function storageKey(genre: string, mode: PlayMode): string {
+  return mode === 'archive' ? `${KEY_PREFIX}archive-${genre}` : KEY_PREFIX + genre;
+}
 
 interface StoredGameId {
   puzzleDate: string;
   id: string;
 }
 
-function read(genre: string): StoredGameId | null {
-  const raw = localStorage.getItem(KEY_PREFIX + genre);
+function read(genre: string, mode: PlayMode): StoredGameId | null {
+  const raw = localStorage.getItem(storageKey(genre, mode));
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as Partial<StoredGameId>;
@@ -28,20 +35,28 @@ function read(genre: string): StoredGameId | null {
   }
 }
 
-export function getGameId(genre: string, puzzleDate: string): string | null {
-  const stored = read(genre);
+export function getGameId(
+  genre: string,
+  puzzleDate: string,
+  mode: PlayMode = 'daily',
+): string | null {
+  const stored = read(genre, mode);
   return stored?.puzzleDate === puzzleDate ? stored.id : null;
 }
 
-export function startGameId(genre: string, puzzleDate: string): { id: string; isNew: boolean } {
-  const existing = getGameId(genre, puzzleDate);
+export function startGameId(
+  genre: string,
+  puzzleDate: string,
+  mode: PlayMode = 'daily',
+): { id: string; isNew: boolean } {
+  const existing = getGameId(genre, puzzleDate, mode);
   if (existing) return { id: existing, isNew: false };
 
   const id = crypto.randomUUID();
-  localStorage.setItem(KEY_PREFIX + genre, JSON.stringify({ puzzleDate, id }));
+  localStorage.setItem(storageKey(genre, mode), JSON.stringify({ puzzleDate, id }));
   return { id, isNew: true };
 }
 
-export function clearGameId(genre: string): void {
-  localStorage.removeItem(KEY_PREFIX + genre);
+export function clearGameId(genre: string, mode: PlayMode = 'daily'): void {
+  localStorage.removeItem(storageKey(genre, mode));
 }

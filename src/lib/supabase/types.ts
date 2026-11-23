@@ -187,6 +187,7 @@ export type Database = {
           game_id: string | null
           genre: string
           id: number
+          mode: string
           puzzle_date: string
           source: string | null
           user_id: string | null
@@ -197,6 +198,7 @@ export type Database = {
           game_id?: string | null
           genre: string
           id?: never
+          mode?: string
           puzzle_date: string
           source?: string | null
           user_id?: string | null
@@ -207,6 +209,7 @@ export type Database = {
           game_id?: string | null
           genre?: string
           id?: never
+          mode?: string
           puzzle_date?: string
           source?: string | null
           user_id?: string | null

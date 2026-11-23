@@ -194,5 +194,54 @@ describe('statsStore', () => {
       expect(stats.currentStreak).toBe(1);
       expect(stats.maxStreak).toBe(1);
     });
+
+    it('archive win filling a gap does not extend streak', () => {
+      const history: GameResult[] = [
+        makeResult({ genre: 'films', date: '2026-04-08', won: true }),
+        makeResult({ genre: 'films', date: '2026-04-09', won: true, archive: true }),
+        makeResult({ genre: 'films', date: '2026-04-10', won: true }),
+      ];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ gameHistory: history }));
+
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+
+      const stats = store.getState().getGenreStats('films');
+      expect(stats.currentStreak).toBe(1);
+      expect(stats.maxStreak).toBe(1);
+    });
+
+    it('archive-only history has zero streak', () => {
+      const history: GameResult[] = [
+        makeResult({ genre: 'films', date: '2026-04-08', won: true, archive: true }),
+        makeResult({ genre: 'films', date: '2026-04-09', won: true, archive: true }),
+      ];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ gameHistory: history }));
+
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+
+      const stats = store.getState().getGenreStats('films');
+      expect(stats.currentStreak).toBe(0);
+      expect(stats.maxStreak).toBe(0);
+    });
+
+    it('archive games count toward played, won and win %', () => {
+      const history: GameResult[] = [
+        makeResult({ genre: 'films', date: '2026-04-10', won: true }),
+        makeResult({ genre: 'films', date: '2026-03-01', won: true, archive: true }),
+        makeResult({ genre: 'films', date: '2026-03-02', won: false, archive: true }),
+        makeResult({ genre: 'films', date: '2026-03-03', won: true, archive: true }),
+      ];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ gameHistory: history }));
+
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+
+      const stats = store.getState().getGenreStats('films');
+      expect(stats.gamesPlayed).toBe(4);
+      expect(stats.gamesWon).toBe(3);
+      expect(stats.winRate).toBe(75);
+    });
   });
 });

@@ -42,6 +42,13 @@ function seedRows(): GameEventRow[] {
       for (let i = 0; i < started; i++) rows.push({ event_type: "started", created_at: iso, genre, source });
       for (let i = 0; i < won; i++) rows.push({ event_type: "won", created_at: iso, genre, source });
       for (let i = 0; i < Math.max(lost, 0); i++) rows.push({ event_type: "lost", created_at: iso, genre, source });
+
+      // A few archive replays per day, so the Archive toggle has data.
+      const archiveStarted = Math.floor(Math.random() * 5);
+      for (let i = 0; i < archiveStarted; i++) {
+        rows.push({ event_type: "started", created_at: iso, genre, source, mode: "archive" });
+        if (i % 2 === 0) rows.push({ event_type: "won", created_at: iso, genre, source, mode: "archive" });
+      }
     }
   }
   return rows;
@@ -117,6 +124,7 @@ const FEEDBACK_SAMPLE: SurveyResponseRow[] = [
 export const Realistic: Story = {
   args: {
     data: aggregateEventsByGenre(REALISTIC_ROWS, NOW),
+    archive: aggregateEventsByGenre(REALISTIC_ROWS, NOW, "archive"),
     bySource: aggregateBySource(REALISTIC_ROWS, NOW),
     feedback: FEEDBACK_SAMPLE,
     puzzleFeedback: PUZZLE_FEEDBACK_SAMPLE,
@@ -126,6 +134,7 @@ export const Realistic: Story = {
 export const Empty: Story = {
   args: {
     data: aggregateEventsByGenre([], NOW),
+    archive: aggregateEventsByGenre([], NOW, "archive"),
     bySource: aggregateBySource([], NOW),
     feedback: [],
     puzzleFeedback: [],
@@ -135,6 +144,7 @@ export const Empty: Story = {
 export const SparseEarlyDays: Story = {
   args: {
     data: aggregateEventsByGenre(SPARSE_ROWS, NOW),
+    archive: aggregateEventsByGenre(SPARSE_ROWS, NOW, "archive"),
     bySource: aggregateBySource(SPARSE_ROWS, NOW),
     feedback: [
       {

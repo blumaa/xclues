@@ -10,3 +10,7 @@
     padding-block: var(--xclues-spacing-1, 0.25rem);
   }
 }
+
+.archive-date__title {
+  margin-block: 0 var(--xclues-spacing-2, 0.5rem);
+}

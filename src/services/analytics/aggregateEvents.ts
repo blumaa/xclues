@@ -1,3 +1,5 @@
+import type { PlayMode } from '../../types/stats';
+
 export type EventType = 'started' | 'won' | 'lost';
 
 export interface GameEventRow {
@@ -6,6 +8,8 @@ export interface GameEventRow {
   genre?: string;
   source?: string | null;
   game_id?: string | null;
+  /** Missing on rows from before the column existed: those are daily. */
+  mode?: PlayMode;
 }
 
 export interface Counts {
@@ -102,7 +106,18 @@ function groupBy(rows: GameEventRow[], keyOf: (row: GameEventRow) => string): Ma
   return groups;
 }
 
-export function aggregateEvents(rows: GameEventRow[], now: Date = new Date()): AggregatedEvents {
+// Today's puzzle and archive replays are separate funnels. Both bucket by
+// created_at, so mixing them would inflate the daily numbers.
+function inMode(rows: GameEventRow[], mode: PlayMode): GameEventRow[] {
+  return rows.filter((row) => (row.mode ?? 'daily') === mode);
+}
+
+export function aggregateEvents(
+  allRows: GameEventRow[],
+  now: Date = new Date(),
+  mode: PlayMode = 'daily',
+): AggregatedEvents {
+  const rows = inMode(allRows, mode);
   const finished = finishedGameIds(rows);
 
   const byDay = groupBy(rows, (row) => utcDateKey(new Date(row.created_at)));
@@ -131,10 +146,12 @@ const SOURCE_WINDOW_DAYS = 30;
 // (organic search, dark social) collapses into a single 'organic' bucket.
 // Sorted by started desc so the highest-volume channels surface first.
 export function aggregateBySource(
-  rows: GameEventRow[],
+  allRows: GameEventRow[],
   now: Date = new Date(),
   windowDays: number = SOURCE_WINDOW_DAYS,
 ): SourceBucket[] {
+  // Traffic sources measure what brings people to today's puzzle.
+  const rows = inMode(allRows, 'daily');
   const cutoff = addUTCDays(now, -windowDays).getTime();
   const finished = finishedGameIds(rows);
   const inWindow = rows.filter((row) => new Date(row.created_at).getTime() >= cutoff);
@@ -147,7 +164,11 @@ export function aggregateBySource(
 
 export type GenreAggregations = Record<'films' | 'books' | 'music' | 'all', AggregatedEvents>;
 
-export function aggregateEventsByGenre(rows: GameEventRow[], now: Date = new Date()): GenreAggregations {
+export function aggregateEventsByGenre(
+  rows: GameEventRow[],
+  now: Date = new Date(),
+  mode: PlayMode = 'daily',
+): GenreAggregations {
   const grouped: Record<string, GameEventRow[]> = { films: [], books: [], music: [], all: [] };
 
   for (const row of rows) {
@@ -159,9 +180,9 @@ export function aggregateEventsByGenre(rows: GameEventRow[], now: Date = new Dat
   }
 
   return {
-    films: aggregateEvents(grouped.films, now),
-    books: aggregateEvents(grouped.books, now),
-    music: aggregateEvents(grouped.music, now),
-    all: aggregateEvents(grouped.all, now),
+    films: aggregateEvents(grouped.films, now, mode),
+    books: aggregateEvents(grouped.books, now, mode),
+    music: aggregateEvents(grouped.music, now, mode),
+    all: aggregateEvents(grouped.all, now, mode),
   };
 }

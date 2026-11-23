@@ -1,13 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect } from "react";
 import { GameBoard } from "./GameBoard";
-import { getGameStore } from "../../store/gameStore";
+import { boardKey, getGameStore } from "../../store/gameStore";
 import { withProviders } from "../../__mocks__/storyDecorators";
 import { mockItems, mockGroups } from "../../__mocks__/puzzleData";
 import type { Item, Group } from "../../types";
 
 // Helper to initialize store state
-const STORY_GENRE = 'films';
+const STORY_GENRE = "films";
+const STORY_DATE = "2026-04-15";
+const STORY_BOARD = boardKey(STORY_GENRE, STORY_DATE);
 
 function StoreInitializer({
   items,
@@ -25,7 +27,7 @@ function StoreInitializer({
   gameStatus?: "playing" | "won" | "lost";
 }) {
   useEffect(() => {
-    getGameStore(STORY_GENRE).setState({
+    getGameStore(STORY_BOARD).setState({
       items,
       groups,
       foundGroups,
@@ -49,7 +51,7 @@ const meta: Meta<typeof GameBoard> = {
   },
   tags: ["autodocs"],
   decorators: [withProviders],
-  args: { puzzleDate: "2026-04-15" },
+  args: { puzzleDate: STORY_DATE },
 };
 
 export default meta;
@@ -229,7 +231,7 @@ export const MixedWithFoundGroup: Story = {
 // Story showing the animation in action
 function AnimatingStoreInitializer() {
   useEffect(() => {
-    getGameStore(STORY_GENRE).setState({
+    getGameStore(STORY_BOARD).setState({
       items: mockItems,
       groups: mockGroups,
       foundGroups: [],

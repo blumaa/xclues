@@ -5,35 +5,25 @@ import type { Genre } from '../config/seoConfig';
 interface AppStoreState {
   activeGenre: Genre;
   puzzleDate: string;
-  puzzlesReady: Record<Genre, boolean>;
   initialized: boolean;
 
   setActiveGenre(genre: Genre): void;
-  markPuzzleReady(genre: Genre): void;
   initialize(genre: Genre, puzzleDate: string): void;
 }
 
 function createAppStore(): StoreApi<AppStoreState> {
-  return createStore<AppStoreState>((set, get) => ({
+  return createStore<AppStoreState>((set) => ({
     activeGenre: 'films',
     puzzleDate: '',
-    puzzlesReady: { films: false, books: false, music: false },
     initialized: false,
 
     setActiveGenre(genre: Genre) {
       set({ activeGenre: genre });
     },
 
-    markPuzzleReady(genre: Genre) {
-      set((state) => ({
-        puzzlesReady: { ...state.puzzlesReady, [genre]: true },
-      }));
-    },
-
     initialize(genre: Genre, puzzleDate: string) {
-      // Only set activeGenre on first initialization — subsequent route
-      // navigations (e.g., returning from how-to-play) should not reset it.
-      if (get().initialized) return;
+      // The route's genre always wins. Links back to the game carry the
+      // current genre (header logo), so a pick survives side pages.
       set({ activeGenre: genre, puzzleDate, initialized: true });
     },
   }));

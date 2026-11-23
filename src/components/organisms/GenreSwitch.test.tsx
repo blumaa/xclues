@@ -4,9 +4,18 @@ import { userEvent } from '@testing-library/user-event';
 import { GenreSwitch } from './GenreSwitch';
 import { getAppStore, resetAppStore } from '../../store/appStore';
 
+const pushMock = vi.fn();
+let pathname = '/films';
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => pathname,
+  useRouter: () => ({ push: pushMock }),
+}));
+
 describe('GenreSwitch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    pathname = '/films';
     resetAppStore();
     // Default to films
     getAppStore().getState().initialize('films', '2026-04-10');
@@ -78,5 +87,44 @@ describe('GenreSwitch', () => {
     screen.getByRole('tab', { name: 'Films' }).focus();
     await user.keyboard('{ArrowRight}');
     expect(getAppStore().getState().activeGenre).toBe('books');
+  });
+
+  describe('off the game home (e.g. an archive page)', () => {
+    beforeEach(() => {
+      pathname = '/books/archive/2026-10-01';
+    });
+
+    it('navigates to that genre\'s game', async () => {
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+      await user.click(screen.getByRole('tab', { name: 'Music' }));
+      expect(pushMock).toHaveBeenCalledWith('/music');
+    });
+
+    it('makes the tapped genre active so the game opens on it', async () => {
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+      await user.click(screen.getByRole('tab', { name: 'Music' }));
+      expect(getAppStore().getState().activeGenre).toBe('music');
+    });
+
+    it('navigates even when the tapped genre is already active', async () => {
+      getAppStore().getState().setActiveGenre('books');
+      const user = userEvent.setup();
+      render(<GenreSwitch />);
+      await user.click(screen.getByRole('tab', { name: 'Lit' }));
+      expect(pushMock).toHaveBeenCalledWith('/books');
+    });
+  });
+
+  it('swaps in place on the root home page', async () => {
+    pathname = '/';
+    const user = userEvent.setup();
+    const replaceStateSpy = vi.spyOn(window.history, 'replaceState');
+    render(<GenreSwitch />);
+    await user.click(screen.getByRole('tab', { name: 'Music' }));
+    expect(replaceStateSpy).toHaveBeenCalledWith(null, '', '/music');
+    expect(pushMock).not.toHaveBeenCalled();
+    replaceStateSpy.mockRestore();
   });
 });

@@ -1,5 +1,6 @@
 import type { EventType } from './aggregateEvents';
 import { getAttributionSource } from './attribution';
+import type { PlayMode } from '../../types/stats';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
@@ -12,6 +13,8 @@ interface GameEventMeta {
   source?: string | null;
   /** Per-game id (see gameId.ts); null for games started before it existed. */
   gameId?: string | null;
+  /** Daily (today's puzzle) or archive (past date replayed). Defaults to daily. */
+  mode?: PlayMode;
 }
 
 export async function trackGameEvent(type: EventType, meta: GameEventMeta): Promise<void> {
@@ -34,6 +37,7 @@ export async function trackGameEvent(type: EventType, meta: GameEventMeta): Prom
         user_id: meta.userId ?? null,
         source: meta.source ?? getAttributionSource(),
         game_id: meta.gameId ?? null,
+        mode: meta.mode ?? 'daily',
       }),
       keepalive: true,
     });

@@ -45,6 +45,24 @@ describe('ResultsPanel', () => {
     expect(screen.getByLabelText('Share your results')).toBeInTheDocument();
   });
 
+  it('archive play: no countdown, links to today\'s puzzle instead', () => {
+    render(<ResultsPanel {...defaultProps} mode="archive" />);
+    expect(screen.queryByRole('timer')).toBeNull();
+    expect(screen.getByRole('link', { name: /play today/i })).toHaveAttribute('href', '/films');
+  });
+
+  it('shares the played puzzle date, not today', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+
+    render(<ResultsPanel {...defaultProps} mode="archive" puzzleDate="2026-10-01" />);
+    fireEvent.click(screen.getByLabelText('Share your results'));
+
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
+    expect(writeText.mock.calls[0][0]).toMatch(/Oct\w* 1/);
+  });
+
   it('renders the countdown timer', () => {
     render(<ResultsPanel {...defaultProps} />);
     expect(screen.getByRole('timer')).toBeInTheDocument();
