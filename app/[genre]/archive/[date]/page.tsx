@@ -11,10 +11,8 @@ import {
 } from "../../../../src/utils/dateValidation";
 import { archiveDateUrl, getAdjacentDates } from "../../../../src/utils/archiveDates";
 import { type Genre, getSeoConfig, isValidGenre } from "../../../../src/config/seoConfig";
-import { buildBreadcrumbJsonLd } from "../../../../src/lib/seo/breadcrumbJsonLd";
 import { ArchiveGameView } from "../../../../src/views/ArchiveGameView";
 import { XHeading } from "../../../../src/components/atoms";
-import { Breadcrumbs } from "../../../../src/components/molecules/Breadcrumbs";
 import { ArchiveDateNav } from "../../../../src/components/molecules/ArchiveDateNav";
 import "./archive-date.css";
 
@@ -98,30 +96,14 @@ export default async function ArchivePage({
     },
   };
 
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: config.siteName, url: `https://${config.domain}` },
-    { name: "Archive", url: `https://${config.domain}/${genre}/archive` },
-    { name: displayDate },
-  ]);
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
       <div className="archive-date">
-        <Breadcrumbs
-          items={[
-            { label: config.siteName, href: "/" },
-            { label: "Archive", href: `/${genre}/archive` },
-            { label: displayDate },
-          ]}
-        />
+        {/* No breadcrumbs: board + submit must fit one screen. Footer links the archive. */}
         {/* h1 kept for SEO; sized down so the board stays the hero */}
         <XHeading level={1} size="md" align="center" className="archive-date__title">
           {config.siteName} &mdash; {displayDate}

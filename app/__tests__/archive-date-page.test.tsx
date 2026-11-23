@@ -22,20 +22,24 @@ async function renderPage() {
 }
 
 describe("archive date page", () => {
-  it("renders breadcrumbs, title, then the playable game, then the date nav", async () => {
+  it("renders title, then the playable game, then the date nav", async () => {
     const { container } = await renderPage();
 
     const wrap = container.querySelector(".archive-date");
     const children = [...(wrap?.children ?? [])].map((c) => c.className);
-    const crumbsIdx = children.findIndex((c) => c.includes("breadcrumbs"));
     const titleIdx = children.findIndex((c) => c.includes("archive-date__title"));
     const gameIdx = children.findIndex((c) => c.includes("homepage-game"));
     const navIdx = children.findIndex((c) => c.includes("archive-date-nav"));
 
-    expect(crumbsIdx).toBeGreaterThan(-1);
-    expect(crumbsIdx).toBeLessThan(titleIdx);
+    expect(titleIdx).toBe(0);
     expect(titleIdx).toBeLessThan(gameIdx);
     expect(gameIdx).toBeLessThan(navIdx);
+  });
+
+  it("has no breadcrumb trail or BreadcrumbList data; the board needs the room", async () => {
+    const { container, queryByRole } = await renderPage();
+    expect(queryByRole("navigation", { name: "Breadcrumb" })).toBeNull();
+    expect(container.innerHTML).not.toContain("BreadcrumbList");
   });
 
   it("keeps an h1 naming the puzzle and date", async () => {
