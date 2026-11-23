@@ -9,22 +9,23 @@ vi.mock("../organisms/Logo", () => ({
 
 import { AppSplash } from "../AppSplash";
 
-type WindowWithCapacitor = Window & {
-  Capacitor?: { isNativePlatform?: () => boolean };
-};
+/** Pretend the site runs as an installed PWA (or a normal tab). */
+function setStandalone(standalone: boolean) {
+  vi.mocked(window.matchMedia).mockImplementation(
+    (query: string) =>
+      ({ matches: standalone && query === "(display-mode: standalone)", media: query }) as ReturnType<typeof window.matchMedia>,
+  );
+}
 
 describe("AppSplash", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    // Force the native condition so the splash renders.
-    (window as WindowWithCapacitor).Capacitor = {
-      isNativePlatform: () => true,
-    };
+    setStandalone(true);
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    delete (window as WindowWithCapacitor).Capacitor;
+    setStandalone(false);
   });
 
   it("renders the Logo component", () => {
@@ -69,8 +70,8 @@ describe("AppSplash", () => {
     expect(overlay?.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("does not render on regular web (non-native, non-standalone)", () => {
-    delete (window as WindowWithCapacitor).Capacitor;
+  it("does not render in a regular browser tab", () => {
+    setStandalone(false);
     const { container } = render(<AppSplash />);
     expect(container.querySelector(".app-splash")).toBeNull();
   });

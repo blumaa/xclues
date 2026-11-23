@@ -97,7 +97,7 @@ export default [js.configs.recommended, {
     },
   },
 }, {
-  ignores: ['dist', 'node_modules', 'storybook-static', 'ios', 'scripts', 'supabase', '.storybook', '.next', 'out'],
+  ignores: ['dist', 'node_modules', 'storybook-static', 'scripts', 'supabase', '.storybook', '.next', 'out'],
 }, {
   rules: {
     "react-refresh/only-export-components": "off",

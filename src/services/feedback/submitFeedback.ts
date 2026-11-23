@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase/client';
+import { restInsert } from '../../lib/supabase/restInsert';
 import { SURVEY_VERSION, isSurveyComplete, type SurveyAnswers } from './survey';
 
 /**
@@ -29,10 +29,5 @@ export async function submitFeedback(
     user_id: userId ?? null,
   };
 
-  try {
-    const { error } = await supabase.from('feedback').insert(row);
-    return !error;
-  } catch {
-    return false;
-  }
+  return restInsert('feedback', row);
 }

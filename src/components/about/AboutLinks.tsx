@@ -3,10 +3,8 @@ import { useSite } from "../../providers/useSite";
 import { BookIcon } from "./icons/BookIcon";
 import { PopcornIcon } from "./icons/PopcornIcon";
 import { MusicIcon } from "./icons/MusicIcon";
-import { Capacitor } from "@capacitor/core";
 import type { Genre } from "../../config/seoConfig";
 import "./AboutLinks.css";
-
 
 interface GameLink {
   genre: Genre;
@@ -41,17 +39,15 @@ export function AboutLinks() {
   const context = useSite();
   const activeGenre = context?.genre || "films";
 
-  const isNative = Capacitor.isNativePlatform();
-
   return (
     <div className="about-links">
       <div className="about-links-list">
         {GAME_LINKS.map((link) => (
           <a
             key={link.genre}
-            href={isNative ? `/${link.genre}` : `https://${link.domain}`}
-            target={isNative ? undefined : "_blank"}
-            rel={isNative ? undefined : "noopener noreferrer"}
+            href={`https://${link.domain}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <XButton
               size="sm"

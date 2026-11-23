@@ -3,21 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ResultsPanel } from '../ResultsPanel';
 import type { GuessColor } from '../../../types/stats';
 
-// Mock providers that ResultsPanel depends on
-vi.mock('../../../providers/useStats', () => ({
-  useStats: () => ({
-    getStats: vi.fn().mockResolvedValue({
-      gamesPlayed: 5,
-      gamesWon: 4,
-      winRate: 80,
-      currentStreak: 3,
-      maxStreak: 5,
-      lastPlayedDate: '2026-04-10',
-      gameHistory: [],
-    }),
-  }),
-}));
-
 vi.mock('../../../providers/useSite', () => ({
   useSite: () => ({
     siteName: 'Filmclues',

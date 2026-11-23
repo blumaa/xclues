@@ -11,7 +11,6 @@ musiclues .space) by detecting the host.
 - **Zustand** — game/stats/app state (per-genre store instances)
 - **Supabase** — Postgres + auth (project `filmections`, ref `thvrwkzeqkppkvgsuenc`)
 - **Vitest** + Testing Library — tests; **Storybook** — component dev
-- **Capacitor** — optional iOS build (`CAPACITOR=1`)
 
 ## Setup
 

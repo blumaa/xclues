@@ -4,9 +4,8 @@
  * Next 16 no longer emits a per-route app-build-manifest, so instead of fragile
  * per-route parsing we measure the gzipped size of every emitted client chunk
  * in .next/static/chunks. Fails CI if the total or any single chunk exceeds its
- * budget — a robust regression guard. Budgets are intentionally generous now
- * (current total ~309 KB) and should tighten as the Phase 2 perf work lands
- * (capacitor → devDeps, drop unused react-query, server components).
+ * budget. Total ~266 KB local (CI builds ~3 KB larger); 280 KB leaves room for
+ * small features only. Growth past it means trim, never raise.
  *
  * Run after `next build`: bun run scripts/bundle-budget.ts
  */
@@ -15,7 +14,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const CHUNKS_DIR = ".next/static/chunks";
-const TOTAL_BUDGET_KB = Number(process.env.BUNDLE_TOTAL_BUDGET_KB ?? 400);
+const TOTAL_BUDGET_KB = Number(process.env.BUNDLE_TOTAL_BUDGET_KB ?? 280);
 const PER_CHUNK_BUDGET_KB = Number(process.env.BUNDLE_CHUNK_BUDGET_KB ?? 120);
 
 function walk(dir: string): string[] {

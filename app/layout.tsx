@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Header } from "./header";
 import { Footer } from "../src/components/organisms/Footer";
-import { NativeSetup } from "../src/components/NativeSetup";
 import { AttributionCapture } from "../src/components/AttributionCapture";
 import { AppSplash } from "../src/components/AppSplash";
 import { getThemeInitScript } from "../src/utils/themeScript";
@@ -65,7 +64,6 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only">
           Skip to content
         </a>
-        <NativeSetup />
         <AttributionCapture />
         <AppSplash />
         <Providers>

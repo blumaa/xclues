@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase/client';
+import { restInsert } from '../../lib/supabase/restInsert';
 import type { Genre } from '../../config/seoConfig';
 
 /** Rating bounds; match the `puzzle_feedback.rating` CHECK constraint. */
@@ -32,15 +32,10 @@ export async function submitPuzzleFeedback(feedback: PuzzleFeedback): Promise<bo
 
   const comment = feedback.comment.trim();
 
-  try {
-    const { error } = await supabase.from('puzzle_feedback').insert({
-      genre: feedback.genre,
-      puzzle_date: feedback.puzzleDate,
-      rating: feedback.rating,
-      comment: comment.length > 0 ? comment : null,
-    });
-    return !error;
-  } catch {
-    return false;
-  }
+  return restInsert('puzzle_feedback', {
+    genre: feedback.genre,
+    puzzle_date: feedback.puzzleDate,
+    rating: feedback.rating,
+    comment: comment.length > 0 ? comment : null,
+  });
 }

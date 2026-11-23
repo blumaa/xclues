@@ -3,7 +3,7 @@
  *
  * Provides site configuration throughout the app based on domain.
  * Detects genre from hostname and provides corresponding config.
- * Genre can be changed reactively via setGenre (for dev/Capacitor).
+ * Genre can be changed reactively via setGenre (for dev).
  */
 
 import { ReactNode, useEffect, useMemo } from 'react';

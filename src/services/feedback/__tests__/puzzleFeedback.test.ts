@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { insertMock } = vi.hoisted(() => ({ insertMock: vi.fn() }));
 
-vi.mock('../../../lib/supabase/client', () => ({
-  supabase: { from: vi.fn(() => ({ insert: insertMock })) },
+vi.mock('../../../lib/supabase/restInsert', () => ({
+  restInsert: insertMock,
 }));
 
 import {
@@ -32,13 +32,14 @@ describe('isValidRating', () => {
 describe('submitPuzzleFeedback', () => {
   beforeEach(() => {
     insertMock.mockReset();
-    insertMock.mockResolvedValue({ error: null });
+    insertMock.mockResolvedValue(true);
   });
 
   it('inserts genre, puzzle date, rating and trimmed comment', async () => {
     await submitPuzzleFeedback(feedback);
 
-    expect(insertMock).toHaveBeenCalledWith({
+    expect(insertMock).toHaveBeenCalledWith(
+      'puzzle_feedback',{
       genre: 'films',
       puzzle_date: '2026-10-15',
       rating: 4,
@@ -50,6 +51,7 @@ describe('submitPuzzleFeedback', () => {
     await submitPuzzleFeedback({ ...feedback, comment: '   ' });
 
     expect(insertMock).toHaveBeenCalledWith(
+      'puzzle_feedback',
       expect.objectContaining({ comment: null }),
     );
   });
@@ -58,15 +60,11 @@ describe('submitPuzzleFeedback', () => {
     await expect(submitPuzzleFeedback(feedback)).resolves.toBe(true);
   });
 
-  it('returns false when the insert reports an error', async () => {
-    insertMock.mockResolvedValue({ error: { message: 'nope' } });
+  it('returns false when the insert is refused', async () => {
+    insertMock.mockResolvedValue(false);
     await expect(submitPuzzleFeedback(feedback)).resolves.toBe(false);
   });
 
-  it('returns false when the insert throws', async () => {
-    insertMock.mockRejectedValue(new Error('offline'));
-    await expect(submitPuzzleFeedback(feedback)).resolves.toBe(false);
-  });
 
   it('refuses an out-of-range rating without writing', async () => {
     await expect(submitPuzzleFeedback({ ...feedback, rating: 0 })).resolves.toBe(false);
