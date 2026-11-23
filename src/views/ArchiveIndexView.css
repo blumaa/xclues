@@ -1,103 +1,226 @@
 .archive-index {
-  max-width: 760px;
+  max-width: 560px;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--xclues-spacing-4, 1rem);
   padding: var(--xclues-spacing-6, 1.5rem) var(--xclues-spacing-4, 1rem);
 }
 
-.archive-index__header {
-  margin-bottom: var(--xclues-spacing-6, 1.5rem);
-  display: flex;
-  flex-direction: column;
-  gap: var(--xclues-spacing-2, 0.5rem);
+/* Small title; the calendar is the page. */
+.archive-index__note {
+  text-align: center;
 }
 
-.archive-index__grid {
+/* Progress strip: three equal stats, big colored number over a small label.
+   Same colors as the calendar days, so it reads as the key. */
+.archive-stats {
   list-style: none;
-  margin: 0;
+  margin: var(--xclues-spacing-4, 1rem) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--xclues-spacing-3, 0.75rem);
-}
-
-.archive-index__card-link {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.archive-index__card {
-  height: 100%;
+  grid-template-columns: repeat(3, 1fr);
   border: 1px solid var(--xclues-border);
+  border-radius: var(--xclues-border-radius, 12px);
+  background: var(--xclues-card-bg);
+  overflow: hidden;
 }
 
-.archive-index__card-body {
+.archive-stat {
   display: flex;
   flex-direction: column;
-  gap: var(--xclues-spacing-1, 0.25rem);
-  padding: var(--xclues-spacing-4, 1rem);
-}
-
-.archive-index__card-date {
+  align-items: center;
+  gap: 2px;
+  padding: var(--xclues-spacing-3, 0.75rem) var(--xclues-spacing-2, 0.5rem);
+  border-top: 3px solid var(--xclues-border);
   color: var(--xclues-text-primary);
-  font-weight: 600;
-  font-size: var(--xclues-font-size-md, 1rem);
 }
 
-.archive-index__card-meta {
+.archive-stat + .archive-stat {
+  border-left: 1px solid var(--xclues-border);
+}
+
+.archive-stat__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-stat__label {
+  color: var(--xclues-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.archive-stat--solved {
+  border-top-color: var(--xclues-text-success);
+  color: var(--xclues-text-success);
+}
+
+.archive-stat--lost {
+  border-top-color: var(--xclues-text-error);
+  color: var(--xclues-text-error);
+}
+
+.archive-stat--unplayed {
+  border-top-color: var(--xclues-text-primary);
+}
+
+/* Month sections */
+.archive-index__month-title {
+  margin: 0;
+  text-align: center;
+  color: var(--xclues-text-primary);
+  font-size: var(--xclues-font-size-lg, 1.125rem);
+  font-weight: 700;
+}
+
+/* Calendar month: Sunday-first table, one row per week */
+.archive-cal {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+
+.archive-cal__weekday {
+  padding-bottom: var(--xclues-spacing-1, 0.25rem);
+  color: var(--xclues-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.archive-cal__cell {
+  padding: 0;
+  vertical-align: top;
+}
+
+/* Day with no puzzle on this page */
+.archive-cal__off {
   display: flex;
   align-items: center;
-  gap: var(--xclues-spacing-2, 0.5rem);
-}
-
-.archive-index__card-chevron {
+  justify-content: center;
+  height: 48px;
   color: var(--xclues-text-tertiary);
-  transition: transform 0.15s ease, color 0.15s ease;
+  font-size: 0.875rem;
 }
 
-.archive-index__card-link:hover .archive-index__card-chevron {
-  color: var(--xclues-primary);
-  transform: translateX(3px);
+/* Playable day: day number + status. Text color = result. */
+.archive-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 48px;
+  border: 1px solid var(--xclues-border);
+  border-radius: var(--xclues-border-radius-sm, 8px);
+  background: var(--xclues-card-bg);
+  color: var(--xclues-text-primary);
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.archive-tile:hover {
+  border-color: var(--xclues-primary);
+  background: var(--xclues-card-bg-hover);
+}
+
+.archive-tile:focus-visible {
+  outline: var(--xclues-focus-ring-style, 2px solid) var(--xclues-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.archive-tile__day {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.archive-tile__status {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Status word only where cells are wide enough; symbol always shows. */
+.archive-tile__label {
+  display: none;
+}
+
+.archive-tile--solved {
+  border-color: var(--xclues-text-success);
+  color: var(--xclues-text-success);
+}
+
+.archive-tile--lost {
+  border-color: var(--xclues-text-error);
+  color: var(--xclues-text-error);
+}
+
+@media (min-width: 600px) {
+  .archive-cal {
+    border-spacing: 6px;
+  }
+
+  .archive-cal__off,
+  .archive-tile {
+    height: 72px;
+  }
+
+  .archive-tile__day {
+    font-size: 1.25rem;
+  }
+
+  .archive-tile__label {
+    display: inline;
+  }
 }
 
 .archive-index__empty {
   padding: var(--xclues-spacing-6, 1.5rem) 0;
+  text-align: center;
 }
 
-.archive-index__pager {
+/* Month switcher: ‹ June 2026 › */
+.archive-index__switcher {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--xclues-spacing-4, 1rem);
-  margin-top: var(--xclues-spacing-6, 1.5rem);
+  justify-content: space-between;
+  gap: var(--xclues-spacing-2, 0.5rem);
+  margin-bottom: var(--xclues-spacing-2, 0.5rem);
 }
 
-.archive-index__pager-link {
-  color: var(--xclues-text-primary);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: var(--xclues-font-size-sm, 0.875rem);
-  padding: var(--xclues-spacing-2, 0.5rem) var(--xclues-spacing-3, 0.75rem);
+.archive-index__switch-link {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--xclues-border);
-  border-radius: var(--xclues-border-radius-xs, 0.25rem);
+  border-radius: var(--xclues-radius-pill, 24px);
+  color: var(--xclues-text-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.archive-index__pager-link:hover {
-  border-color: var(--xclues-text-primary);
+.archive-index__switch-link:hover {
+  border-color: var(--xclues-primary);
 }
 
-.archive-index__pager-link--disabled {
-  color: var(--xclues-text-tertiary);
-  font-weight: 400;
-  cursor: default;
+.archive-index__switch-link:focus-visible {
+  outline: var(--xclues-focus-ring-style, 2px solid) var(--xclues-focus-ring-color);
+  outline-offset: 2px;
 }
 
-.archive-index__pager-link--disabled:hover {
-  border-color: var(--xclues-border);
-}
-
-.archive-index__pager-status {
-  color: var(--xclues-text-secondary);
-  font-size: var(--xclues-font-size-sm, 0.875rem);
+/* Keeps the title centred when one arrow is missing. */
+.archive-index__switch-link--none {
+  visibility: hidden;
 }

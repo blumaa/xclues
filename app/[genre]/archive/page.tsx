@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { genre } = await params;
   if (!isValidGenre(genre)) return {};
-  return buildArchiveMetadata(genre, 1);
+  return buildArchiveMetadata(genre, null);
 }
 
 export default async function ArchiveIndexPage({
@@ -20,5 +20,5 @@ export default async function ArchiveIndexPage({
   params: Promise<{ genre: string }>;
 }) {
   const { genre } = await params;
-  return <ArchiveHub genre={genre} page={1} />;
+  return <ArchiveHub genre={genre} month={null} />;
 }

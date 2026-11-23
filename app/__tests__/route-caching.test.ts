@@ -7,6 +7,7 @@ import * as genreLayout from "../[genre]/layout";
 import * as genrePage from "../[genre]/page";
 import * as archiveDatePage from "../[genre]/archive/[date]/page";
 import * as archivePagedPage from "../[genre]/archive/page/[n]/page";
+import * as archiveMonthPage from "../[genre]/archive/month/[month]/page";
 import * as genreOgImage from "../[genre]/opengraph-image";
 import * as archiveOgImage from "../[genre]/archive/[date]/opengraph-image";
 import * as genreTwitterImage from "../[genre]/twitter-image";
@@ -73,6 +74,7 @@ describe("ISR config on public content routes", () => {
   it.each([
     ["archive date page", archiveDatePage],
     ["archive paginated page", archivePagedPage],
+    ["archive month page", archiveMonthPage],
     ["archive OG image", archiveOgImage],
     ["archive Twitter image", archiveTwitterImage],
   ])("%s renders on first visit, then serves from cache", async (_, mod) => {

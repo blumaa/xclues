@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { fetchPublishedDatesForGenre } from "../../../src/lib/supabase/puzzleQueries";
 import { getSeoConfig, isValidGenre, type Genre } from "../../../src/config/seoConfig";
-import { paginate } from "../../../src/utils/paginate";
-import { ARCHIVE_PAGE_SIZE, archivePagePath } from "../../../src/utils/archiveDates";
-import { buildBreadcrumbJsonLd } from "../../../src/lib/seo/breadcrumbJsonLd";
+import {
+  archiveMonthPath,
+  findArchiveMonth,
+  groupDatesByMonth,
+  monthLabel,
+} from "../../../src/utils/archiveDates";
 import { ArchiveIndexView } from "../../../src/views/ArchiveIndexView";
 
-/** Shared metadata for both the page-1 hub and the /page/[n] routes. */
-export function buildArchiveMetadata(genre: Genre, page: number): Metadata {
+/** Shared metadata for the hub (newest month, `month` null) and /month/[month]. */
+export function buildArchiveMetadata(genre: Genre, month: string | null): Metadata {
   const config = getSeoConfig(genre);
-  const canonical = `https://${config.domain}${archivePagePath(genre, page)}`;
-  const title = `${config.siteName} Puzzle Archive${page > 1 ? ` (Page ${page})` : ""}`;
-  const description = `Browse every past ${config.siteName} puzzle. Pick a date to see all four categories and their connections revealed.`;
+  const canonical = `https://${config.domain}${archiveMonthPath(genre, month)}`;
+  const title = `${config.siteName} Puzzle Archive${month ? ` – ${monthLabel(month)}` : ""}`;
+  const description = `Play any past ${config.siteName} puzzle${month ? ` from ${monthLabel(month)}` : ""}. Pick a day on the calendar; archive games never affect your streak.`;
 
   return {
     title: { absolute: title },
@@ -24,38 +27,21 @@ export function buildArchiveMetadata(genre: Genre, page: number): Metadata {
 }
 
 /**
- * Server-rendered archive hub body, shared by the page-1 and paginated routes.
- * Guards an invalid genre or an out-of-range page with a 404.
+ * Server-rendered archive hub body: one calendar month. `month` null = newest.
+ * Invalid genre or a month with no puzzles 404s; the newest month's own URL
+ * redirects to the bare hub so it has one canonical.
  */
-export async function ArchiveHub({ genre, page }: { genre: string; page: number }) {
+export async function ArchiveHub({ genre, month }: { genre: string; month: string | null }) {
   if (!isValidGenre(genre)) notFound();
 
   const config = getSeoConfig(genre);
-  const dates = await fetchPublishedDatesForGenre(genre);
-  const { items, page: current, totalPages } = paginate(dates, page, ARCHIVE_PAGE_SIZE);
+  const months = groupDatesByMonth(await fetchPublishedDatesForGenre(genre));
 
-  // A page past the last (or any /page/[n] when nothing is published) is a 404;
-  // page 1 with no puzzles renders the empty state instead.
-  if (page > 1 && page > totalPages) notFound();
+  if (month !== null && month === months[0]?.key) permanentRedirect(archiveMonthPath(genre, null));
+  const archive = findArchiveMonth(months, month);
+  // The bare hub with nothing published renders the empty state instead.
+  if (month !== null && !archive) notFound();
 
-  const jsonLd = buildBreadcrumbJsonLd([
-    { name: config.siteName, url: `https://${config.domain}` },
-    { name: "Archive", url: `https://${config.domain}/${genre}/archive` },
-  ]);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <ArchiveIndexView
-        genre={genre}
-        siteName={config.siteName}
-        dates={items}
-        page={current}
-        totalPages={totalPages}
-      />
-    </>
-  );
+  // No breadcrumbs: one level deep, header logo links home.
+  return <ArchiveIndexView genre={genre} siteName={config.siteName} archive={archive} />;
 }
