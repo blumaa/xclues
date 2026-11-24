@@ -48,6 +48,18 @@ describe('ResultsPanel', () => {
     expect(writeText.mock.calls[0][0]).toMatch(/Oct\w* 1/);
   });
 
+  it('passes the ref=share link to the native share sheet', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'share', { value: share, configurable: true });
+
+    render(<ResultsPanel {...defaultProps} />);
+    fireEvent.click(screen.getByLabelText('Share your results'));
+
+    await vi.waitFor(() => expect(share).toHaveBeenCalled());
+    expect(share.mock.calls[0][0].url).toBe('https://filmclues.space/?ref=share');
+    Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+  });
+
   it('renders the countdown timer', () => {
     render(<ResultsPanel {...defaultProps} />);
     expect(screen.getByRole('timer')).toBeInTheDocument();

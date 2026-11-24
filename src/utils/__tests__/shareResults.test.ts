@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { generateShareText, shareResults } from '../shareResults';
+import { buildShareUrl, generateShareText, shareResults } from '../shareResults';
 import type { GuessColor } from '../../types/stats';
 
 describe('generateShareText', () => {
@@ -26,7 +26,7 @@ describe('generateShareText', () => {
     expect(lines[3]).toBe('🟩🟩🟩🟩');
     expect(lines[4]).toBe('🟦🟦🟦🟦');
     expect(lines[5]).toBe('🟪🟪🟪🟪');
-    expect(lines[6]).toBe('Play: https://filmclues.space');
+    expect(lines[6]).toBe('Play: https://filmclues.space/?ref=share');
   });
 
   it('works with a single guess row', () => {
@@ -43,7 +43,7 @@ describe('generateShareText', () => {
 
     expect(result).toContain('Xclues - January 1, 2025');
     expect(result).toContain('🟩🟩🟩🟩');
-    expect(result).toContain('Play: https://xclues.app');
+    expect(result).toContain('Play: https://xclues.app/?ref=share');
   });
 
   it('omits the cross-promo line when no genre is provided', () => {
@@ -105,5 +105,22 @@ describe('shareResults', () => {
 
     expect(ok).toBe(true);
     expect(writeText).toHaveBeenCalledWith('grid text');
+  });
+});
+
+describe('share link attribution', () => {
+  it('buildShareUrl tags the link with ref=share', () => {
+    expect(buildShareUrl('filmclues.space')).toBe('https://filmclues.space/?ref=share');
+  });
+
+  it('puts the tagged link in the share text', () => {
+    const result = generateShareText({
+      siteName: 'Filmclues',
+      puzzleDate: '2025-12-04',
+      guessHistory: [['green', 'green', 'green', 'green']],
+      domain: 'filmclues.space',
+    });
+
+    expect(result).toContain('Play: https://filmclues.space/?ref=share');
   });
 });

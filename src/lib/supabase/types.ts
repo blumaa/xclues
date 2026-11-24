@@ -183,33 +183,39 @@ export type Database = {
       game_events: {
         Row: {
           created_at: string
+          days_since_last: number | null
           event_type: string
           game_id: string | null
           genre: string
           id: number
           mode: string
+          prior_games: number | null
           puzzle_date: string
           source: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
+          days_since_last?: number | null
           event_type: string
           game_id?: string | null
           genre: string
           id?: never
           mode?: string
+          prior_games?: number | null
           puzzle_date: string
           source?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
+          days_since_last?: number | null
           event_type?: string
           game_id?: string | null
           genre?: string
           id?: never
           mode?: string
+          prior_games?: number | null
           puzzle_date?: string
           source?: string | null
           user_id?: string | null

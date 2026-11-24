@@ -1,6 +1,7 @@
 import type { EventType } from './aggregateEvents';
 import { getAttributionSource } from './attribution';
 import type { PlayMode } from '../../types/stats';
+import type { ReturnSignal } from './returnSignal';
 import { restInsert } from '../../lib/supabase/restInsert';
 
 
@@ -14,6 +15,8 @@ interface GameEventMeta {
   gameId?: string | null;
   /** Daily (today's puzzle) or archive (past date replayed). Defaults to daily. */
   mode?: PlayMode;
+  /** Returning-player counts (see returnSignal.ts); sent with `started` only. */
+  returning?: ReturnSignal;
 }
 
 export async function trackGameEvent(type: EventType, meta: GameEventMeta): Promise<void> {
@@ -30,6 +33,8 @@ export async function trackGameEvent(type: EventType, meta: GameEventMeta): Prom
       source: meta.source ?? getAttributionSource(),
       game_id: meta.gameId ?? null,
       mode: meta.mode ?? 'daily',
+      prior_games: meta.returning?.priorGames ?? null,
+      days_since_last: meta.returning?.daysSinceLast ?? null,
     },
     { keepalive: true, label: `trackGameEvent(${type})` },
   );

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { getStatsStore } from "../store/statsStore";
 import { startGameId } from "../services/analytics/gameId";
 import { trackGameEvent } from "../services/analytics/gameEvents";
+import { returnSignal } from "../services/analytics/returnSignal";
 import type { PlayMode } from "../types/stats";
 
 /**
@@ -17,9 +18,11 @@ export function useTrackGameStart(
 ): void {
   useEffect(() => {
     if (!enabled) return;
-    if (getStatsStore().getState().getCompletedGame(genre, puzzleDate)) return;
+    const stats = getStatsStore().getState();
+    if (stats.getCompletedGame(genre, puzzleDate)) return;
     const { id, isNew } = startGameId(genre, puzzleDate, mode);
     if (!isNew) return;
-    void trackGameEvent("started", { genre, puzzleDate, gameId: id, mode });
+    const returning = returnSignal(stats.gameHistory, genre);
+    void trackGameEvent("started", { genre, puzzleDate, gameId: id, mode, returning });
   }, [enabled, genre, puzzleDate, mode]);
 }

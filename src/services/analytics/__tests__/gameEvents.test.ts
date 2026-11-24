@@ -23,6 +23,18 @@ describe('trackGameEvent', () => {
     expect(body.mode).toBe('archive');
   });
 
+  it('sends the returning-player signal when given', async () => {
+    await trackGameEvent('started', {
+      genre: 'films',
+      puzzleDate: '2026-11-24',
+      returning: { priorGames: 4, daysSinceLast: 1 },
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.prior_games).toBe(4);
+    expect(body.days_since_last).toBe(1);
+  });
+
   it('sends the per-game id when given', async () => {
     await trackGameEvent('lost', { genre: 'books', puzzleDate: '2026-10-05', gameId: 'g-1' });
 
@@ -46,6 +58,8 @@ describe('trackGameEvent', () => {
           source: null,
           game_id: null,
           mode: 'daily',
+          prior_games: null,
+          days_since_last: null,
         }),
       }),
     );
@@ -77,6 +91,8 @@ describe('trackGameEvent', () => {
       source: null,
       game_id: null,
       mode: 'daily',
+      prior_games: null,
+      days_since_last: null,
     });
   });
 

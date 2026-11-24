@@ -47,6 +47,14 @@ function buildCrossPromo(genre: Genre): string {
   return `More puzzles — ${names}: ${domains}`;
 }
 
+/**
+ * Link shared with results. Tagged so shared plays show up as `share` in
+ * attribution: pasted links send no referrer and would otherwise be untracked.
+ */
+export function buildShareUrl(domain: string): string {
+  return `https://${domain}/?ref=share`;
+}
+
 interface ShareOptions {
   siteName: string;
   puzzleDate: string;
@@ -67,7 +75,7 @@ interface ShareOptions {
  * 🟩🟩🟩🟩
  * 🟦🟦🟦🟦
  * 🟪🟪🟪🟪
- * Play: https://filmclues.space
+ * Play: https://filmclues.space/?ref=share
  * More puzzles — Litclues & Musiclues: litclues.space · musiclues.space
  * ```
  */
@@ -80,7 +88,7 @@ export function generateShareText({
 }: ShareOptions): string {
   const formattedDate = formatDateForShare(puzzleDate);
   const emojiGrid = guessHistoryToEmojis(guessHistory);
-  const url = `https://${domain}`;
+  const url = buildShareUrl(domain);
 
   let text = `${siteName} - ${formattedDate}\n${emojiGrid}\nPlay: ${url}`;
 

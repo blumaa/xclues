@@ -4,7 +4,7 @@ import { useSite } from "../../providers/useSite";
 import { Stats } from "../molecules/Stats";
 import { GameResultDisplay } from "../molecules/GameResultDisplay";
 import { CountdownTimer } from "../molecules/CountdownTimer";
-import { generateShareText, shareResults } from "../../utils/shareResults";
+import { buildShareUrl, generateShareText, shareResults } from "../../utils/shareResults";
 import { ShareIcon } from "../atoms/ShareIcon";
 import { isValidGenre } from "../../config/seoConfig";
 import { getStatsStore } from "../../store/statsStore";
@@ -52,7 +52,7 @@ export function ResultsPanel({
       genre: isValidGenre(genre) ? genre : undefined,
     });
 
-    const success = await shareResults(shareText, `https://${domain}`);
+    const success = await shareResults(shareText, buildShareUrl(domain));
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
