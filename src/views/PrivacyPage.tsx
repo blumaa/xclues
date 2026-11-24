@@ -35,6 +35,14 @@ export function PrivacyPage() {
               deleted from your browser once the game ends.
             </XText>
           </li>
+          <li>
+            <XText size="sm">
+              When you start a game: how many games you have finished before on this site and how many
+              days since your last one, counted from the stats already kept in your browser. Only the two
+              numbers are sent, never an id, so we can tell new players from returning ones without
+              knowing who you are.
+            </XText>
+          </li>
         </ul>
 
         <div className="privacy-section-heading">

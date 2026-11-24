@@ -7,6 +7,7 @@ describe("PrivacyPage analytics disclosure", () => {
     render(<PrivacyPage />);
     expect(screen.getByText(/random id for that one game/)).toBeInTheDocument();
     expect(screen.getByText(/site that sent you here/)).toBeInTheDocument();
+    expect(screen.getByText(/how many games you have finished before/)).toBeInTheDocument();
   });
 
   it("explains the per-game id is not a tracking identifier", () => {
