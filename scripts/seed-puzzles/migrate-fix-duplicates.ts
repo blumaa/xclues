@@ -7,6 +7,7 @@
  * Usage: bun scripts/seed-puzzles/migrate-fix-duplicates.ts [--dry-run]
  */
 import { supabase } from './supabase-client';
+import { fetchAllPages } from '../puzzle-db';
 import { musicPuzzles } from './music-puzzles';
 import { musicGapPuzzles } from './music-gaps';
 import { bookPuzzles } from './book-puzzles';
@@ -27,16 +28,15 @@ const allSeedPuzzles: PuzzleDef[] = [
 async function migrate() {
   console.log(`${dryRun ? '[DRY RUN] ' : ''}Fetching published puzzles...`);
 
-  const { data: puzzles, error } = await supabase
-    .from('puzzles')
-    .select('id, puzzle_date, genre, groups')
-    .eq('status', 'published')
-    .not('groups', 'is', null);
-
-  if (error) {
-    console.error('Failed to fetch puzzles:', error.message);
-    process.exit(1);
-  }
+  const puzzles = await fetchAllPages((from, to) =>
+    supabase
+      .from('puzzles')
+      .select('id, puzzle_date, genre, groups')
+      .eq('status', 'published')
+      .not('groups', 'is', null)
+      .order('id')
+      .range(from, to),
+  );
 
   if (!puzzles || puzzles.length === 0) {
     console.log('No published puzzles found.');

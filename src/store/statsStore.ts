@@ -12,6 +12,7 @@ interface StatsStoreState {
   hydrate(storageKey: string): void;
   recordCompletion(result: GameResult): void;
   getCompletedGame(genre: string, date: string): GameResult | undefined;
+  dropStaleCompletion(genre: string, date: string, editedAt: number): void;
   getGenreStats(genre: string): UserStats;
 }
 
@@ -108,6 +109,21 @@ function createStatsStore(): StoreApi<StatsStoreState> {
 
     getCompletedGame(genre: string, date: string): GameResult | undefined {
       return get().gameHistory.find((g) => g.genre === genre && g.date === date);
+    },
+
+    // A puzzle edited after the player finished it is a new puzzle to them:
+    // forget the old result so the board opens fresh.
+    dropStaleCompletion(genre: string, date: string, editedAt: number) {
+      const { gameHistory, storageKey } = get();
+      const newHistory = gameHistory.filter(
+        (g) => !(g.genre === genre && g.date === date && g.completedAt < editedAt),
+      );
+      if (newHistory.length === gameHistory.length) return;
+
+      set({ gameHistory: newHistory });
+      if (storageKey) {
+        persistToLocalStorage(storageKey, newHistory);
+      }
     },
 
     getGenreStats(genre: string): UserStats {

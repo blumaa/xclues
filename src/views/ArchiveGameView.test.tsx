@@ -31,6 +31,7 @@ const puzzle: SavedPuzzle = {
   items: groups.flatMap((g) => g.items),
   groups,
   createdAt: Date.now(),
+  editedAt: Date.now(),
 };
 
 const DATE = '2026-10-01';

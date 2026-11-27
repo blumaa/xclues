@@ -1,7 +1,7 @@
 import { supabase } from './supabase-client';
+import { fetchAllPages } from '../puzzle-db';
 import type { PuzzleDef } from './types';
 import { findDuplicateSongsInPuzzle } from './validate-puzzles';
-import { fetchAllPages } from '../../src/lib/supabase/fetchAllPages';
 
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + 'T00:00:00Z');
@@ -22,18 +22,18 @@ async function fetchExistingConnections(): Promise<Set<string>> {
 
 async function fetchScheduledDates(genre: string): Promise<Set<string>> {
   const dates = new Set<string>();
-  const { data, error } = await supabase
-    .from('puzzles')
-    .select('puzzle_date')
-    .eq('genre', genre)
-    .eq('status', 'published')
-    .not('puzzle_date', 'is', null);
-
-  if (error) throw new Error(`Failed to fetch scheduled dates: ${error.message}`);
-  if (data) {
-    for (const row of data) {
-      if (row.puzzle_date) dates.add(row.puzzle_date);
-    }
+  const data = await fetchAllPages((from, to) =>
+    supabase
+      .from('puzzles')
+      .select('puzzle_date')
+      .eq('genre', genre)
+      .eq('status', 'published')
+      .not('puzzle_date', 'is', null)
+      .order('id')
+      .range(from, to),
+  );
+  for (const row of data) {
+    if (row.puzzle_date) dates.add(row.puzzle_date);
   }
   return dates;
 }

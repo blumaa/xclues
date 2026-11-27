@@ -55,6 +55,7 @@ export const RawPuzzleRowSchema = z.object({
   id: z.string(),
   groups: z.array(RawGroupSchema).min(1),
   created_at: z.string(),
+  edited_at: z.string().nullish(),
   metadata: z.record(z.string(), z.unknown()).nullish(),
 });
 

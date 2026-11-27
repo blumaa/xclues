@@ -41,6 +41,7 @@ function makePuzzle(): SavedPuzzle {
       makeGroup('g4', [13, 14, 15, 16]),
     ],
     createdAt: Date.now(),
+    editedAt: Date.now(),
   };
 }
 

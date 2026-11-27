@@ -115,6 +115,18 @@ describe("parsePuzzleRow", () => {
     expect(result.items.map((i) => i.id)).toEqual(allIds);
   });
 
+  it("reads editedAt from edited_at", () => {
+    const result = parsePuzzleRow({ ...rawPuzzleRow, edited_at: "2026-11-26T15:00:00Z" });
+
+    expect(result.editedAt).toBe(Date.parse("2026-11-26T15:00:00Z"));
+  });
+
+  it("falls back editedAt to createdAt when edited_at is absent", () => {
+    const result = parsePuzzleRow(rawPuzzleRow);
+
+    expect(result.editedAt).toBe(Date.parse("2026-04-14T00:00:00Z"));
+  });
+
   it("preserves already-unique item ids unchanged", () => {
     const result = parsePuzzleRow(rawPuzzleRow);
 
@@ -181,7 +193,7 @@ describe("fetchPuzzleByDate", () => {
     await fetchPuzzleByDate("films", "2026-04-14");
 
     expect(mockSupabase.from).toHaveBeenCalledWith("puzzles");
-    expect(mockSelect).toHaveBeenCalledWith("id, groups, puzzle_date, created_at, metadata");
+    expect(mockSelect).toHaveBeenCalledWith("id, groups, puzzle_date, created_at, edited_at, metadata");
     expect(mockEq).toHaveBeenCalledWith("puzzle_date", "2026-04-14");
     expect(mockEq).toHaveBeenCalledWith("genre", "films");
     expect(mockEq).toHaveBeenCalledWith("status", "published");

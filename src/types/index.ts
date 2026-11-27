@@ -49,6 +49,8 @@ export interface SavedPuzzle {
   groups: Group[];
   items: Item[];
   createdAt: number;
+  /** Last time the groups changed. Results finished before this are stale. */
+  editedAt: number;
   metadata?: Record<string, unknown>;
 }
 

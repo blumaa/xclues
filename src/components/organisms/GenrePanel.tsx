@@ -19,7 +19,9 @@ export function initBoard(genre: string, puzzle: SavedPuzzle, puzzleDate: string
   const gameStore = getGameStore(boardKey(genre, puzzleDate));
   if (gameStore.getState().groups.length > 0) return;
 
-  const completed = getStatsStore().getState().getCompletedGame(genre, puzzleDate);
+  const stats = getStatsStore().getState();
+  stats.dropStaleCompletion(genre, puzzleDate, puzzle.editedAt);
+  const completed = stats.getCompletedGame(genre, puzzleDate);
   if (completed) {
     gameStore.getState().restoreCompletedGame(puzzle.groups, completed.won, completed.mistakes);
   } else {

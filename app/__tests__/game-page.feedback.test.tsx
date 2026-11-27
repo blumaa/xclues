@@ -32,6 +32,7 @@ const mockPuzzleData: import('../../src/types').SavedPuzzle = {
     },
   ],
   createdAt: Date.now(),
+  editedAt: Date.now(),
 };
 
 const STATS_STORAGE_KEY = 'xclues-stats';
