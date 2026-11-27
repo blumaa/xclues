@@ -88,6 +88,48 @@ describe('statsStore', () => {
     });
   });
 
+  describe('dropStaleCompletion', () => {
+    const EDITED_AT = Date.parse('2026-11-26T15:00:00Z');
+
+    it('removes a result completed before the puzzle was edited', () => {
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+      store.getState().recordCompletion(
+        makeResult({ date: '2026-11-26', completedAt: EDITED_AT - 1000 }),
+      );
+
+      store.getState().dropStaleCompletion('films', '2026-11-26', EDITED_AT);
+
+      expect(store.getState().getCompletedGame('films', '2026-11-26')).toBeUndefined();
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
+      expect(stored.gameHistory).toEqual([]);
+    });
+
+    it('keeps a result completed after the puzzle was edited', () => {
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+      store.getState().recordCompletion(
+        makeResult({ date: '2026-11-26', completedAt: EDITED_AT + 1000 }),
+      );
+
+      store.getState().dropStaleCompletion('films', '2026-11-26', EDITED_AT);
+
+      expect(store.getState().getCompletedGame('films', '2026-11-26')).toBeDefined();
+    });
+
+    it('leaves other genres and dates alone', () => {
+      const store = getStatsStore();
+      store.getState().hydrate(STORAGE_KEY);
+      const old = EDITED_AT - 1000;
+      store.getState().recordCompletion(makeResult({ genre: 'books', date: '2026-11-26', completedAt: old }));
+      store.getState().recordCompletion(makeResult({ genre: 'films', date: '2026-11-25', completedAt: old }));
+
+      store.getState().dropStaleCompletion('films', '2026-11-26', EDITED_AT);
+
+      expect(store.getState().gameHistory).toHaveLength(2);
+    });
+  });
+
   describe('recordCompletion', () => {
     it('adds a game result to history', () => {
       const store = getStatsStore();

@@ -10,6 +10,7 @@
  *   (dry-run by default; pass --apply to write)
  */
 import { supabase } from './supabase-client';
+import { fetchAllPages } from '../puzzle-db';
 
 const apply = process.argv.includes('--apply');
 
@@ -35,13 +36,15 @@ function reindex(groups: SnapGroup[]): { groups: SnapGroup[]; changed: boolean }
 }
 
 async function run() {
-  const { data, error } = await supabase
-    .from('puzzles')
-    .select('id, genre, puzzle_date, groups')
-    .eq('status', 'published')
-    .not('groups', 'is', null);
-
-  if (error) { console.error(error.message); process.exit(1); }
+  const data = await fetchAllPages((from, to) =>
+    supabase
+      .from('puzzles')
+      .select('id, genre, puzzle_date, groups')
+      .eq('status', 'published')
+      .not('groups', 'is', null)
+      .order('id')
+      .range(from, to),
+  );
 
   let fixedCount = 0;
   for (const p of data ?? []) {

@@ -31,4 +31,5 @@ export const mockPuzzle: SavedPuzzle = {
   items: mockItems,
   groups: mockGroups,
   createdAt: Date.now(),
+  editedAt: Date.now(),
 };

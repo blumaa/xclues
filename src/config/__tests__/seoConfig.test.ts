@@ -14,6 +14,13 @@ describe('seoConfig', () => {
     }
   });
 
+  it('compares to NY Times Connections, never Wordle', () => {
+    for (const genre of VALID_GENRES) {
+      expect(SEO_CONFIGS[genre].metaDescription).not.toMatch(/wordle/i);
+      expect(SEO_CONFIGS[genre].metaDescription).toContain('NY Times Connections');
+    }
+  });
+
   it('sports is not a valid genre (not launched yet)', () => {
     expect(VALID_GENRES).not.toContain('sports');
   });

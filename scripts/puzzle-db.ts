@@ -25,12 +25,35 @@ export function colorForDifficulty(difficulty: string): string {
   return color;
 }
 
+// `connection_groups.difficulty_score` is the same concept again, as a number the
+// seeding tools sort by. Derived here for the same reason as colour: authored twice,
+// it drifts. The spacing matches the values the existing archive rows were seeded with.
+const DIFFICULTY_TO_SCORE: Record<string, number> = {
+  easy: 2,
+  medium: 5,
+  hard: 7,
+  hardest: 9,
+};
+
+export function scoreForDifficulty(difficulty: string): number {
+  const score = DIFFICULTY_TO_SCORE[difficulty];
+  if (score === undefined) {
+    throw new Error(
+      `Unknown difficulty "${difficulty}". Expected one of: ${Object.keys(DIFFICULTY_TO_SCORE).join(', ')}.`,
+    );
+  }
+  return score;
+}
+
 export function getPuzzleClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error('Missing Supabase env vars (NEXT_PUBLIC_SUPABASE_URL + a key).');
   return createClient(url, key);
 }
+
+// Archive-wide reads page through the shared helper (1000-row server cap).
+export { fetchAllPages } from '../src/lib/supabase/fetchAllPages';
 
 export async function fetchPuzzleRow(
   client: SupabaseClient,

@@ -55,6 +55,7 @@ const mockPuzzleData: import('../../src/types').SavedPuzzle = {
     },
   ],
   createdAt: Date.now(),
+  editedAt: Date.now(),
 };
 
 function renderGamePage(genre: import('../../src/config/seoConfig').Genre = 'films', puzzleDate = '2026-04-08') {

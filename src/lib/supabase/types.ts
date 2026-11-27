@@ -427,6 +427,7 @@ export type Database = {
       puzzles: {
         Row: {
           created_at: string | null
+          edited_at: string | null
           genre: string
           group_ids: string[]
           groups: Json | null
@@ -439,6 +440,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          edited_at?: string | null
           genre?: string
           group_ids?: string[]
           groups?: Json | null
@@ -451,6 +453,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          edited_at?: string | null
           genre?: string
           group_ids?: string[]
           groups?: Json | null
@@ -502,6 +505,7 @@ export type Database = {
         Args: { genre_param?: string; puzzle_date_param?: string }
         Returns: {
           created_at: string | null
+          edited_at: string | null
           genre: string
           group_ids: string[]
           groups: Json | null

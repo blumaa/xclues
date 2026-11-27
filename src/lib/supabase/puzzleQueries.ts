@@ -14,7 +14,7 @@ import type {
   DifficultyColor,
 } from "../../types";
 
-// One hour: puzzles are published per-day and never change once live.
+// One hour. Live puzzles can be edited; a cache purge serves edits sooner.
 const PUZZLE_REVALIDATE_SECONDS = 60 * 60;
 
 /**
@@ -43,11 +43,14 @@ export function parsePuzzleRow(data: Record<string, unknown>): SavedPuzzle {
 
   const items = groups.flatMap((g) => g.items);
 
+  const createdAt = new Date(row.created_at).getTime();
+
   return {
     id: row.id,
     groups,
     items,
-    createdAt: new Date(row.created_at).getTime(),
+    createdAt,
+    editedAt: row.edited_at ? new Date(row.edited_at).getTime() : createdAt,
     metadata: row.metadata ?? undefined,
   };
 }
@@ -64,7 +67,7 @@ async function fetchPuzzleUncached(
       async () => {
         const { data, error } = await supabase
           .from("puzzles")
-          .select("id, groups, puzzle_date, created_at, metadata")
+          .select("id, groups, puzzle_date, created_at, edited_at, metadata")
           .eq("puzzle_date", date)
           .eq("genre", genre)
           .eq("status", "published")

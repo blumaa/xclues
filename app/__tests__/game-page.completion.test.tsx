@@ -43,6 +43,7 @@ const puzzle: SavedPuzzle = {
     },
   ],
   createdAt: Date.now(),
+  editedAt: Date.now(),
 };
 
 const DATE = '2026-04-23';

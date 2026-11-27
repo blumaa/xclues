@@ -52,3 +52,4 @@ storybook-static/
 # TypeScript incremental build cache (never commit — causes CI/local drift)
 *.tsbuildinfo
 
+.vercel

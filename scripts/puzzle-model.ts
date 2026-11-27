@@ -18,7 +18,14 @@ export interface GenreConfig {
   itemLabel: string;
 }
 
-interface Item { id: number; title: string; year?: number; artist?: string }
+interface Item {
+  id: number;
+  title: string;
+  year?: number;
+  artist?: string;
+  /** Hidden-word groups only: the word this tile hides. Audit-time; never written to the DB. */
+  hidden?: string;
+}
 export interface PuzzleGroup {
   id: string;
   items: Item[];
