@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServiceRoleClient } from "../../src/lib/supabase/server";
 import {
   aggregateBySource,
   aggregateEventsByGenre,
   type GameEventRow,
 } from "../../src/services/analytics/aggregateEvents";
+import { fetchAllEvents } from "../../src/services/analytics/fetchAllEvents";
 import { AnalidiotsView } from "../../src/views/AnalidiotsView";
 import type { SurveyResponseRow } from "../../src/services/feedback/aggregateSurvey";
 import { SURVEY_VERSION } from "../../src/services/feedback/survey";
@@ -19,30 +19,9 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
-const PAGE_SIZE = 1000;
 
 function sinceIso(): string {
   return new Date(Date.now() - NINETY_DAYS_MS).toISOString();
-}
-
-async function fetchAllEvents(supabase: SupabaseClient, since: string): Promise<GameEventRow[]> {
-  const all: GameEventRow[] = [];
-  let from = 0;
-
-  while (true) {
-    const { data } = await supabase
-      .from("game_events")
-      .select("event_type, created_at, genre, source, game_id, mode")
-      .gte("created_at", since)
-      .range(from, from + PAGE_SIZE - 1);
-
-    if (!data || data.length === 0) break;
-    all.push(...(data as GameEventRow[]));
-    if (data.length < PAGE_SIZE) break;
-    from += PAGE_SIZE;
-  }
-
-  return all;
 }
 
 export default async function AnalidiotsPage({

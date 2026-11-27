@@ -70,8 +70,21 @@ describe('ArchiveGameView', () => {
     expect(screen.queryByText('Today item')).toBeNull();
   });
 
-  it('logs started with mode archive', async () => {
+  it('does not log started when the page only loads', async () => {
     renderView();
+    await waitFor(() => expect(getGameStore(boardKey('books', DATE)).getState().groups.length).toBe(4));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(false);
+  });
+
+  it('logs started with mode archive on the first move', async () => {
+    renderView();
+    await waitFor(() => expect(getGameStore(boardKey('books', DATE)).getState().groups.length).toBe(4));
+    await act(async () => {
+      getGameStore(boardKey('books', DATE)).getState().selectItem(1);
+    });
     await waitFor(() => {
       const start = trackGameEventMock.mock.calls.find((c) => c[0] === 'started');
       expect(start?.[1]).toMatchObject({ genre: 'books', puzzleDate: DATE, mode: 'archive' });
@@ -98,7 +111,7 @@ describe('ArchiveGameView', () => {
     localStorage.setItem(
       'xclues-stats',
       JSON.stringify({
-        gameHistory: [{ date: DATE, genre: 'books', won: false, mistakes: 4, completedAt: 1 }],
+        gameHistory: [{ date: DATE, genre: 'books', won: false, mistakes: 4, completedAt: Date.now() }],
       }),
     );
     renderView();

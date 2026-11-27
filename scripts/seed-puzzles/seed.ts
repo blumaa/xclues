@@ -1,6 +1,7 @@
 import { supabase } from './supabase-client';
 import type { PuzzleDef } from './types';
 import { findDuplicateSongsInPuzzle } from './validate-puzzles';
+import { fetchAllPages } from '../../src/lib/supabase/fetchAllPages';
 
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + 'T00:00:00Z');
@@ -9,27 +10,14 @@ function addDays(dateStr: string, days: number): string {
 }
 
 async function fetchExistingConnections(): Promise<Set<string>> {
-  const connections = new Set<string>();
-  let offset = 0;
-  const batchSize = 1000;
-
-  while (true) {
-    const { data, error } = await supabase
+  const data = await fetchAllPages((from, to) =>
+    supabase
       .from('connection_groups')
       .select('connection')
-      .range(offset, offset + batchSize - 1);
-
-    if (error) throw new Error(`Failed to fetch connections: ${error.message}`);
-    if (!data || data.length === 0) break;
-
-    for (const row of data) {
-      connections.add(row.connection);
-    }
-    if (data.length < batchSize) break;
-    offset += batchSize;
-  }
-
-  return connections;
+      .order('id')
+      .range(from, to),
+  );
+  return new Set(data.map((row) => row.connection));
 }
 
 async function fetchScheduledDates(genre: string): Promise<Set<string>> {

@@ -47,6 +47,14 @@ const puzzle: SavedPuzzle = {
 
 const DATE = '2026-04-23';
 
+// Starts log on the first move, not on load (crawlers never move).
+async function firstMove(genre: 'films' | 'books' | 'music') {
+  await waitFor(() => expect(getGameStore(boardKey(genre, DATE)).getState().items.length).toBeGreaterThan(0));
+  await act(async () => {
+    getGameStore(boardKey(genre, DATE)).getState().selectItem(1);
+  });
+}
+
 function renderFresh() {
   return render(
     <GamePage
@@ -66,8 +74,18 @@ describe('GamePage completion → trackGameEvent', () => {
     resetAllStores();
   });
 
-  it('fires trackGameEvent("started") only for the initial genre on mount', async () => {
+  it('does not fire trackGameEvent("started") when the page only loads', async () => {
     renderFresh();
+    await waitFor(() => expect(getAppStore().getState().initialized).toBe(true));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(false);
+  });
+
+  it('fires trackGameEvent("started") only for the genre the player moves in', async () => {
+    renderFresh();
+    await firstMove('films');
     await waitFor(() => {
       const starts = trackGameEventMock.mock.calls.filter((c) => c[0] === 'started');
       expect(starts.length).toBe(1);
@@ -77,6 +95,7 @@ describe('GamePage completion → trackGameEvent', () => {
 
   it('fires trackGameEvent("lost") when a genre game transitions to lost', async () => {
     renderFresh();
+    await firstMove('films');
 
     await waitFor(() => {
       expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
@@ -96,6 +115,7 @@ describe('GamePage completion → trackGameEvent', () => {
 
   it('fires trackGameEvent("started") for a new genre when user switches tabs', async () => {
     renderFresh();
+    await firstMove('films');
     await waitFor(() => {
       expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
     });
@@ -105,6 +125,7 @@ describe('GamePage completion → trackGameEvent', () => {
     await act(async () => {
       getAppStore().getState().setActiveGenre('music');
     });
+    await firstMove('music');
 
     await waitFor(() => {
       const starts = trackGameEventMock.mock.calls.filter((c) => c[0] === 'started');
@@ -115,6 +136,7 @@ describe('GamePage completion → trackGameEvent', () => {
 
   it('does not fire duplicate started events when switching back to a visited genre', async () => {
     renderFresh();
+    await firstMove('films');
     await waitFor(() => {
       expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
     });
@@ -122,6 +144,7 @@ describe('GamePage completion → trackGameEvent', () => {
     await act(async () => {
       getAppStore().getState().setActiveGenre('music');
     });
+    await firstMove('music');
 
     await waitFor(() => {
       expect(trackGameEventMock.mock.calls.filter((c) => c[0] === 'started').length).toBe(2);
@@ -144,6 +167,7 @@ describe('GamePage completion → trackGameEvent', () => {
 
   it('fires trackGameEvent("won") when a genre game transitions to won', async () => {
     renderFresh();
+    await firstMove('films');
 
     await waitFor(() => {
       expect(trackGameEventMock.mock.calls.some((c) => c[0] === 'started')).toBe(true);
@@ -180,6 +204,7 @@ describe('GamePage per-game analytics id', () => {
 
   it('sends the same gameId with started and the finishing event', async () => {
     renderFresh();
+    await firstMove('films');
     const started = await waitForStart();
     expect(started.gameId).toEqual(expect.any(String));
 
@@ -195,6 +220,7 @@ describe('GamePage per-game analytics id', () => {
 
   it('does not log a second start when the page reloads mid-game', async () => {
     const first = renderFresh();
+    await firstMove('films');
     await waitForStart();
     first.unmount();
 
@@ -213,6 +239,7 @@ describe('GamePage per-game analytics id', () => {
 
   it('clears the stored id once the game ends', async () => {
     renderFresh();
+    await firstMove('films');
     await waitForStart();
     expect(localStorage.getItem('xclues-game-id-films')).not.toBeNull();
 

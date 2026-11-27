@@ -75,8 +75,9 @@ describe('GamePage → submitGuess wrong 4x → fetch insert lost', () => {
       />,
     );
 
+    // Board ready. No fetch yet: started logs on the first move.
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalled();
+      expect(getGameStore(boardKey('films', DATE)).getState().items.length).toBeGreaterThan(0);
     });
 
     fetchMock.mockClear();

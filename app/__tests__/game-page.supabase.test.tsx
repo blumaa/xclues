@@ -72,7 +72,7 @@ describe('GamePage → fetch insert', () => {
     );
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalled();
+      expect(getGameStore(boardKey('films', DATE)).getState().items.length).toBeGreaterThan(0);
     });
 
     fetchMock.mockClear();
@@ -103,6 +103,13 @@ describe('GamePage → fetch insert', () => {
       />,
     );
 
+    await waitFor(() => {
+      expect(getGameStore(boardKey('books', DATE)).getState().items.length).toBeGreaterThan(0);
+    });
+    // Started logs on the first move, so the player moves on their board.
+    await act(async () => {
+      getGameStore(boardKey('books', DATE)).getState().selectItem(1);
+    });
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalled();
     });
